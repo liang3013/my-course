@@ -1,0 +1,2134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎭 人类误判心理学与行为金融 · 芒格的核心武器</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --card-hover: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --sub: #8b949e;
+  --accent: #c084fc;
+  --accent2: #a855f7;
+  --green: #3fb950;
+  --red: #f85149;
+  --yellow: #d2991d;
+  --orange: #e28413;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(192,132,252,0.35); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3e50; }
+body {
+  font-family: -apple-system, 'SF Pro Display', 'PingFang SC', sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #1a1020 0%, var(--bg) 70%);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Layout */
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width: 280px;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  padding: 24px 16px;
+  position: sticky; top:0; height:100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.main {
+  flex:1;
+  padding: 32px 48px;
+  max-width: 900px;
+}
+
+/* Sidebar */
+.logo {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.logo .icon { font-size: 1.4em; }
+.subtitle { color: var(--sub); font-size: 0.82em; margin-bottom: 20px; opacity: 0.8; }
+
+.progress-bar-wrap {
+  background: var(--border); border-radius: 8px; height: 6px;
+  margin-bottom: 22px; overflow: hidden;
+}
+.progress-bar {
+  height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 8px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 0 12px rgba(192,132,252,0.25);
+}
+.progress-text { font-size: 0.78em; color: var(--sub); margin-bottom: 4px; }
+
+.nav-module { margin-bottom: 18px; }
+.nav-module-title {
+  font-size: 0.72em; text-transform: uppercase;
+  color: var(--sub); letter-spacing: 1.5px;
+  margin-bottom: 8px; padding: 0 8px;
+  opacity: 0.7;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; border-radius: 8px;
+  cursor: pointer; transition: all 0.2s ease;
+  font-size: 0.88em; color: var(--sub);
+  border-left: 3px solid transparent;
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: var(--card-hover); color: var(--text); border-left-color: rgba(192,132,252,0.3); }
+.nav-item.active { background: rgba(192,132,252,0.12); color: var(--accent2); font-weight: 600; border-left-color: var(--accent2); }
+.nav-item.done { color: var(--green); }
+.nav-item .check { width: 20px; text-align: center; font-size: 0.8em; }
+
+.divider { border-top: 1px solid var(--border); margin: 16px 0; }
+
+/* Main Content */
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.lesson-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px 34px;
+  margin-bottom: 24px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.lesson-card:hover {
+  border-color: rgba(192,132,252,0.2);
+  box-shadow: 0 2px 20px rgba(192,132,252,0.06);
+}
+.lesson-card h2 {
+  font-size: 1.5em; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 10px;
+}
+.lesson-card h2 .emoji { font-size: 1.3em; }
+.lesson-card .meta {
+  color: var(--sub); font-size: 0.85em; margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.lesson-card h3 {
+  font-size: 1.1em; margin: 28px 0 14px; color: var(--accent2);
+  position: relative;
+  padding-left: 14px;
+}
+.lesson-card h3::before {
+  content: '';
+  position: absolute; left: 0; top: 3px; bottom: 3px;
+  width: 3px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent2));
+}
+.lesson-card p { margin-bottom: 14px; }
+.lesson-card ul, .lesson-card ol { padding-left: 24px; margin-bottom: 14px; }
+.lesson-card li { margin-bottom: 8px; }
+
+/* Analogy Box */
+.analogy {
+  background: linear-gradient(135deg, rgba(168,85,247,0.06), rgba(192,132,252,0.06));
+  border: 1px solid rgba(168,85,247,0.15);
+  border-left: 3px solid var(--accent2);
+  border-radius: var(--radius); padding: 18px 22px;
+  margin: 20px 0;
+  transition: border-color 0.2s;
+}
+.analogy:hover { border-color: rgba(168,85,247,0.25); }
+.analogy .label {
+  font-size: 0.78em; color: var(--accent2); text-transform: uppercase;
+  letter-spacing: 1.5px; margin-bottom: 10px; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* Diagram */
+.diagram-svg {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 12px; margin: 20px 0;
+  text-align: center;
+  overflow-x: auto;
+}
+.diagram-svg svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+.diagram-svg text { font-family: inherit; }
+.diagram-svg .sub { fill: var(--sub); }
+.diagram-svg .accent { fill: var(--accent); }
+
+/* Callout */
+.tip, .warning {
+  border-radius: var(--radius); padding: 18px 22px; margin: 20px 0;
+  position: relative;
+}
+.tip { background: rgba(63,185,80,0.06); border: 1px solid rgba(63,185,80,0.2); border-left: 3px solid var(--green); }
+.warning { background: rgba(248,81,73,0.06); border: 1px solid rgba(248,81,73,0.2); border-left: 3px solid var(--red); }
+.tip .label, .warning .label { font-weight: 700; margin-bottom: 6px; font-size: 0.85em; display: flex; align-items: center; gap: 6px; }
+.tip .label { color: var(--green); }
+.warning .label { color: var(--red); }
+
+/* Quiz */
+.quiz-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 28px 30px; margin: 28px 0;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.quiz-card:hover {
+  border-color: rgba(192,132,252,0.3);
+  box-shadow: 0 2px 16px rgba(192,132,252,0.05);
+}
+.quiz-card h3 {
+  font-size: 1.15em; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.quiz-question { margin: 18px 0 10px; font-weight: 600; font-size: 0.95em; }
+.quiz-option {
+  display: block; width: 100%; text-align: left;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 13px 18px;
+  margin: 8px 0; cursor: pointer;
+  color: var(--text); font-size: 0.93em;
+  transition: all 0.2s ease;
+}
+.quiz-option:hover { border-color: var(--accent); background: var(--card-hover); transform: translateX(4px); }
+.quiz-option.correct { border-color: var(--green); background: rgba(63,185,80,0.08); color: var(--green); }
+.quiz-option.wrong { border-color: var(--red); background: rgba(248,81,73,0.08); color: var(--red); }
+.quiz-option:disabled { cursor: default; opacity: 0.8; transform: none; }
+
+.quiz-result {
+  margin-top: 16px; padding: 16px; border-radius: 8px;
+  display: none;
+}
+.quiz-result.show { display: block; }
+.quiz-result.pass { background: rgba(63,185,80,0.1); border: 1px solid var(--green); }
+.quiz-result.fail { background: rgba(248,81,73,0.1); border: 1px solid var(--red); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 26px;
+  border-radius: 8px; border: none; cursor: pointer;
+  font-size: 0.93em; font-weight: 600;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--accent); color: #000; box-shadow: 0 2px 8px rgba(192,132,252,0.3); }
+.btn-primary:hover { background: #a855f7; box-shadow: 0 4px 16px rgba(192,132,252,0.4); }
+.btn-secondary { background: var(--border); color: var(--text); }
+.btn-secondary:hover { background: #3a3e50; }
+.btn-success { background: var(--green); color: #fff; box-shadow: 0 2px 8px rgba(63,185,80,0.3); }
+.btn-success:hover { background: #00a381; box-shadow: 0 4px 16px rgba(63,185,80,0.4); }
+.btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+/* Step Cards */
+.step-list { display: flex; gap: 14px; flex-wrap: wrap; margin: 18px 0; }
+.step-card {
+  flex: 1; min-width: 180px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 16px; text-align: center;
+  transition: all 0.2s ease;
+}
+.step-card:hover { border-color: rgba(192,132,252,0.3); transform: translateY(-2px); }
+.step-card .num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #9333ea);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px; font-weight: 700; font-size: 0.85em;
+  box-shadow: 0 2px 8px rgba(192,132,252,0.3);
+}
+.step-card .title { font-weight: 600; margin-bottom: 6px; font-size: 0.9em; }
+.step-card .desc { font-size: 0.82em; color: var(--sub); line-height: 1.6; }
+
+/* Nav btns */
+.nav-btns { display: flex; justify-content: space-between; margin-top: 32px; }
+
+/* Table */
+.table-wrap { overflow-x: auto; margin: 18px 0; }
+.table-wrap table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.88em; line-height: 1.6;
+}
+.table-wrap th {
+  background: rgba(192,132,252,0.08);
+  border-bottom: 1px solid var(--accent2);
+  padding: 10px 14px; font-weight: 600; text-align: left;
+  color: var(--accent);
+}
+.table-wrap td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+.table-wrap tr:hover td { background: rgba(192,132,252,0.04); }
+
+/* Highlight classes */
+.hl { color: var(--accent); font-weight: 600; }
+.hl2 { color: var(--green); font-weight: 600; }
+.hl3 { color: var(--yellow); font-weight: 600; }
+
+/* Final exam */
+.final-exam { display: none; }
+.final-exam.active { display: block; }
+.certificate {
+  display: none;
+  background: linear-gradient(135deg, rgba(192,132,252,0.08), rgba(168,85,247,0.06));
+  border: 2px solid var(--accent2);
+  border-radius: var(--radius);
+  padding: 48px 40px; text-align: center; margin: 28px 0;
+  box-shadow: 0 4px 32px rgba(168,85,247,0.08);
+}
+.certificate.show { display: block; animation: fadeIn 0.5s ease; }
+.certificate h2 { font-size: 2em; color: var(--accent2); margin-bottom: 8px; }
+.certificate .grade { font-size: 2.5em; color: var(--accent); font-weight: 800; margin: 16px 0 8px; }
+
+/* Deep dive box */
+.deep {
+  background: rgba(192,132,252,0.05);
+  border: 1px solid rgba(192,132,252,0.12);
+  border-radius: var(--radius);
+  padding: 20px 24px; margin: 20px 0;
+}
+.deep .label { font-weight: 700; color: var(--accent); margin-bottom: 10px; font-size: 0.9em; }
+
+/* Practice card */
+.practice-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px; margin: 16px 0;
+}
+.practice-card .label {
+  font-size: 0.82em; color: var(--accent2); font-weight: 700;
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .app { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+  .main { padding: 20px 16px; }
+  .step-list { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">🎭</span> 误判心理学</div>
+  <div class="subtitle">芒格的核心武器——理解人类为何犯错</div>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+  <a href="课程首页_金融基础.html" style="display:block;margin-bottom:12px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:0.82em;color:var(--sub);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.borderColor=this.style.color" onmouseout="this.style.borderColor='var(--border)'" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--sub)'">🏠 回到课程总览</a>
+<div id="navContainer"></div>
+  <div class="divider"></div>
+  <button class="btn btn-primary" style="width:100%" onclick="startFinalExam()">🏆 终极测验</button>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="resetAll()">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ===== COURSE DATA =====
+const modules = [
+  {
+    title: '🎭 模块一：为什么要学误判心理学',
+    lessons: [
+      {
+        id: 'why-psychology',
+        title: '芒格最被低估的武器——心理学',
+        emoji: '🎭',
+        content: `
+<h3>芒格的格栅理论中，最重要的一格</h3>
+
+<p>查理·芒格把他的成功归功于<span class="hl">「多元思维模型格栅」</span>。在100+个思维模型中，他认为心理学是最重要的一格——如果你不理解人类为什么会系统性犯错，你就不可能成为好的投资者。</p>
+
+<div class="analogy">
+  <div class="label">🏀 投篮类比</div>
+  <p>想象你站在罚球线上投篮。你的技术（报表分析）没问题，<strong>但全场两万人突然开始吼叫、闪光灯狂闪。</strong></p>
+  <p>你的手会抖——不是因为技术变差了，是<span class="hl">心理被干扰了</span>。</p>
+  <p>投资也一样：公司基本面没变，但市场恐慌时你会抛售、贪婪时会追高——<strong>不是分析错了，是心理被干扰了。</strong></p>
+</div>
+
+<h3>芒格的演讲：24个标准导致误判的原因</h3>
+
+<p>1992-1995年，芒格在哈佛大学做了四次演讲，后来整理成<span class="hl">《人类误判心理学》</span>（The Psychology of Human Misjudgment）。他列举了25种导致人类系统性犯错的心理倾向。</p>
+
+<div class="deep">
+  <div class="label">🎭 芒格原话</div>
+  <p>"我早就对标准思维错误很感兴趣。我这一生都在跟各种形式的愚蠢打交道。当我还是一个年轻律师的时候，我就发现，<strong>大多数灾难性的错误都是人类心理的产物，不是外部事件的产物。</strong>"</p>
+  <p style="margin-top:8px">— 查理·芒格，《穷查理宝典》</p>
+</div>
+
+<h3>为什么单独开一门课？</h3>
+
+<div class="step-list">
+  <div class="step-card">
+    <div class="num">1</div>
+    <div class="title">📊 财报分析</div>
+    <div class="desc">告诉你一间公司「好不好」<br>但对「为什么别人在错的时间买/卖」无能为力</div>
+  </div>
+  <div class="step-card">
+    <div class="num">2</div>
+    <div class="title">🌊 周期宏观</div>
+    <div class="desc">告诉你「我们在哪」<br>但对「为什么人们在顶点贪婪、在底部恐惧」只有描述没有解释</div>
+  </div>
+  <div class="step-card">
+    <div class="num">3</div>
+    <div class="title">🎭 误判心理</div>
+    <div class="desc">告诉你「人为什么犯错」<br>这是三张地图的最后一张——理解自己、理解对手、理解市场</div>
+  </div>
+</div>
+
+<div class="tip">
+  <div class="label">💡 本课程承诺</div>
+  <p>• 掌握芒格25种心理倾向——每个配真实投资案例<br>
+  • 学会识别市场什么时候是「情绪驱动」vs「基本面驱动」<br>
+  • 建立自己的「误判检查清单」——每次交易前自检<br>
+  • 理解为什么最聪明的人也会在金融市场上犯相同的错误<br>
+  • 最终目标：<strong>不是消除心理偏误（不可能），而是设计系统来对抗它</strong></p>
+</div>
+`
+      },
+      {
+        id: 'psychology-vs-rational',
+        title: '理性人假设：经济学最大的谎言',
+        emoji: '🎭',
+        content: `
+<h3>经济学教科书里的「理性人」不存在</h3>
+
+<p>传统经济学建立在一个假设之上：<span class="hl">人是理性的</span>——会收集所有信息、做出最优决策、不受情绪干扰。</p>
+
+<p>行为金融学用实验证明了这个假设的荒谬。2002年，心理学家丹尼尔·卡尼曼获得诺贝尔经济学奖——不是因为他懂经济学，而是因为<span class="hl">他证明了经济学的基本假设是错的</span>。</p>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left: Rational Man -->
+  <rect x="30" y="30" width="340" height="220" rx="12" fill="rgba(63,185,80,0.06)" stroke="#3fb950" stroke-width="1"/>
+  <text x="200" y="65" text-anchor="middle" fill="#3fb950" font-size="16" font-weight="700">🤖 理性人假设</text>
+  <text x="200" y="95" text-anchor="middle" fill="#8b949e" font-size="12">（传统经济学）</text>
+  <text x="60" y="130" fill="#e6edf3" font-size="13">• 收集所有信息</text>
+  <text x="60" y="155" fill="#e6edf3" font-size="13">• 计算最优决策</text>
+  <text x="60" y="180" fill="#e6edf3" font-size="13">• 不受情绪干扰</text>
+  <text x="60" y="205" fill="#e6edf3" font-size="13">• 长期利益最大化</text>
+  <text x="60" y="235" fill="#f85149" font-size="12">⛔ 现实中不存在</text>
+
+  <!-- Arrow -->
+  <text x="390" y="145" text-anchor="middle" fill="#c084fc" font-size="28">→</text>
+
+  <!-- Right: Real Human -->
+  <rect x="430" y="30" width="340" height="220" rx="12" fill="rgba(192,132,252,0.06)" stroke="#c084fc" stroke-width="1"/>
+  <text x="600" y="65" text-anchor="middle" fill="#c084fc" font-size="16" font-weight="700">🎭 真实人类</text>
+  <text x="600" y="95" text-anchor="middle" fill="#8b949e" font-size="12">（行为金融学）</text>
+  <text x="460" y="130" fill="#e6edf3" font-size="13">• 只看最近发生的事（近因偏误）</text>
+  <text x="460" y="155" fill="#e6edf3" font-size="13">• 跟风别人做什么（羊群效应）</text>
+  <text x="460" y="180" fill="#e6edf3" font-size="13">• 害怕亏损大于渴望盈利（损失厌恶）</text>
+  <text x="460" y="205" fill="#e6edf3" font-size="13">• 高估自己的能力（过度自信）</text>
+  <text x="460" y="235" fill="#3fb950" font-size="12">✅ 这是真实的你和我</text>
+</svg>
+</div>
+
+<h3>投资中最危险的心理陷阱——一个实验</h3>
+
+<div class="analogy">
+  <div class="label">🪙 抛硬币实验（卡尼曼 & 特沃斯基）</div>
+  <p><strong>情景A：</strong>给你两个选择</p>
+  <p>① 确定拿到 800 元<br>
+  ② 85% 概率拿到 1000 元，15% 概率拿 0 元</p>
+  <p style="color:var(--green)">大多数人选①——宁愿少拿也要确定。</p>
+  <p style="margin-top:16px"><strong>情景B：</strong>给你两个选择</p>
+  <p>③ 确定亏损 800 元<br>
+  ④ 85% 概率亏损 1000 元，15% 概率亏损 0 元</p>
+  <p style="color:var(--red)">大多数人选④——宁愿赌一把也不接受确定的亏损。</p>
+</div>
+
+<p><strong>关键发现：</strong>同样的人、同样的数学期望、只是把「赚」字换成「亏」字——选择完全反转。这就是<span class="hl">损失厌恶</span>（Loss Aversion）：<strong>亏损的痛苦 ≈ 盈利快乐的 2 倍。</strong></p>
+
+<div class="warning">
+  <div class="label">⚠️ 投资中的致命后果</div>
+  <p>• 盈利时 → <strong>急着止盈</strong>（"落袋为安"）→ 错过了十倍大牛股<br>
+  • 亏损时 → <strong>死扛不割</strong>（"回本就卖"）→ 从亏 10% 扛到亏 90%<br>
+  • 这就是为什么散户的平均收益远低于基金——不是选股差，是<span class="hl">心理在干扰</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">卡尼曼的抛硬币实验证明了什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 人喜欢冒险</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 面对盈利时追求稳妥，面对亏损时却愿意冒险——同一个人、矛盾行为</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 人会计算数学期望</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 抛硬币是公平的</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这就是「损失厌恶」——亏损的痛苦大约是盈利快乐的2倍。在投资中表现为：盈利时急着卖（落袋为安），亏损时死扛（不愿承认亏损）。这是散户跑不赢基金的根源之一。</div>
+</div>
+`
+      },
+    ]
+  },
+  {
+    title: '🔬 模块二：奖励与惩罚——终极超级倾向',
+    lessons: [
+      {
+        id: 'incentive-superpower',
+        title: '激励的超级力量：比你想象的强大100倍',
+        emoji: '🔬',
+        content: `
+<h3>芒格最推崇的一条法则</h3>
+
+<div class="analogy">
+  <div class="label">🎭 芒格名言</div>
+  <p>"<strong>永远不要低估激励的力量。</strong>我在生活中还没见过哪件事——无论是好是坏——不能用激励机制来解释。给我看激励机制，我给你看结果。"</p>
+</div>
+
+<p>芒格把「奖励与惩罚超级反应倾向」排在他25个倾向的<span class="hl">第一位</span>——不是因为它最重要，而是因为<span class="hl">如果连这都不理解，其他一切都是空谈</span>。</p>
+
+<h3>联邦快递的经典案例</h3>
+
+<p>联邦快递（FedEx）的核心价值主张是「隔夜送达」。但早期出现了一个严重问题：<strong>夜班工人效率太低，导致包裹常常延误。</strong></p>
+
+<p>管理层试过各种方法：罚款、辞退威胁、团队激励大会——都不管用。直到有人想出了一个天才方案：</p>
+
+<div class="practice-card">
+  <div class="label">💡 天才方案</div>
+  <p><strong>改变薪酬结构：</strong>把夜班工人按小时计薪 → 改为按班次计薪。<br>
+  做完当班所有包裹就可以下班回家，工资照拿。</p>
+  <p style="margin-top:8px;color:var(--green)"><strong>结果：</strong>包裹再也没延误过。工人主动想办法提高效率——因为早做完=早回家+同工资。</p>
+</div>
+
+<p><strong>核心教训：</strong>不是工人懒惰，是<strong>激励结构让他们选择「磨洋工」</strong>——按小时计薪，做得快反而拿得少。激励一变，行为立刻变。</p>
+
+<h3>投资中的激励机制陷阱</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>角色</th><th>激励结构</th><th>导致的偏误行为</th></tr>
+  <tr><td><strong>基金经理</strong></td><td>按管理规模收管理费</td><td>追求规模而非回报——牛市发新产品收钱，熊市关闭</td></tr>
+  <tr><td><strong>券商分析师</strong></td><td>投行收入>研究收入</td><td>给承销客户出「买入」评级——评级不是研究结论，是销售工具</td></tr>
+  <tr><td><strong>公司高管</strong></td><td>股票期权+业绩奖金</td><td>操纵利润达标→短期美化报表→长期损害企业</td></tr>
+  <tr><td><strong>财经媒体</strong></td><td>点击量=广告收入</td><td>标题党+制造恐慌→严肃分析没流量，耸人听闻才有钱</td></tr>
+  <tr><td><strong>理财产品销售</strong></td><td>按销售额提成</td><td>推高佣金产品而非好产品——客户亏钱跟我没关系</td></tr>
+</table>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 投资中的激励检查</div>
+  <p>每次看一个投资建议，先问：<strong>「推荐这个的人，他的利益在哪？」</strong></p>
+  <p>• 基金经理推荐某股票 → 看看他持仓了吗？<br>
+  • 券商给出「买入」评级 → 这公司是他们的投行客户吗？<br>
+  • 理财顾问推荐某产品 → 这产品的佣金比别的产品高吗？<br>
+  • 财经大V推荐某标的 → 他先买了再喊你接盘吗？</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">联邦快递夜班效率问题的根本原因是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 工人素质太低</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 按小时计薪→做得快拿得少→激励结构鼓励磨洋工</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 包裹太多了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 管理层不会管</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这不是品质问题，是激励结构问题。改变激励（按班次计薪），行为立刻改变（主动提高效率）。在投资中同样适用——先理解每个人「靠什么赚钱」，才能理解他们「为什么这么说」。</div>
+</div>
+`
+      },
+      {
+        id: 'incentive-investing',
+        title: '投资中的激励偏误——从佣金到老鼠仓',
+        emoji: '💸',
+        content: `
+<h3>中国的激励偏误案例</h3>
+
+<h3>案例1：P2P 的崩塌</h3>
+<div class="practice-card">
+  <div class="label">📋 激励机制分析</div>
+  <p><strong>P2P平台销售：</strong>每卖出一份理财产品拿 3-5% 佣金<br>
+  <strong>平台老板：</strong>融资越多→规模越大→估值越高→套现走人<br>
+  <strong>投资人：</strong>被「年化15%+」诱惑，忽略了「借款不还」的风险</p>
+  <p style="margin-top:8px;color:var(--red)"><strong>结果：</strong>三方激励完全错位。销售只管卖不管回款，老板只想做大不想风控，投资人只看收益不看风险。2018-2019年大面积暴雷，万亿规模灰飞烟灭。</p>
+</div>
+
+<h3>案例2：券商的「研究」报告</h3>
+<div class="practice-card">
+  <div class="label">📋 激励机制分析</div>
+  <p>中国券商研究所的潜在利益冲突：<br>
+  • 研究部出报告 → 机构销售部拿去服务基金客户<br>
+  • 投行部承销某公司IPO → 研究部给出「买入」评级<br>
+  • 分析师自己先买 → 出报告拉高 → 卖出</p>
+  <p style="margin-top:8px;color:var(--yellow)"><strong>关键识别法：</strong>如果一家券商是某公司的承销商，该公司所有的「买入」评级都应该打折扣。看研报前先看「利益披露」声明。</p>
+</div>
+
+<h3>芒格的「激励检查清单」</h3>
+
+<div class="deep">
+  <div class="label">🎭 每次做投资决策前，问自己三个问题</div>
+  <p><strong>① 我的激励是什么？</strong>我是不是因为「已经买了」才到处找看好的理由？（确认偏误+激励结合）</p>
+  <p><strong>② 对方的激励是什么？</strong>推荐这个股票的人，他的奖金/佣金/名声跟这个推荐有什么关系？</p>
+  <p><strong>③ 系统层面的激励是什么？</strong>整个制度鼓励什么行为？——A股鼓励并购重组时，就会出现商誉大洗澡；鼓励分红时，就会有公司借债分红。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">券商分析师为什么经常给承销客户出「买入」评级？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 这些公司确实好</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 投行承销收入 >> 研究收入，评级是销售工具不是研究结论</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 分析师水平高</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 监管部门要求的</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 利益冲突是结构性的——当投行从一家公司拿到的承销费可能是研究收入的百倍，分析师的「独立客观」就成了童话。这提醒我们：永远先看「推荐你的人靠什么赚钱」。</div>
+</div>
+`
+      },
+    ]
+  },
+  {
+    title: '💭 模块三：情感扭曲——喜欢/讨厌如何毁掉判断',
+    lessons: [
+      {
+        id: 'liking-loving',
+        title: '喜欢/热爱倾向：为什么你会「爱上一支股票」',
+        emoji: '❤️',
+        content: `
+<h3>人类最古老的心理程序</h3>
+
+<p>芒格观察到，人类天生会<span class="hl">忽略所爱对象的缺点、放大优点</span>。这不是理性选择——是写在基因里的。在进化环境中，爱部落成员、忽略缺点有利于群体生存。但在现代金融市场，这倾向是灾难性的。</p>
+
+<div class="analogy">
+  <div class="label">💔 「爱上股票」的症状</div>
+  <p>• 公司出利空 → 「市场误解了，长期没问题」<br>
+  • 竞争对手崛起 → 「对手的数据有问题」<br>
+  • 管理层犯错 → 「谁不犯错呢？给他们时间」<br>
+  • 估值贵了 → 「好公司值得溢价」<br>
+  • 连续三个季度不达预期 → 「下个季度一定反转」</p>
+  <p style="color:var(--red);margin-top:8px"><strong>诊断：</strong>如果你对一支股票的好消息兴奋、对坏消息找借口——你可能已经「爱上」了它。</p>
+</div>
+
+<h3>投资中的「爱股」效应</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>现象</th><th>表现</th><th>真实案例</th></tr>
+  <tr><td><strong>茅台永远涨</strong></td><td>任何利空都是「黄金坑」</td><td>2021年PE从70倍跌到25倍，-65%——不是黄金坑，是估值回归</td></tr>
+  <tr><td><strong>腾讯信仰</strong></td><td>「互联网唯一真神」</td><td>2021-2022年股价-70%，持有者不断加仓→被反身性反噬</td></tr>
+  <tr><td><strong>特斯拉教徒</strong></td><td>「所有分析师都不懂」</td><td>2021-2023年-75%，信仰不能当饭吃</td></tr>
+  <tr><td><strong>比特币永恒</strong></td><td>「法定货币是骗局」</td><td>每次-70%都是上车机会？四次了，每次相信的人都更多了</td></tr>
+</table>
+</div>
+
+<h3>芒格为什么「不持有苹果以外的任何科技股」？</h3>
+
+<p>芒格坦承他有<span class="hl">「不喜欢科技股」</span>的偏误——因为早年错过太多，产生了一种心理防御。但他选择了<strong>接受这个偏误的存在</strong>，而不是假装能克服。他的方法：<strong>找一个喜欢科技股的人（比如李录），让他帮忙筛选。</strong></p>
+
+<div class="tip">
+  <div class="label">💡 对抗喜欢偏误的武器</div>
+  <p>① <strong>写下来：</strong>买入一支股票时写下「我为什么买它」和「什么情况下我判断错了」——贴在桌面上<br>
+  ② <strong>找反对者：</strong>强制自己读三篇做空报告或强烈看空的文章<br>
+  ③ <strong>时间冷却：</strong>任何买入决定至少放24小时再执行<br>
+  ④ <strong>规则代替判断：</strong>设好止损线，到了就机械执行——不给「再想想」的机会</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">「爱上股票」最典型的症状是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 天天看股价</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 对好消息兴奋、对坏消息找借口——选择性关注信息</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 频繁交易</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不关注新闻</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这是「喜欢/热爱倾向」的典型表现——人类天生会扭曲事实来维护对所爱对象的正面认知。在投资中这极其危险，因为它阻止你客观评估风险。芒格的方法：承认偏误存在，用制度（而非意志力）来对抗。</div>
+</div>
+`
+      },
+      {
+        id: 'hating-disliking',
+        title: '讨厌/憎恨倾向与嫉妒——为什么你会错过十倍股',
+        emoji: '💔',
+        content: `
+<h3>讨厌倾向：喜欢的反面，同样强大</h3>
+
+<p>如果说「喜欢倾向」让你拿着垃圾不放手，那么<span class="hl">「讨厌倾向」让你错过最好的机会</span>。</p>
+
+<div class="analogy">
+  <div class="label">🎯 讨厌倾向的投资表现</div>
+  <p>• <strong>「拼多多太low了」</strong> → 错过三年10倍涨幅<br>
+  • <strong>「泡泡玛特就是卖盲盒的骗局」</strong> → 错过从2023低点到2025高点的5倍<br>
+  • <strong>「比亚迪电池不行」</strong> → 错过新能源车整个周期前半程<br>
+  • <strong>「比特币是骗局」</strong> → 无论你喜不喜欢，它从1美元涨到10万美元</p>
+</div>
+
+<h3>芒格谈讨厌倾向</h3>
+
+<div class="deep">
+  <div class="label">🎭 芒格原话</div>
+  <p>"讨厌/憎恨倾向让人们在看待他们不喜欢的事物时，产生严重的认知扭曲。你讨厌一个人时，你会忽略他所有的优点。同样，你讨厌一家公司时，你会忽略它所有的竞争优势。"</p>
+  <p style="margin-top:8px">这种偏误在投资圈的杀伤力尤其大——<strong>因为价值投资者最容易犯的就是「鄙视一切高估值」。</strong>80倍的茅台有人骂，300倍的英伟达有人骂，但最后骂的人全都错过了。</p>
+</div>
+
+<h3>嫉妒倾向：最被低估的破坏力</h3>
+
+<p>芒格说嫉妒是<span class="hl">「唯一不会给任何人带来任何快乐的罪恶」</span>。在投资中：</p>
+
+<div class="practice-card">
+  <div class="label">📊 嫉妒的链条反应</div>
+  <p>邻居买AI股赚了3倍 → 我开始焦虑 → 我也买AI股（根本不懂） → 买在山顶 → 死扛不动 → 亏50%</p>
+  <p style="margin-top:8px;color:var(--accent)"><strong>整个链条中，驱动决策的唯一变量就是「嫉妒」——和基本面毫无关系。</strong></p>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 投资圈的「相对收益焦虑」</div>
+  <p>基金经理最大的恐惧不是「亏钱」——是<span class="hl">「别人赚了我没赚」</span>。在牛市中，基金经理的「错失恐惧症」（FOMO）比散户更严重——因为跑输同行=饭碗不保。<br><br>这就是为什么牛市中所有基金都在买同样的股票：不是因为这些股票最好，是因为「万一别人买了涨了而我没买」=被辞退。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">基金经理牛市追涨热门板块的根本原因是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 他们看好这些股票</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. FOMO——「别人赚了我没赚」比「一起亏」更可怕</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 技术分析发出了买入信号</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 他们的研究能力很强</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这是嫉妒倾向+社会认同的联合作用。基金经理面临的是「相对收益考核」——跑输同行=失业。所以「跟大家一起亏」比「独自踏空」安全得多。理解这个逻辑，你就能理解为什么泡沫会自我强化。</div>
+</div>
+`
+      },
+    ]
+  },
+  {
+    title: '🔄 模块四：认知偏误——最大的敌人是自己',
+    lessons: [
+      {
+        id: 'confirmation-bias',
+        title: '确认偏误：为什么你会「看见你想看见的」',
+        emoji: '🔍',
+        content: `
+<h3>投资中最普遍、最隐蔽的认知偏误</h3>
+
+<p><span class="hl">确认偏误</span>（Confirmation Bias）：人类天生倾向于寻找、关注、记住<strong>支持自己已有观点的信息</strong>，同时忽略、贬低、遗忘<strong>挑战自己观点的信息</strong>。</p>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg">
+  <rect x="80" y="40" width="280" height="140" rx="12" fill="rgba(63,185,80,0.06)" stroke="#3fb950" stroke-width="1"/>
+  <text x="220" y="75" text-anchor="middle" fill="#3fb950" font-size="14" font-weight="700">🔍 你会认真读</text>
+  <text x="220" y="105" text-anchor="middle" fill="#8b949e" font-size="12">• 有利财报</text>
+  <text x="220" y="125" text-anchor="middle" fill="#8b949e" font-size="12">• 分析师看好报告</text>
+  <text x="220" y="145" text-anchor="middle" fill="#8b949e" font-size="12">• 其他持有者的赞美</text>
+  <text x="220" y="165" text-anchor="middle" fill="#8b949e" font-size="12">• 股价上涨的新闻</text>
+
+  <rect x="440" y="40" width="280" height="140" rx="12" fill="rgba(248,81,73,0.06)" stroke="#f85149" stroke-width="1"/>
+  <text x="580" y="75" text-anchor="middle" fill="#f85149" font-size="14" font-weight="700">🗑️ 你会自动忽略</text>
+  <text x="580" y="105" text-anchor="middle" fill="#8b949e" font-size="12">• 竞争对手崛起</text>
+  <text x="580" y="125" text-anchor="middle" fill="#8b949e" font-size="12">• 做空报告</text>
+  <text x="580" y="145" text-anchor="middle" fill="#8b949e" font-size="12">• 行业逆风数据</text>
+  <text x="580" y="165" text-anchor="middle" fill="#8b949e" font-size="12">• 股价下跌的警告</text>
+</svg>
+</div>
+
+<h3>一个致命的投资实验</h3>
+
+<div class="analogy">
+  <div class="label">📱 实验：你刚买了腾讯股票，然后看到两条消息</div>
+  <p><strong>消息A：</strong>「腾讯AI业务超预期，游戏收入创新高」<br>
+  <strong>消息B：</strong>「字节跳动广告收入超过腾讯，电商继续侵蚀腾讯份额」</p>
+  <p style="margin-top:12px"><strong>问：</strong>你对哪条消息更认真对待？你记住了哪条的细节？<br>
+  <strong>几乎100%的人：</strong>记住A的细节，对B的印象是「夸张了」「不太准确」。</p>
+</div>
+
+<p>这不是因为你愚蠢。这是<span class="hl">人类大脑的出厂设置</span>——在任何地方，人们都在重复这个模式。</p>
+
+<h3>对抗确认偏误的实战方法</h3>
+
+<div class="deep">
+  <div class="label">🎭 芒格的三步验证法</div>
+  <p><strong>第一步：反向搜索。</strong>每次看好一个标的，强制自己搜索「XXX 风险」「XXX 做空」「XXX 为什么下跌」。读至少三篇反对文章。</p>
+  <p><strong>第二步：魔鬼代言人。</strong>找一个你信任的人，让他扮演反对者——「请说服我为什么不该买这支股票」。认真听，不打断。</p>
+  <p><strong>第三步：概率化判断。</strong>不要问「腾讯会不会涨」，改问「腾讯有X%概率涨到Y元、有Z%概率跌到W元」。把确定性判断变成概率分布。</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 简单工具：「悲观清单」</div>
+  <p>每次买入时，在一张纸上写5个「这支股票可能让我亏钱的最坏情况」。贴在屏幕旁边。每周看一次。这个简单的仪式能大幅度降低确认偏误的危害。</p>
+</div>
+`
+      },
+      {
+        id: 'consistency-commitment',
+        title: '一致性倾向：为什么道歉比坚持更难',
+        emoji: '🔗',
+        content: `
+<h3>我们的大脑讨厌「前后不一致」</h3>
+
+<p>芒格指出，人类有一种强大的心理倾向：<span class="hl">一旦做出选择或公开承诺，就会倾向于用后续行为来「维护」这个选择——哪怕它已经被证明是错的。</span></p>
+
+<div class="analogy">
+  <div class="label">🎲 经典的赛马场实验</div>
+  <p>研究者采访赛马场门口的人，问他们「你觉得哪匹马会赢？」<br>
+  再采访刚下完注出来的人，问同样的问题。</p>
+  <p><strong>结果惊人：</strong>下注前的人说「不太确定，6号马概率大一点吧」。刚下完注的人说「6号马肯定赢，你看他最近三场状态多好。」</p>
+  <p><strong>同一批人、同一天、同一匹马。</strong>唯一的变量是「下了注」。下了注之后，大脑自动进入「辩护模式」——因为承认「我可能选错了」在心理上太痛苦。</p>
+</div>
+
+<h3>投资中的一致性陷阱</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>陷阱</th><th>表现</th><th>后果</th></tr>
+  <tr><td><strong>承诺升级</strong></td><td>亏了10%不但不止损，反而加仓——「拉低成本」</td><td>从亏10%到亏50%</td></tr>
+  <tr><td><strong>公开声明</strong></td><td>在朋友圈/雪球说了「看好XX」，跌了不好意思卖</td><td>面子比钱重要</td></tr>
+  <tr><td><strong>沉没成本</strong></td><td>「我已经研究了三个月，不能半途而废」</td><td>继续在一个错误方向上投入</td></tr>
+  <tr><td><strong>先入为主</strong></td><td>第一次接触某公司的信息是正面的，后续很难逆转</td><td>第一印象锁定了认知框架</td></tr>
+</table>
+</div>
+
+<h3>巴菲特是怎么处理这个问题的？</h3>
+
+<div class="deep">
+  <div class="label">🎭 巴菲特的「快速认错」原则</div>
+  <p>巴菲特一生中最被低估的品质不是选股，而是<span class="hl">认错的速度</span>：</p>
+  <p>• 2022年买入台积电 → 3个月后全部卖出 → 公开说「我错了，地缘风险超出我能力圈」<br>
+  • 航空股疫情前重仓 → 疫情后清仓 → 「我错了，行业结构变了」<br>
+  • IBM持仓6年 → 全部卖出 → 「我的判断不够准」</p>
+  <p style="color:var(--accent);margin-top:8px"><strong>关键：</strong>每次认错巴菲特只用几周时间——大部分人要用几年。差距不在智商，在一致性偏误的控制力。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">为什么下了注的人比下注前更确信那匹马会赢？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 他们后来获得了新信息</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 一致性倾向——大脑会事后合理化自己的决策</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 他们咨询了专家</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 马的状态变了</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这是「一致性倾向」的经典实验——大脑讨厌「前后矛盾」，一旦做出选择，会主动寻找支持这个选择的理由，同时压制反对信息。在投资中表现为「承诺升级」——亏损后不但不认错，还加仓想证明自己是对的。</div>
+</div>
+`
+      },
+    ]
+  },
+  {
+    title: '🎯 模块五：从众与权威——为什么市场会集体犯错',
+    lessons: [
+      {
+        id: 'social-proof',
+        title: '社会认同倾向：集体的愚蠢市场',
+        emoji: '🐑',
+        content: `
+<h3>「如果大家都这么做，应该是对的吧？」</h3>
+
+<p><span class="hl">社会认同倾向</span>（Social Proof）：人类在不确定的环境中，会自动观察他人的行为来指导自己的决策。在远古草原上，看到所有人都在跑，你也跑——这是生存智慧。在金融市场上，看到所有人都在买，你也买——这是财富毁灭。</p>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Ancient -->
+  <rect x="20" y="30" width="350" height="140" rx="10" fill="rgba(63,185,80,0.06)" stroke="#3fb950" stroke-width="1"/>
+  <text x="195" y="60" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="700">🏕️ 远古草原（生存智慧）</text>
+  <text x="195" y="88" text-anchor="middle" fill="#e6edf3" font-size="12">看到所有人跑 → 你也跑</text>
+  <text x="195" y="110" text-anchor="middle" fill="#8b949e" font-size="11">可能有狮子！</text>
+  <text x="195" y="135" text-anchor="middle" fill="#3fb950" font-size="11">结果：活得久 ✅</text>
+  <text x="195" y="158" text-anchor="middle" fill="#8b949e" font-size="10">这个本能刻在基因里了</text>
+
+  <!-- Arrow -->
+  <text x="385" y="105" text-anchor="middle" fill="#c084fc" font-size="24">→</text>
+
+  <!-- Modern -->
+  <rect x="420" y="30" width="360" height="140" rx="10" fill="rgba(248,81,73,0.06)" stroke="#f85149" stroke-width="1"/>
+  <text x="600" y="60" text-anchor="middle" fill="#f85149" font-size="13" font-weight="700">📈 现代股市（财富毁灭）</text>
+  <text x="600" y="88" text-anchor="middle" fill="#e6edf3" font-size="12">看到所有人买 → 你也买</text>
+  <text x="600" y="110" text-anchor="middle" fill="#8b949e" font-size="11">可能是泡沫！</text>
+  <text x="600" y="135" text-anchor="middle" fill="#f85149" font-size="11">结果：高位接盘 ❌</text>
+  <text x="600" y="158" text-anchor="middle" fill="#8b949e" font-size="10">同样的本能，截然相反的结果</text>
+</svg>
+</div>
+
+<h3>中国市场的经典社会认同案例</h3>
+
+<div class="practice-card">
+  <div class="label">🇨🇳 2015年A股杠杆牛</div>
+  <p><strong>背景：</strong>2014下半年-2015上半年，上证从2000点涨到5178点。<br>
+  <strong>社会认同在跑步入场：</strong>「身边的人都赚了」「菜市场阿姨都在聊股票」「同事一个月赚了我一年工资」<br>
+  <strong>结果：</strong>6月开始股灾，3个月回到3000点以下。无数中产家庭财富蒸发。</p>
+  <p style="color:var(--accent);margin-top:8px"><strong>核心机制：</strong>社会认同 + 嫉妒（别人赚了） + 奖励超级倾向（买就涨） = 三重错误叠加。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">🇨🇳 2021年公募基金狂潮</div>
+  <p><strong>背景：</strong>2021年初，明星基金经理被捧成「爱豆」，张坤有后援会、葛兰被叫「医药女神」。<br>
+  <strong>社会认同：</strong>「一亿人在买基金」「支付宝金选推荐」<br>
+  <strong>结果：</strong>2021年2月见顶后，大量基金跌40-60%。「坤坤勇敢飞，iKun永相随」→「菜狗还钱」。</p>
+  <p style="color:var(--accent);margin-top:8px"><strong>额外偏误：</strong>权威偏见（专家选总没错）+ 社会认同（大家都在买）。</p>
+</div>
+
+<h3>牛市和熊市中的社会认同对比</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>维度</th><th>牛市顶部</th><th>熊市底部</th></tr>
+  <tr><td>他人行为</td><td>所有人都在买→「我也得快买」</td><td>所有人都在卖→「我也得赶紧跑」</td></tr>
+  <tr><td>媒体叙事</td><td>「黄金十年」→ 合理化了任何估值</td><td>「这次不一样」→ 合理化了任何悲观</td></tr>
+  <tr><td>你该做的事</td><td class="hl3">减仓（逆向）</td><td class="hl3">加仓（逆向）</td></tr>
+  <tr><td>你实际会做的</td><td>追高（社会认同驱动）</td><td>割肉（损失厌恶+社会认同）</td></tr>
+</table>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 社会认同的逆向指标作用</div>
+  <p>芒格说：「当菜市场大妈开始给你推荐股票时，你就应该开始卖了。」<br><br>
+  这不是歧视——是<span class="hl">「社会认同饱和度」</span>指标：当最后一个潜在买家都已经入场，就没有新的买家了。价格只能向下。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">2015年A股从5178崩盘，社会认同在其中起了什么作用？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 没起什么作用</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 「别人都赚了」→我也冲进去→最后一批买家用尽→价格崩塌</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 社会认同让人更理性</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 社会认同只影响少数人</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 社会认同在泡沫形成期是加速器→社会认同在泡沫破裂期是引爆器。当「最后一个潜在买家」被社会认同驱赶入场后，接盘力量耗尽，任何风吹草动都会引发踩踏。这就是索罗斯描述的「反身性逆转」的心理机制。</div>
+</div>
+`
+      },
+      {
+        id: 'authority-bias',
+        title: '权威误导倾向：为什么专家也会错',
+        emoji: '🎓',
+        content: `
+<h3>为什么穿白大褂的人说什么你都信？</h3>
+
+<p>芒格指出，人类有跟随权威的强烈本能——这在社会结构中很有用，但在投资中极其危险。</p>
+
+<div class="analogy">
+  <div class="label">🧪 米尔格拉姆电击实验（1963）</div>
+  <p>实验对象被要求对「学习者」施加电击（假的），电压从15V到450V（致命级别）。<br>
+  65%的人在「权威人士」（穿白大褂的实验员）的命令下，把电压加到了致命的450V。</p>
+  <p><strong>结论：</strong>普通人在权威面前会放弃独立判断。<span class="hl">权威偏见不是弱者的弱点——是所有人的出厂设置。</span></p>
+</div>
+
+<h3>投资圈的权威偏误实录</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>权威人物</th><th>著名错误预判</th><th>当时多少人信了？</th></tr>
+  <tr><td>格林斯潘（美联储主席）</td><td>「次贷危机不会扩散」（2007）</td><td>全球投资者</td></tr>
+  <tr><td>雷曼CEO</td><td>「我们资本充裕」（2008年9月，崩盘前一周）</td><td>全体员工+投资者</td></tr>
+  <tr><td>评级机构（穆迪/标普）</td><td>给次贷AAA评级</td><td>全球养老金+基金</td></tr>
+  <tr><td>中石油2007年IPO</td><td>「亚洲最赚钱公司」→上市即巅峰</td><td>万亿散户认购</td></tr>
+  <tr><td>巴菲特的航空股</td><td>2020年2月加仓→3月割肉</td><td>无数抄作业的投资者</td></tr>
+</table>
+</div>
+
+<div class="deep">
+  <div class="label">🎭 权威偏误的三层防护</div>
+  <p>① <strong>区分「领域内」vs「领域外」权威。</strong>经济学教授谈选股=领域外，不管用。</p>
+  <p>② <strong>跟踪权威的业绩记录。</strong>这个「专家」过去5年的公开推荐准确率是多少？大部分人不公布这个数据，因为很难看。</p>
+  <p>③ <strong>权威也有偏误。</strong>巴菲特自己也承认有「能力圈限制」——他不会投资科技股直到苹果。连芒格都有心理偏误，不要盲从任何人。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">米尔格拉姆实验告诉我们什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 人是理性的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 普通人在权威面前会放弃独立判断，这是全人类的出厂设置</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 只有弱者才听权威的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 权威总是对的</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 65%的普通人会在权威命令下做出违背良知的行为。投资中，这意味着你看到「专家推荐」「大佬买入」时会自动降低独立思考的程度。芒格的解法：区分领域内vs领域外权威，跟踪公开历史准确率，永远保留「这个人可能错了」的意识。</div>
+</div>
+`
+      },
+    ]
+  },
+  {
+    title: '📈 模块六：稀缺与嫉妒——泡沫和恐慌的根源',
+    lessons: [
+      {
+        id: 'scarcity-mistake',
+        title: '稀缺性错觉：为什么「限时抢购」如此有效',
+        emoji: '⏳',
+        content: `
+<h3>「最后3个！马上抢！」为什么这句话永远管用？</h3>
+
+<p><span class="hl">稀缺性误导倾向</span>（Scarcity-Mistaking Tendency）：人类天生高估稀缺物品的价值。这个本能在资源匮乏的远古环境中是合理的——稀缺=珍贵=该赶紧获取。但在现代商业社会，稀缺往往是被<span class="hl">人为制造</span>的。</p>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="20" width="360" height="140" rx="10" fill="rgba(63,185,80,0.06)" stroke="#3fb950" stroke-width="1"/>
+  <text x="200" y="52" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="700">🦴 远古：真实稀缺</text>
+  <text x="200" y="80" text-anchor="middle" fill="#8b949e" font-size="12">这头鹿是最后一头了！</text>
+  <text x="200" y="100" text-anchor="middle" fill="#8b949e" font-size="12">不快抓住它今晚饿肚子</text>
+  <text x="200" y="125" text-anchor="middle" fill="#3fb950" font-size="11">→ 合理反应，本能有用 ✅</text>
+
+  <text x="395" y="95" text-anchor="middle" fill="#c084fc" font-size="22">→</text>
+
+  <rect x="420" y="20" width="360" height="140" rx="10" fill="rgba(248,81,73,0.06)" stroke="#f85149" stroke-width="1"/>
+  <text x="600" y="52" text-anchor="middle" fill="#f85149" font-size="13" font-weight="700">📱 现代：人造稀缺</text>
+  <text x="600" y="80" text-anchor="middle" fill="#8b949e" font-size="12">「限量版！再不买就没了！」</text>
+  <text x="600" y="100" text-anchor="middle" fill="#8b949e" font-size="12">库存充足，但「稀缺」让你冲动消费</text>
+  <text x="600" y="125" text-anchor="middle" fill="#f85149" font-size="11">→ 被操纵，本能成了陷阱 ❌</text>
+</svg>
+</div>
+
+<h3>金融市场中的人造稀缺</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>场景</th><th>人造稀缺的表现</th><th>真实情况</th></tr>
+  <tr><td><strong>IPO申购</strong></td><td>「超额认购500倍！快抢！」</td><td>机构先拿，散户垫后。中签率0.01%但亏钱概率不低</td></tr>
+  <tr><td><strong>概念炒作</strong></td><td>「元宇宙/ AI/芯片是最后的船票」</td><td>新技术永远有下一波——错过一个机会还有100个</td></tr>
+  <tr><td><strong>私募基金</strong></td><td>「只有最后1000万额度」</td><td>私募公司拼命募资——额度稀缺是营销话术</td></tr>
+  <tr><td><strong>内部推荐</strong></td><td>「这是我大舅子的消息，不能外传」</td><td>真正的内幕消息不会流到散户耳朵里</td></tr>
+</table>
+</div>
+
+<div class="deep">
+  <div class="label">🎭 芒格的反稀缺思维</div>
+  <p>"我对稀缺的东西没什么兴趣。我感兴趣的是那些永远有需求、永远稀缺不了的东西——比如可口可乐的品牌。真正的价值不来自「这个东西数量很少」，而来自「这个东西不可替代」。"</p>
+  <p style="margin-top:12px"><strong>投资中的启发：</strong>当一个机会被包装成「稀缺」「限量」「最后机会」的时候，你的稀缺偏误已经被触发了。此时要问：这东西的稀缺是真实的（不可复制的竞争优势），还是人造的（营销的话术）？</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">在投资中如何区分「真实的稀缺」和「人造的稀缺」？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 看广告怎么说</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 不可复制的竞争优势=真实稀缺（如茅台窖池），营销话术=人造稀缺（如「最后1000万额度」）</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 稀缺都是假的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 稀缺都是真的</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 真实稀缺=企业无法被复制的竞争壁垒（茅台的地理位置、可口可乐的品牌配方）。人造稀缺=用来制造紧迫感的营销手段（「限时特惠」「最后机会」）。芒格说：永远不要在被人制造的紧迫感中做重大决策。</div>
+</div>
+`
+      },
+      {
+        id: 'envy-jealousy',
+        title: '嫉妒倾向：最无声的杀手',
+        emoji: '👀',
+        content: `
+<h3>芒格：「嫉妒是唯一不给任何人带来快乐的罪恶」</h3>
+
+<p>在所有心理偏误中，<span class="hl">嫉妒/艳羡倾向</span>最特殊——它<strong>不会给嫉妒者任何正面效用</strong>，纯粹是一种心理消耗。</p>
+
+<div class="analogy">
+  <div class="label">📊 嫉妒在投资中的链式反应</div>
+  <p><strong>阶段1：</strong>同事买AI股赚了50%。你没买。</p>
+  <p><strong>阶段2：</strong>你开始焦虑——「为什么他能赚我不能？」——你开始关注AI新闻。</p>
+  <p><strong>阶段3：</strong>你又看到一个朋友赚了80%。焦虑升级为行动——你冲进去买AI股。</p>
+  <p><strong>阶段4：</strong>AI股已经涨了150%，你是最后一批买入的人——接盘。</p>
+  <p style="color:var(--red);margin-top:8px"><strong>全程驱动情绪是嫉妒。基本面分析=0%。</strong></p>
+</div>
+
+<h3>「FOMO」——新时代的嫉妒放大器</h3>
+
+<p>社交媒体把嫉妒倾向放大了一万倍。在雪球/即刻/小红书上：</p>
+<ul>
+  <li>所有人都在晒盈利截图（亏钱的沉默）→ <span class="hl">幸存者偏差</span>×嫉妒</li>
+  <li>「今天又赚了三个月工资」→ 你开始怀疑自己的策略</li>
+  <li>你从不晒自己的持仓——因为你知道晒了只会增加心理压力</li>
+</ul>
+
+<div class="tip">
+  <div class="label">💡 对抗嫉妒的实用方法</div>
+  <p>① <strong>不看别人的账户。</strong>巴菲特的合伙人芒格一生不看别人的投资回报。<br>
+  ② <strong>只跟自己的基准比。</strong>设定一个年化收益目标（比如跑赢沪深300+2%），不看别人赚了多少。<br>
+  ③ <strong>认识到「别人的公开收益」=幸存者偏差。</strong>亏钱的人不会晒。你看到的永远是最好的一面。<br>
+  ④ <strong>培养「别人赚不关我事」的心理肌肉。</strong>这是一项需要刻意练习的技能。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">社交媒体上的投资收益晒单最大的认知陷阱是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 都是假的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 幸存者偏差——亏钱的人不会晒，看到的永远是筛选后的赢家</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 他们水平比我高</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 我应该跟着他们买</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 社交媒体上的投资晒单存在严重的幸存者偏差——亏钱的人不好意思晒，结果你看到的似乎「大家都在赚钱」，触发嫉妒偏误→催生FOMO冲动交易。芒格一生不看别人的投资回报，这是真正的智慧。</div>
+</div>
+`
+      },
+    ]
+  },
+  {
+    title: '🤯 模块七：压力与多重偏误——灾难如何发生的',
+    lessons: [
+      {
+        id: 'stress-influence',
+        title: '压力影响倾向：为什么人在压力下会变蠢',
+        emoji: '😰',
+        content: `
+<h3>压力让大脑「降级运行」</h3>
+
+<p><span class="hl">压力影响倾向</span>（Stress-Influence Tendency）：适度压力提升表现（肾上腺素），但<strong>过度压力会让人的认知能力断崖式下降</strong>——回归到最原始的「战斗或逃跑」模式。</p>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg">
+  <!-- Yerkes-Dodson curve -->
+  <path d="M0,145 Q100,145 150,100 Q220,50 300,35 Q400,25 500,60 Q600,110 750,145" fill="none" stroke="#c084fc" stroke-width="3"/>
+  
+  <text x="80" y="155" fill="#3fb950" font-size="11">没压力</text>
+  <text x="220" y="45" fill="#3fb950" font-size="11">适度的压力</text>
+  <text x="220" y="58" fill="#3fb950" font-size="11">→ 最佳表现</text>
+  <text x="400" y="15" fill="#c084fc" font-size="12" font-weight="700">🎯 最佳压力点</text>
+  <text x="500" y="52" fill="#f85149" font-size="11">过高压力</text>
+  <text x="500" y="65" fill="#f85149" font-size="11">→ 认知崩溃</text>
+  <text x="580" y="140" fill="#8b949e" font-size="11">压力水平 →</text>
+
+  <!-- Annotations -->
+  <rect x="100" y="110" width="140" height="20" rx="4" fill="rgba(63,185,80,0.1)"/>
+  <text x="170" y="124" text-anchor="middle" fill="#3fb950" font-size="9">理性运作</text>
+
+  <rect x="500" y="110" width="140" height="20" rx="4" fill="rgba(248,81,73,0.1)"/>
+  <text x="570" y="124" text-anchor="middle" fill="#f85149" font-size="9">战斗或逃跑</text>
+</svg>
+</div>
+
+<h3>投资中压力最大的三个时刻</h3>
+
+<div class="practice-card">
+  <div class="label">⚡ 时刻1：股灾中看着账户每天-5%</div>
+  <p><strong>大脑反应：</strong>压力激素（皮质醇）飙升 → 前额叶皮层（理性思考区）被抑制 → 进入「战斗或逃跑」→ <strong>你会想「全卖掉！不能再看它亏了！」</strong></p>
+  <p><strong>正确做法：</strong>关机睡觉。任何在极端压力下做的投资决策，80%会是错的。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">⚡ 时刻2：重大消息发布后几分钟</div>
+  <p><strong>大脑反应：</strong>信息冲击 → 认知超载 → 无法完整分析 → 跟随直觉（=跟随情绪反应）→ 追涨杀跌</p>
+  <p><strong>正确做法：</strong>重大消息后至少等1小时再做反应。让市场先消化，你再看别人怎么反应。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">⚡ 时刻3：杠杆爆仓边缘</div>
+  <p><strong>大脑反应：</strong>恐惧→失智→加杠杆补仓（赌徒谬误）→更快爆仓</p>
+  <p><strong>正确做法：</strong>永远不让自己进入这个状态。巴菲特的铁律：「永远不要用借来的钱买股票。」</p>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 芒格的忠告</div>
+  <p>"如果你在一笔投资上感到压力大到睡不着觉——你已经错了。不是在市场方向上错了，是在仓位管理上错了。减仓到你能睡着的水平。"</p>
+  <p style="margin-top:8px">压力下的智力 ≈ 正常智力的 30%。用 30% 的脑力做 100% 重要的决策 = 灾难。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">为什么极度压力下不宜做任何投资决策？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 压力让人更果断</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 压力激素抑制前额叶皮层→理性思考能力断崖下降→只能「战斗或逃跑」</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 压力不影响决策</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 压力让人更谨慎</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 压力下的智力≈正常的30%。芒格的建议：如果你的仓位让你睡不着——说明仓位太大。减到能安睡的水平。压力下的决策=用30%脑力做100%重要的决策=灾难。</div>
+</div>
+`
+      },
+      {
+        id: 'lollapalooza',
+        title: '多重倾向叠加：Lollapalooza效应——当所有偏误一起爆发',
+        emoji: '💥',
+        content: `
+<h3>芒格最恐怖的发现：偏误不会单独出现</h3>
+
+<p><span class="hl">Lollapalooza效应</span>（芒格自创词）：当多种心理倾向同时朝同一个方向作用时，它们不是相加的关系——它们是<span class="hl">相乘</span>的关系。结果是毁灭性的。</p>
+
+<div class="analogy">
+  <div class="label">🌪️ 飓风类比</div>
+  <p>单一偏误=微风，你会注意到但能抵抗。<br>
+  两个偏误叠加=台风，大多数人的理性防线被攻破。<br>
+  三个以上偏误叠加=五级飓风，<strong>任何人都会沦陷</strong>——包括巴菲特和芒格。</p>
+  <p style="margin-top:8px">芒格：「我这一生中见过的最大的错误，都是由多种心理倾向共同作用导致的。单独一种倾向不会造成灾难——但四五种倾向同时指向同一个方向，没有任何人能抵抗。」</p>
+</div>
+
+<h3>2008年金融危机：Lollapalooza效应的经典案例</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>心理倾向</th><th>在2008年危机中的表现</th></tr>
+  <tr><td>① 激励超级倾向</td><td>贷款经纪按放贷量拿佣金→倾向放贷给任何人，不管能不能还</td></tr>
+  <tr><td>② 社会认同</td><td>「所有人都在做次贷衍生品，怎么可能都错？」</td></tr>
+  <tr><td>③ 权威偏见</td><td>评级机构给次贷AAA→「评级机构都说没问题」</td></tr>
+  <tr><td>④ 过度自信</td><td>量化模型看起来很精确→「我们用数学控制了风险」</td></tr>
+  <tr><td>⑤ 确认偏误</td><td>房价一直在涨→所有不利信息都被忽略</td></tr>
+  <tr><td>⑥ 一致性倾向</td><td>已经投入了几百亿→「不能现在停下来」</td></tr>
+  <tr><td style="color:var(--red)"><strong>⑦ 拒绝现实</strong></td><td style="color:var(--red)">迹象越来越多→但人们更努力地忽略它们</td></tr>
+</table>
+</div>
+
+<h3>如何对抗Lollapalooza效应？</h3>
+
+<div class="deep">
+  <div class="label">🎭 唯一的防线：系统，不是意志力</div>
+  <p>芒格坦承，他也没有能力在多重偏误同时作用时保持理性。他的解法不是「练出更强的意志力」——而是<span class="hl">建立系统来替代主观判断</span>：</p>
+  <p>① <strong>检查清单（Checklist）：</strong>巴菲特每次投资前会过一遍清单——不是看「好在哪里」，而是看「可能在哪些心理偏误上犯错」。</p>
+  <p>② <strong>强制冷却期：</strong>重大决策至少放24小时。贪念和恐惧是短时性的——时间会削弱它们的强度。</p>
+  <p>③ <strong>独立反馈机制：</strong>找一个不持有仓位、不参与决策的人给你泼冷水。查理是巴菲特的「反方代言人」。</p>
+  <p style="color:var(--accent);margin-top:8px"><strong>核心原则：不在多重偏误叠加时做决定。如果发现自己同时体验着「嫉妒别人赚了+怕错过+专家说好+周边人都买了」→ 你已经处于Lollapalooza效应中。停下来，不决策，等。</strong></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">Lollapalooza效应的核心含义是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 多个偏误可以相互抵消</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 多种心理偏误同时叠加时，它们不是相加而是相乘——任何人都会沦陷</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 聪明人可以抵抗</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 偏误之间没关系</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 芒格自创的概念——当激励偏误+社会认同+权威偏见+确认偏误+一致性倾向同时指向同一方向，结果是毁灭性的。2008金融危机是教科书级的Lollapalooza效应。芒格的解法：不是用意志力对抗，是用系统（检查清单+冷却期+独立反馈）来绕过。</div>
+</div>
+`
+      },
+    ]
+  },
+  {
+    title: '⚖️ 模块八：行为金融实战——从理论到系统',
+    lessons: [
+      {
+        id: 'behavioral-checklist',
+        title: '建立你的误判检查清单',
+        emoji: '✅',
+        content: `
+<h3>芒格说：你需要的不是更聪明——而是一份清单</h3>
+
+<p>在航空业，飞行员起飞前必须完成一份检查清单——不管飞了多少年、多熟练。清单不是给笨蛋用的。<span class="hl">清单是给聪明人防止在关键时刻犯低级错误的。</span></p>
+
+<div class="analogy">
+  <div class="label">✈️ 航空业给投资人的启示</div>
+  <p>1935年，一架当时最先进的B-17轰炸机在试飞中坠毁。调查结论：不是飞机的问题，是<span class="hl">飞行员太忙忘了松开一个锁</span>。</p>
+  <p>从此，航空业引入了「检查清单」制度——再资深的飞行员也必须逐项打钩。自那以后，因「忘记操作」引起的坠机几乎清零。</p>
+  <p style="margin-top:8px;color:var(--accent)"><strong>投资也一样。</strong>最聪明的人不是不会犯错——是在忙碌/兴奋/恐惧时，会忘记最基本的操作。</p>
+</div>
+
+<h3>投资决策前——10项误判检查清单</h3>
+
+<div class="practice-card">
+  <div class="label">✅ 每次买入/卖出/加仓前，逐项检查</div>
+  <ol style="padding-left:24px">
+    <li><strong>激励检查：</strong>这次交易的激励是什么？我是不是因为「已经买了」才想加仓？（一致性+确认偏误）</li>
+    <li><strong>嫉妒检查：</strong>我是不是因为「别人赚了、我还没赚」才想买？（嫉妒+FOMO）</li>
+    <li><strong>稀缺检查：</strong>我是不是因为「怕错过」「最后机会」才着急？（稀缺偏误）</li>
+    <li><strong>社会认同检查：</strong>我是不是因为「大家都在买」？（羊群效应）</li>
+    <li><strong>权威检查：</strong>我的判断依据是「某大V说了」还是自己的独立分析？（权威偏误）</li>
+    <li><strong>确认偏误检查：</strong>我过去24小时读了几篇反对这个标的的文章？（确认偏误）</li>
+    <li><strong>喜欢/讨厌检查：</strong>我对这个标的有情感依赖吗？（喜欢/讨厌偏误）</li>
+    <li><strong>压力检查：</strong>我现在是不是在压力下做决定？（压力影响倾向）</li>
+    <li><strong>过度自信检查：</strong>我给的「确定性」是不是太高了？（过度乐观偏误）</li>
+    <li><strong>Lollapalooza检查：</strong>以上有几项同时触发？如果≥3项——不交易，至少等24小时。（多重偏误叠加）</li>
+  </ol>
+</div>
+
+<div class="tip">
+  <div class="label">💡 如何让清单真正有效</div>
+  <p>① <strong>打印出来</strong>贴在你的交易屏幕旁边——不是手机备忘录，是真实的纸。<br>
+  ② <strong>每次下单前用手指着一项一项过</strong>——这个物理动作有心理学意义：「我完成了检查」。<br>
+  ③ <strong>三个月后复盘：</strong>找出你最频繁触发的3个偏误→专门读关于它们的内容→刻意练习。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">为什么航空业引入检查清单后「忘记操作」引起的坠机几乎清零？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 飞行员变聪明了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 飞机更先进了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 清单不是给笨蛋的——是给聪明人防止关键时刻犯低级错误的。系统替代记忆，制度替代意志力</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 事故本来就不多</button>
+  <div class="quiz-result"><strong>答案：C。</strong> B-17坠毁的教训：最资深的飞行员在最忙碌的时刻也会忘记一个简单操作。清单=用制度对抗人性的不可靠。投资中也一样——最聪明的人在贪婪/恐惧时最需要检查清单。</div>
+</div>
+`
+      },
+      {
+        id: 'punch-card',
+        title: '巴菲特的「打孔卡」法则——用制度对抗冲动',
+        emoji: '🃏',
+        content: `
+<h3>如果你一生只有20次投资机会</h3>
+
+<div class="deep">
+  <div class="label">🎭 巴菲特原话</div>
+  <p>"我给你一张卡，上面只有20个孔。你每做一次投资就打一个孔。当20个孔打完时，你一生的投资额度就用完了。在这个规则下，你会非常仔细地思考每一笔投资——你会做出好得多的决策。"</p>
+</div>
+
+<p>这个思想实验的核心价值：<span class="hl">人为创造稀缺来对抗人类的「多动症」倾向</span>。当你知道「机会无限多」时，你会随便买。当你知道「只有20次机会」时，你会按最高标准筛选。</p>
+
+<h3>「打孔卡」背后的心理学原理</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>对抗的偏误</th><th>如何对抗</th></tr>
+  <tr><td>过度交易（行为偏误）</td><td>每次交易都消耗一个「孔」→ 交易频率自动下降</td></tr>
+  <tr><td>确认偏误</td><td>因为「孔」珍贵→你会主动寻找反面证据</td></tr>
+  <tr><td>稀缺害怕（FOMO）</td><td>机会很多→但「孔」有限→必须选最好的</td></tr>
+  <tr><td>嫉妒驱动</td><td>看到别人赚了→「但打孔卡只剩5个，值得吗？」→ 冷静</td></tr>
+</table>
+</div>
+
+<h3>实战版打孔卡：适合普通投资者的变体</h3>
+
+<div class="practice-card">
+  <div class="label">📋 年度打孔卡：每年只做6次交易</div>
+  <p><strong>规则：</strong>每年只允许6次买卖操作（买入和卖出各算1次）。<br>
+  每年1月1日重置。<br>
+  如果某一年6次用完了——剩下的时间只能看，不能动。</p>
+  <p style="margin-top:8px;color:var(--accent)"><strong>效果：</strong>你会自动过滤掉90%的垃圾机会。因为你知道——不是所有的「看起来不错」都值得用掉一个珍贵的孔。</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 进阶应用</div>
+  <p>巴菲特的打孔卡只是一个思想实验——他本人一生的重大投资可能只有十几次。核心不是数字本身，而是<span class="hl">用稀缺来对抗冲动</span>这个机制。你可以创造你自己的「限制机制」：<br>
+  • 月度限制：每月最多2次交易<br>
+  • 冷却限制：任何标的研究少于20小时不买<br>
+  • 资金限制：单笔不超过总资金的10%<br>
+  <strong>关键：不是限制你的收益——是限制你的偏误。</strong></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">巴菲特的「打孔卡」法则最核心的心理学机制是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 限制交易频率以提高收益</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 人为创造「稀缺」来对抗人类的冲动交易——让你在每次交易前进行深度思考</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 他只喜欢打卡</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 避免手续费</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 核心是人为制造稀缺来对抗心理偏误：当你知道「孔是有限的」→你会自动：①减少交易频率 ②更仔细地做功课 ③主动寻找反面证据 ④不被FOMO驱动。因为浪费一个孔的代价比错过一次机会更大。</div>
+</div>
+`
+      },
+    ]
+  },
+  {
+    title: '💰 豪泽尔的金钱心理学——管住自己比管住钱更重要',
+    lessons: [
+      {
+        id: 'housel-psychology',
+        title: '摩根·豪泽尔：《金钱心理学》——投资成功的另一半答案',
+        emoji: '💰',
+        content: `
+<div class="analogy">
+  <div class="label">🎭 芒格 vs 豪泽尔——两位心理学大师的分工</div>
+  <p><strong>芒格（误判心理学）：</strong>告诉我<strong>大脑怎么骗你</strong>——25个认知偏误是人类的出厂bug<br>
+  <strong>豪泽尔（金钱心理学）：</strong>告诉我<strong>钱怎么扭曲你</strong>——投资成功更多取决于「你怎么管自己」而非「你怎么分析公司」</p>
+  <p style="margin-top:8px">两个人的结论一致但路径不同：<span class="hl">投资最大的敌人不是市场，是你自己。</span></p>
+</div>
+
+<h3>豪泽尔三大基石（如果只记三条，就这三条）</h3>
+
+<div class="deep">
+  <div class="label">💰 基石一：没人对「理性」有统一标准</div>
+  <p>豪泽尔的核心洞察：<strong>每个人的风险偏好由其人生经历塑造。</strong></p>
+  <p>• 经历过2008年金融危机的人，天然更保守<br>
+  • 2019年入市的人，天然更乐观<br>
+  • 父母经历过饥荒的人，对「现金」有宗教般的信仰</p>
+  <p><strong>投资含义：</strong>你认为「合理的仓位」对别人可能是「疯狂赌博」或「极度保守」。<span class="hl">没有普适的「理性」——只有你的经历塑造的「理性」。</span>所以别人喊你抄底时，他的「理性」跟你的「理性」不在同一个频道。</p>
+</div>
+
+<div class="deep">
+  <div class="label">💰 基石二：复利最大的敌人是「打断」</div>
+  <p>豪泽尔说得好：「巴菲特845亿美元的金融净资产中，有842亿是50岁以后赚的，有815亿是65岁以后赚的。」</p>
+  <p><strong>这告诉我们什么？</strong></p>
+  <p>• 不是巴菲特晚年投资水平突然变高了——是<strong>复利需要时间。</strong><br>
+  • 如果你早年因为恐慌卖出、因为贪婪加杠杆爆仓——<strong>你打断了复利</strong><br>
+  • 投资最大的技能不是选股，是<span class="hl">「不被迫卖出」</span></p>
+  <p><strong>豪泽尔公式：</strong>投资成功 = 合理的回报率 × 足够长的时间 × 没有被打断。<br>第一项重要，但后两项决定胜负。</p>
+</div>
+
+<div class="deep">
+  <div class="label">💰 基石三：知足是超能力</div>
+  <p>豪泽尔讲过一个震撼的故事：</p>
+  <p>一个叫顾磊杰（Rajat Gupta）的人——哈佛商学院毕业、麦肯锡全球CEO、净资产1亿美元。他本可以过上99.999%人类羡慕的生活。但他为了在内部交易中多赚几百美元，最终入狱，一切归零。</p>
+  <p><strong>为什么？</strong>因为「够」的边界被推到了无限远——他已经有1亿，但跟亿万富翁比还是「不够」。</p>
+  <p><strong>投资中的「知足」：</strong><br>
+  • 年化15%已经很好了，不要为了25%加杠杆<br>
+  • 赚到合理回报就收手，不要追求「最后一分钱」<br>
+  • <span class="hl">最大的风险不是赚太少，是在「已经够了」的时候还冒险</span></p>
+</div>
+
+<h3>豪泽尔的三个「反面教材」检查清单</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>你在做什么？</th><th>豪泽尔会说什么？</th><th>对应的心理偏误</th></tr>
+  <tr><td>「大家都说这个会涨，我也买点」</td><td>你被别人的「理性」框架裹挟了</td><td>社会认同（芒格#4）</td></tr>
+  <tr><td>「赚了30%还不够，再等等」</td><td>你不知足——你忘了赚30%已经是顶级回报</td><td>贪婪 + 锚定效应</td></tr>
+  <tr><td>「跌了这么多，先卖了等回升再买回来」</td><td>你没想好「如果股市关门5年」你该怎么办——你在打断复利</td><td>损失厌恶（芒格#3）</td></tr>
+</table>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">豪泽尔说「巴菲特845亿美元中，842亿是50岁以后赚的」。这说明了什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 巴菲特50岁以后投资水平突飞猛进</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 复利需要时间——投资成功的关键不是超高回报率，是足够长的时间且没有被打断</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 50岁之前不用投资</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 年龄越大越会炒股</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 巴菲特10岁开始投资，到50岁已经投了40年。但财富的99%是在50岁以后才到来的——因为复利的威力在后期才真正释放。豪泽尔的结论：你不需要超高回报率，你需要「不被打断地」让时间工作。</div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '🎭 模块九：市场心理深度剖析',
+    lessons: [
+      {
+        id: 'psych-crowd',
+        title: '群体心理：为什么「聪明人」一到市场就变傻',
+        emoji: '🧑‍🤝‍🧑',
+        duration: '20分钟',
+        level: '🟡 进阶',
+        content: `
+<p>本杰明·格雷厄姆说：<span class="hl">「投资者最大的敌人不是市场，而是他自己。」</span>这一课专门拆解市场心理——为什么那么多高智商的人，一到股市就成了情绪奴隶。</p>
+
+<h3>三大群体心理机制</h3>
+
+<div class="practice-card">
+  <div class="label">🔍 机制一：羊群效应（Herd Behavior）</div>
+  <p><strong>定义：</strong>个体放弃自己的判断，跟随大多数人的行为。<br><br>
+  <strong>进化根源：</strong>原始社会，脱离群体=死亡。跟随大多数人减少被老虎吃掉的风险。5万年后，这个本能还在——但如今「脱离群体」的代价只是暂时跑输市场，而本能告诉你的却是「再不追就来不及了」。<br><br>
+  <strong>市场表现：</strong>2020-2021年基金牛市——新基民根本不看基金持仓，只看「张坤」两个字就买。2021年2月基金发行创纪录（3600亿/月）→此后沪深300跌了40%。<br><br>
+  <strong>投资启示：</strong>当同事、邻居、理发师都在讨论股票/基金时，羊群效应正处于极端——这是最危险的买点。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">🔍 机制二：信息瀑布（Information Cascade）</div>
+  <p><strong>定义：</strong>人们观察到前面人的行为，推断他们掌握了信息——即使自己看不到这些信息，也会跟随。<br><br>
+  <strong>经典例子：</strong>两家一模一样的新餐厅开在一条街上。第一个人随机进了A。第二个人看到A有人B没人→推断「A好吃」→也进A。第三个人看到A有两个人B没人→更确信A好吃→进A。第20个人看到A排队B空无一人→毫不犹豫进A。但事实是：<span class="hl">没有人知道哪家更好吃。</span>这个信息是虚假的——它由前人的随机选择自我实现了。<br><br>
+  <strong>市场表现：</strong>股票连续涨停→每天都有人觉得「前人的信息是有价值的」→追涨。但前人的信息可能是零——只是跟风。这就是为什么涨停板的溢价最终都会跌回去——支撑上涨的「信息」根本不存在。<br><br>
+  <strong>投资启示：</strong>不要从价格/成交量反推基本面。价格涨≠基本面好。永远回到公司本身。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">🔍 机制三：社会认同压力（Social Proof & Reputation Risk）</div>
+  <p><strong>定义：</strong>人们宁可和别人一起犯错，也不愿独自承担「不一样」的风险。<br><br>
+  <strong>凯恩斯经典名言：</strong>「世俗的智慧教导我们：依照惯例失败，比挑战惯例成功，对名声更有利。」<br><br>
+  <strong>职业投资者也是如此：</strong>如果全行业都在买茅台/腾讯，你空仓→错了→你是「那个不合群的白痴」，会被开除。如果你跟大家一起买，错了→「整个市场都在跌，这不是我的错」。这种激励机制使得<strong>即使最聪明的基金经理也会追逐泡沫</strong>——因为在泡沫中不参与的风险（跑输同行）大于参与后亏损的风险（大家一起亏）。<br><br>
+  <strong>投资启示：</strong>逆向投资有社会成本。巴菲特能这么做是因为他有50年的名声护城河。普通人可以做的是：在恐慌中分批建仓——你不必精准抄底，只要不在狂热中追高。</p>
+</div>
+
+<div class="deep">
+  <div class="label">🎭 群体心理的底层规律</div>
+  <p><strong>个体理性→群体非理性。</strong>每个人的交易决策在自己看来都是合理的。但当所有人的「合理决策」叠加在一起时，结果可能是灾难性的——1929年崩盘、2008年次贷、2015年A股股灾，每个参与者都不是「坏人」，但系统性的狂热和崩溃，正是千万个「合理个体」一起制造出来的。<br><br>
+  <strong>这不是道德问题，是结构问题。</strong>投资的对手盘不是「坏人」——是和你一样试图做出理性决策的普通人。理解这一点，你就能摆脱「别人贪婪时我恐惧」的道德优越感，真正用冷静的框架判断市场。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">为什么职业基金经理也会追逐泡沫？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 因为他们专业能力不足</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 因为激励机制：不追泡沫→跑输同行→被解雇。追泡沫→大家一起亏→「这不是我的错」</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 因为他们也受羊群效应影响</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 以上都是</button>
+  <div class="quiz-result"><strong>答案：D（以上都是）。</strong>基金经理面临的困境是多重叠加的：①短期考核压力（6个月跑输就要被问询）②社会认同压力（宁可跟大家一起错）③个人认知偏差（锚定在近期回报上）。这就是为什么巴菲特说他「按照自己不会因为被解雇而高兴来经营伯克希尔」——他收掉了「被解雇」这个压力。独立思维的前提是独立于社会评价体系。</div>
+</div>
+`
+      },
+      {
+        id: 'psych-biases',
+        title: '六大认知偏差：识别投资中的「大脑bug」',
+        emoji: '🐛',
+        duration: '25分钟',
+        level: '🔴 核心',
+        content: `
+<p>丹尼尔·卡尼曼（诺贝尔经济学奖得主）证明：<span class="hl">人类大脑有两套系统——系统1（快速、直觉、情绪化）和系统2（慢速、逻辑、理性）。</span>股市天生就是系统1的游乐场——涨跌、新闻、排行榜，全部在刺激你的本能反应。这节课拆解六个最常见的「大脑bug」。</p>
+
+<div class="table-wrap">
+<table>
+  <tr><th>#</th><th>偏差</th><th>定义</th><th>投资中的表现</th><th class="hl2">危险等级</th></tr>
+  <tr><td>1</td><td><strong>损失厌恶</strong></td><td>同等金额，损失的痛苦 = 获利的快感 × 2.5</td><td>盈利股票马上卖(落袋为安)，亏损股票死扛(不卖就不亏)</td><td class="hl4">🔴🔴🔴</td></tr>
+  <tr><td>2</td><td><strong>锚定效应</strong></td><td>被第一个信息过度影响后续判断</td><td>「我成本价30块，不到30不卖」——市场不关心你的成本</td><td class="hl4">🔴🔴🔴</td></tr>
+  <tr><td>3</td><td><strong>确认偏误</strong></td><td>主动寻找支持自己判断的信息</td><td>买了茅台后只读「茅台还能涨」的文章，不看任何看空的</td><td class="hl3">🟡🟡</td></tr>
+  <tr><td>4</td><td><strong>近因偏差</strong></td><td>过度看重近期发生的事情</td><td>连跌3天→「熊市要来了」；连涨3天→「牛市来了」</td><td class="hl4">🔴🔴🔴</td></tr>
+  <tr><td>5</td><td><strong>过度自信</strong></td><td>高估自己的判断能力和信息质量</td><td>网上看了两篇研报就觉得自己比基金经理懂</td><td class="hl3">🟡🟡</td></tr>
+  <tr><td>6</td><td><strong>处置效应</strong></td><td>过早卖出盈利+过久持有亏损</td><td>「这个赚了20%先出了，那个亏40%等回本就卖」→结果亏的继续亏</td><td class="hl4">🔴🔴🔴</td></tr>
+</table>
+</div>
+
+<h3>逐个拆解：机制+案例+解法</h3>
+
+<div class="practice-card">
+  <div class="label">🧩 偏差1：损失厌恶 —— 最致命的投资bug</div>
+  <p><strong>卡尼曼实验：</strong>给你两个选择——A.确定赚500块 B.50%概率赚1000块，50%概率赚0。大多数人选A。但如果改成：A.确定亏500块 B.50%概率亏1000块，50%概率不亏。绝大多数人选B——宁愿赌一把也不接受确定亏损。<br><br>
+  <strong>投资后果：</strong>① 赚20%就卖→错过大涨 ② 亏40%死扛→小亏变大亏 ③ 这是散户亏钱的第一大原因<br><br>
+  <strong>解法：</strong>设止损/止盈规则，用系统替代情绪。不管赚还是亏，只问一个问题：「现在这个价格，如果我没有持仓，我会买吗？」如果答案是不会→卖。如果答案是会→买/持有。成本价是幻觉。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">🧩 偏差2：锚定效应 —— 市场不关心你的成本</div>
+  <p><strong>经典实验：</strong>问两组人「甘地去世时超过140岁了吗？」（锚1:140岁）和「甘地去世时不到9岁了吗？」（锚2:9岁）。然后请两组人猜甘地真实年龄。第一组平均猜67岁，第二组平均猜50岁——同一个问题，只是锚不同，答案差了17岁。<br><br>
+  <strong>投资后果：</strong>① 「我成本价30块，不到30不卖」——如果公司基本面恶化，30块可能再也回不去了 ② 「这股票从100跌到30了，好便宜」——但它值30吗？100这个锚是幻觉<br><br>
+  <strong>解法：</strong>永远问「现在值多少」，而不是「从多少跌下来的」。清空成本价记忆。如果一笔投资让你无法客观判断，设一个日历提醒：一个月后重新评估，像第一次看这家公司一样。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">🧩 偏差3：确认偏误 —— 你看到的都是你想看到的</div>
+  <p><strong>机制：</strong>人脑天生寻求「一致性」——买了茅台后，你会主动看茅台的利好，忽视利空。这让你越来越确信自己是对的……直到现实打脸。<br><br>
+  <strong>解法：</strong><strong>魔鬼代言人法：</strong>做每个投资决策前，必须写500字「这个投资为什么可能错」。强迫系统2介入。巴菲特的搭档芒格说：「如果你不能比我更好地反驳你自己的观点，你就不配持有这个观点。」</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">🧩 偏差4：近因偏差 —— 过去三天决定你的世界观</div>
+  <p><strong>现象：</strong>连涨3天→「牛市来了」（其实只是反弹）。连跌3天→「熊市还没完」（其实只是调整）。大脑把最近3天外推到未来3年。2020年3月美股熔断后，多数人预测大萧条来了→结果V型反转创历史新高。<br><br>
+  <strong>解法：</strong>拉长时间尺度。做判断前先看：①过去3个月走势 ②过去3年走势 ③当前估值在历史什么分位。三张图看完再说话。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">🧩 偏差5：过度自信 —— 你比99%的人强？（不，概率上说不可能）</div>
+  <p><strong>经典调查：</strong>问100个司机「你的驾驶技术高于平均水平吗？」80%回答是。数学上不可能——但每个人都真心这么认为。<br><br>
+  <strong>投资表现：</strong>① 网上看了几篇研报就开始频繁交易→交易越频繁，收益越差（大量实证研究证明） ② 「我判断对了上次，所以这次也一定对」→上次可能是运气<br><br>
+  <strong>解法：</strong>用两栏表记录每笔交易——「我买入的理由」vs「后来实际发生了什么」。三个月后回看——你会发现正确率远比你以为的低。这是最好的过度自信解毒剂。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">🧩 偏差6：处置效应 —— 你的账户在说谎</div>
+  <p><strong>公式：</strong>赚了20%的股票→赶紧落袋（loss aversion在盈利端发作）。亏了40%的股票→死扛等回本（loss aversion在亏损端发作）。结果：账户里留下的全是亏损股。<br><br>
+  <strong>一句话解法：</strong>每季度做一次「清零思维」——假设今天你持有现金，你会把你的持仓全部买回来吗？如果有一支你不会买——卖出。这只股票来你账户的理由（曾经浮盈/曾经亏过/已经持有）不构成持有的理由。</p>
+</div>
+
+<div class="deep">
+  <div class="label">🎭 认知偏差的叠加效应</div>
+  <p>最可怕的不是单个偏差，是多个偏差同时发作：<br>
+  ① 股票跌了（触发损失厌恶→不想承认亏损）<br>
+  ② 开始搜索利好文章（确认偏误→只看到好消息）<br>
+  ③ 「成本价30，不到30不卖」（锚定效应→拒绝重新评估）<br>
+  ④ 「我当初选股的理由没问题」（过度自信→拒绝承认判断错误）<br>
+  → <strong>四个bug同时运行=完美风暴。</strong>你在做投资决策，但本质上是大脑的bug在替你决策。<br><br>
+  <strong>唯一的防御：系统。</strong>你不是靠意志力战胜认知偏差（不可能），你靠的是提前设定的规则。止损线、目标仓位、定期重新评估——这些系统才是你的系统2。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">一个投资者买入后股票跌了30%，他开始只读看多的文章，拒绝任何看空信息，并告诉自己「不到成本价不卖」。哪些认知偏差在同时运行？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 只有损失厌恶</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 损失厌恶 + 确认偏误 + 锚定效应（三联动）</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 只有锚定效应</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 这是非常理性的行为</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这是典型的偏差三联动：①跌了不想承认亏损（损失厌恶）→②只读利好文章自我安慰（确认偏误）→③把「成本价」当成价值锚定（锚定效应）。三个偏差形成了一个自我强化的囚笼。打破它的唯一方法是外力——止损规则、投资伙伴的第二意见、或者一个日历提醒让你30天后重新评估。</div>
+</div>
+`
+      },
+      {
+        id: 'psych-extremes',
+        title: '极端情绪识别：如何判断市场到了疯狂或绝望',
+        emoji: '🌡️',
+        duration: '20分钟',
+        level: '🔴 核心',
+        content: `
+<p>周期投资的核心不是预测拐点——<span class="hl">而是识别极端。</span>当市场情绪走到极端时，即使你无法准确预测「哪天转向」，你也知道方向即将改变。这节课给你一套识别极端情绪的工具箱。</p>
+
+<h3>市场顶部的十大极端信号（贪婪端）</h3>
+<div class="step-list">
+  <div class="step-card">
+    <div class="num">1</div><div class="title">新投资者洪水般涌入</div>
+    <div class="desc">券商开户排队、基金发行秒光（2021年1月单日募集2400亿）、街边摊贩聊股票</div>
+  </div>
+  <div class="step-card">
+    <div class="num">2</div><div class="title">「这次不一样」成为共识</div>
+    <div class="desc">估值模型被修改以合理化高估值——「互联网应该用用户数估值」「AI不看PE」</div>
+  </div>
+  <div class="step-card">
+    <div class="num">3</div><div class="title">融资杠杆历史最高</div>
+    <div class="desc">两融余额突破2万亿、场外配资广告泛滥、杠杆基金规模爆发</div>
+  </div>
+  <div class="step-card">
+    <div class="num">4</div><div class="title">垃圾股飞天</div>
+    <div class="desc">ST股炒作、无营收公司IPO破发率接近0、所有新股首日暴涨</div>
+  </div>
+  <div class="step-card">
+    <div class="num">5</div><div class="title">「空头已死」</div>
+    <div class="desc">看空者被嘲笑、被攻击（「你就是踏空了」）。逆向声音全部消失</div>
+  </div>
+</div>
+
+<h3>市场底部的十大极端信号（恐惧端）</h3>
+<div class="step-list" style="margin-top:24px">
+  <div class="step-card">
+    <div class="num">1</div><div class="title">「再也不碰股票了」</div>
+    <div class="desc">券商营业部门可罗雀、基金发行冰点（全月募集不到100亿）、讨论股票的群全部静默</div>
+  </div>
+  <div class="step-card">
+    <div class="num">2</div><div class="title">「这次真的完了」</div>
+    <div class="desc">「中国经济完蛋了」「A股是诈骗市场」「制度有问题」——系统性悲观叙事成为主流</div>
+  </div>
+  <div class="step-card">
+    <div class="num">3</div><div class="title">所有利好都被无视</div>
+    <div class="desc">降息降准→股市不涨反跌。业绩超预期→「股价已经反映了」。国家队入场→「不过是托市」</div>
+  </div>
+  <div class="step-card">
+    <div class="num">4</div><div class="title">破净股遍地</div>
+    <div class="desc">PB<1的股票数量创5年新高。大量优质公司PB降到0.5-0.8x</div>
+  </div>
+  <div class="step-card">
+    <div class="num">5</div><div class="title">信心的代价为负</div>
+    <div class="desc">年分红7%+的蓝筹股没人要——「分红有什么用，股价还不是在跌」</div>
+  </div>
+</div>
+
+<div class="practice-card">
+  <div class="label">🔍 极端情绪的温度计：一个简单的量化工具</div>
+  <table style="width:100%;margin-top:12px">
+    <tr><th>维度</th><th>恐惧极端(1分)</th><th>中性(4分)</th><th>贪婪极端(7分)</th></tr>
+    <tr><td>成交量</td><td><3千亿（极度萎缩）</td><td>8000-12000亿</td><td>>2万亿（极度活跃）</td></tr>
+    <tr><td>基金发行</td><td>全月<100亿</td><td>月均500-800亿</td><td>单周>1000亿</td></tr>
+    <tr><td>两融余额</td><td><7000亿</td><td>1.2-1.5万亿</td><td>>2万亿</td></tr>
+    <tr><td>新增投资者</td><td>月增<50万</td><td>月增100-150万</td><td>月增>300万</td></tr>
+    <tr><td>百度指数（股票）</td><td>底部10%分位</td><td>50%分位</td><td>顶部10%分位</td></tr>
+    <tr><td>破净率</td><td>>15%（极多）</td><td>3-5%</td><td><1%（几乎没有）</td></tr>
+    <tr><td>券商策略会</td><td>无人参加</td><td>正常参与</td><td>座无虚席+线上排队</td></tr>
+  </table>
+</div>
+
+<div class="analogy">
+  <div class="label">💡 巴菲特关于市场心理的精华</div>
+  <p><strong>「别人贪婪时我恐惧，别人恐惧时我贪婪。」</strong>——这句话每个人都听过，但99%的人做不到。为什么？<br><br>
+  因为当别人贪婪时（股价天天涨、媒体天天唱、朋友天天晒收益），你的系统1在大喊：「快买！再不买就错过了！」你的系统2弱弱地说：「但估值有点贵了……」系统1声音大得多。<br><br>
+  当别人恐惧时（股价天天跌、新闻全是坏消息、所有群里都说完了），你的系统1在大喊：「快跑！再不跑倾家荡产！」你的系统2弱弱地说：「但PB不到1了啊……」系统1声音还是大得多。<br><br>
+  <strong>战胜系统1的唯一方法：</strong>提前写好「在那时我该怎么做」的规则。不是到极端情绪来临时再想——那时候你的系统1已经接管大脑了。极端情绪温度计这个工具，就是你的「提前写好的规则」。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">「别人贪婪时我恐惧」这句话，为什么知易行难？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 因为恐惧需要勇气——在所有人赚钱的时候卖出，社交压力巨大</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 因为贪婪是本能——系统1在大喊「再不买来不及了」，压制了系统2</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 因为你无法确定现在是不是「别人贪婪」的顶部——可能还能再涨30%</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 以上都是</button>
+  <div class="quiz-result"><strong>答案：D。</strong> 巴菲特这句话的难度被严重低估了：①社交压力——同事都在赚钱，你卖出=承认自己不一样；②系统1的压制——本能声音比理性声音大得多；③择时难度——你不知道真正的顶部在哪里。这就是为什么连最聪明的投资者也需要规则和工具（而非意志力）来做逆向投资。</div>
+</div>
+`
+      },
+      {
+        id: 'psych-narrative',
+        title: '市场叙事学：识别「这次不一样」的故事陷阱',
+        emoji: '📖',
+        duration: '20分钟',
+        level: '🟡 进阶',
+        content: `
+<p>诺贝尔经济学奖得主罗伯特·席勒提出了<span class="hl">「叙事经济学」</span>——他认为驱动市场的不是理性的经济分析，而是「像病毒一样传播的故事」。这节课教你识别市场上最常见的故事陷阱。</p>
+
+<h3>四种经典的「这次不一样」叙事</h3>
+
+<div class="practice-card">
+  <div class="label">📖 叙事1：「技术革命改变了商业规律」（1999-2000互联网泡沫）</div>
+  <p>「互联网将重塑一切——传统的PE/利润/现金流分析已经不适用了。要用点击量、用户数、GMV来估值。」<br><br>
+  <strong>结果：</strong>纳斯达克从5048跌到1114（跌78%）。亚马逊跌了95%（对，没错，是现在的亚马逊）。<br><br>
+  <strong>识别信号：</strong>当人们说「这次不一样，旧的估值方法不适用了」——记住，这是历史上最昂贵的四个字。技术可以改变，但<span class="hl">资产的定价逻辑不会改变：一个资产值它未来所有现金流的折现值。</span></p>
+</div>
+
+<div class="practice-card">
+  <div class="label">📖 叙事2：「央行这次会不一样」（2008金融危机、2020疫情）</div>
+  <p>「央行已经学会了如何管理周期。他们有无限弹药，不会再让危机发生。」<br>
+  → 然后2008年来了，或者2020年来了。<br><br>
+  <strong>识别信号：</strong>当叙事中出现一个全能的外部救世主时（央行、政府、新技术），意味着人们在逃避对基本面的诚实评估。央行可以缓解周期——但不能消除周期。因为周期源于人性，而人性不会变。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">📖 叙事3：「中国这次不一样」（2015股灾、2021地产）</div>
+  <p>「中国有自己独特的经济规律/政策工具/制度优势，西方的周期理论不适用。」<br>
+  → 2015年A股从5178跌到2638（跌49%）。2021-2024地产从高点跌50%+。<br><br>
+  <strong>识别信号：</strong>当一个叙事特别强调某国「特殊性」来否定通用规律时——高度警惕。中国确实有不同的制度特征——但人性（贪婪/恐惧/从众）和周期规律是世界通用的。制度的不同改变的是周期的时长和振幅，不改变周期本身的存在。</p>
+</div>
+
+<div class="practice-card">
+  <div class="label">📖 叙事4：「AI是人类历史上最重要的技术革命」（2024-至今）</div>
+  <p>「AI将创造数万亿美元的价值。这是工业革命级别的范式转移。不能等回调——现在不买就再也买不到了。」<br><br>
+  <strong>这个叙事可能部分正确：</strong>AI确实可能是变革性技术。但历史上每一场变革性技术革命（铁路、电力、互联网）都经历了：①泡沫阶段（估值过高）→②崩盘（跌50-90%）→③真正赢家在废墟中崛起。<br><br>
+  <strong>识别信号：</strong>当叙事从「AI有长期价值」升级为「不看估值立即买入AI」时——你听到了泡沫的声音。好技术≠好投资。2000年买互联网是对的（长期看），但2000年买纳斯达克ETF的人等了15年才回本。</p>
+</div>
+
+<h3>叙事病毒传播的四阶段模型</h3>
+<div class="step-list">
+  <div class="step-card">
+    <div class="num">1</div><div class="title">萌芽期</div>
+    <div class="desc">少数先行者开始讲述新叙事。大多数人嗤之以鼻。（例：2013年「比特币是数字黄金」——当时$100）</div>
+  </div>
+  <div class="step-card">
+    <div class="num">2</div><div class="title">传播期</div>
+    <div class="desc">价格开始涨→叙事获得「证据」→更多人相信→更多人传播。这是反身性阶段。（例：2017年BTC $2000→$20000）</div>
+  </div>
+  <div class="step-card">
+    <div class="num">3</div><div class="title">共识期 🔥</div>
+    <div class="desc">叙事成为社会共识。怀疑者被嘲笑。媒体铺天盖地。此时入场的人最多——也最危险。（例：2021年BTC $60000）</div>
+  </div>
+  <div class="step-card">
+    <div class="num">4</div><div class="title">崩塌/重整期</div>
+    <div class="desc">叙事与现实碰撞。价格崩盘。大部分人离场。然后在废墟中，真正的长期价值开始构建。（例：2022年BTC $16000→2024 $100000）</div>
+  </div>
+</div>
+
+<div class="deep">
+  <div class="label">🎭 叙事投资的黄金法则</div>
+  <p><strong>在传播期（阶段2）入场，在共识期（阶段3）离场。</strong>大多数散户正好相反——在共识期（媒体铺天盖地时）入场，在崩塌期（媒体全是坏消息时）恐慌离场。<br><br>
+  <strong>如何识别你在哪个阶段？</strong>看谁在讲这个故事：<br>
+  • 只有专业投资者在讲→阶段1或2（可研究）<br>
+  • 财经媒体在讲→阶段2末或3初（可持有）<br>
+  • 综合媒体在讲→阶段3中（警惕）<br>
+  • 你妈在讲→阶段3末→快跑</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">根据叙事传播模型，「你妈都在讨论股票/比特币」的时机，对应什么投资策略？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 应该大量买入——这么多人关注说明有前途</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 应该持有——等更多人进来再卖</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 应该准备卖出——共识期末尾，最后的买家已经进场了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 无所谓，跟市场叙事无关</button>
+  <div class="quiz-result"><strong>答案：C。</strong> 这不是玩笑——「你妈都知道该买的资产」意味着：①最后一个潜在买家已经被动员入场了 ②市场没有新的增量资金来推高价格了 ③剩下的只有卖家。彼得·林奇把这叫「鸡尾酒会理论」：当派对上的陌生人开始给你推荐股票时，牛市已经到顶了。同样的原则，换了不同的时代。</div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '🧪 模块十：25个倾向速查卡片',
+    lessons: [
+      {
+        id: 'tendency-cards-all',
+        title: '芒格25种心理倾向——完整速查手册',
+        emoji: '📇',
+        content: `
+<h3>一页纸掌握所有25个倾向</h3>
+<p>以下列出芒格《人类误判心理学》中的全部25种倾向，每种配一条投资中的典型表现。</p>
+
+<div class="table-wrap">
+<table>
+  <tr><th>#</th><th>倾向名称</th><th>英文</th><th>投资中的典型表现</th></tr>
+  <tr><td>1</td><td>奖励/惩罚超级反应</td><td>Reward/Punishment Superresponse</td><td>基金经理按规模收费→追求规模而非回报</td></tr>
+  <tr><td>2</td><td>喜欢/热爱倾向</td><td>Liking/Loving</td><td>「爱上」重仓股→忽略一切负面信息</td></tr>
+  <tr><td>3</td><td>讨厌/憎恨倾向</td><td>Disliking/Hating</td><td>因为不喜欢某CEO→错过好公司</td></tr>
+  <tr><td>4</td><td>怀疑回避倾向</td><td>Doubt-Avoidance</td><td>不确定时不做功课→凭感觉买卖</td></tr>
+  <tr><td>5</td><td>不一致回避倾向</td><td>Inconsistency-Avoidance</td><td>公开说看好→不好意思承认错了→死扛</td></tr>
+  <tr><td>6</td><td>好奇心倾向</td><td>Curiosity</td><td>（少数正面倾向）不断学习新行业</td></tr>
+  <tr><td>7</td><td>康德式公平倾向</td><td>Kantian Fairness</td><td>认为市场「应该」奖励好人→买质优价高的</td></tr>
+  <tr><td>8</td><td>嫉妒/艳羡倾向</td><td>Envy/Jealousy</td><td>看到别人赚了→FOMO→高位接盘</td></tr>
+  <tr><td>9</td><td>回馈倾向</td><td>Reciprocation</td><td>券商请你吃饭→不好意思不买他们推荐的</td></tr>
+  <tr><td>10</td><td>受简单联想影响的倾向</td><td>Influence-from-Mere-Association</td><td>上次牛市买的股赚钱了→这轮熊市还买同一支</td></tr>
+  <tr><td>11</td><td>简单、避免痛苦的心理否认</td><td>Simple, Pain-Avoiding Psychological Denial</td><td>账户亏30%→「不看就不亏」→拒绝面对</td></tr>
+  <tr><td>12</td><td>过度自我关注的倾向</td><td>Excessive Self-Regard</td><td>觉得自己比基金经理更厉害</td></tr>
+  <tr><td>13</td><td>过度乐观倾向</td><td>Overoptimism</td><td>预测利润增长30%→实际-10%</td></tr>
+  <tr><td>14</td><td>被剥夺超级反应倾向</td><td>Deprival Superreaction</td><td>（即损失厌恶）亏损的痛苦=盈利快乐的2倍</td></tr>
+  <tr><td>15</td><td>社会认同倾向</td><td>Social Proof</td><td>牛市追高→「大家都在买」</td></tr>
+  <tr><td>16</td><td>对比误判倾向</td><td>Contrast Misreaction</td><td>先看一个烂公司→再看一个普通的→觉得普通的是好公司</td></tr>
+  <tr><td>17</td><td>压力影响倾向</td><td>Stress Influence</td><td>股灾中「全卖了！受不了了！」</td></tr>
+  <tr><td>18</td><td>错误衡量易得性倾向</td><td>Availability Misweighing</td><td>刚看到一个暴雷新闻→过度高估所有公司的暴雷概率</td></tr>
+  <tr><td>19</td><td>不用就忘倾向</td><td>Use-It-or-Lose-It</td><td>学会了DCF模型→半年不用→全忘了</td></tr>
+  <tr><td>20</td><td>化学物质错误影响倾向</td><td>Drug Misinfluence</td><td>酒后做的交易第二天全后悔</td></tr>
+  <tr><td>21</td><td>衰老错误影响倾向</td><td>Senescence Misinfluence</td><td>年纪大了→更保守→错过新机会</td></tr>
+  <tr><td>22</td><td>权威错误影响倾向</td><td>Authority Misinfluence</td><td>「巴菲特买了」→我跟</td></tr>
+  <tr><td>23</td><td>废话倾向</td><td>Twaddle</td><td>看太多财经新闻→噪音稀释了信号</td></tr>
+  <tr><td>24</td><td>重视理由倾向</td><td>Reason-Respecting</td><td>「因为美联储降息所以会涨」→被一个简单理由说服</td></tr>
+  <tr><td>25</td><td>Lollapalooza效应</td><td>Lollapalooza Tendency</td><td>多种偏误叠加→2008金融危机级的灾难</td></tr>
+</table>
+</div>
+
+<div class="tip">
+  <div class="label">💡 如何使用这张表</div>
+  <p>• 每次亏钱后，对照这张表找自己在哪几个倾向上犯了错→记录在投资日志里<br>
+  • 三个月后你会发现：<strong>你亏钱的原因就那么3-5个倾向在反复出现</strong>——专门针对这几个倾向建立防线<br>
+  • 建议打印出来贴在交易屏幕旁边</p>
+</div>
+`
+      },
+    ]
+  },
+  {
+    title: '📖 中英文术语对照表',
+    lessons: [
+      {
+        id: 'glossary',
+        title: '行为金融学术语·双语速查',
+        emoji: '📖',
+        content: `
+<h3>行为金融学核心术语对照</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>中文术语</th><th>English</th><th>一句话定义</th></tr>
+  <tr><td>损失厌恶</td><td>Loss Aversion</td><td>亏损的痛苦≈盈利快乐的2倍</td></tr>
+  <tr><td>确认偏误</td><td>Confirmation Bias</td><td>只寻找/记住支持已有观点的信息</td></tr>
+  <tr><td>过度自信</td><td>Overconfidence</td><td>高估自己的判断准确度</td></tr>
+  <tr><td>锚定效应</td><td>Anchoring</td><td>过度依赖第一个获得的信息做判断</td></tr>
+  <tr><td>羊群效应</td><td>Herd Behavior</td><td>跟随大多数人的行为而不独立思考</td></tr>
+  <tr><td>处置效应</td><td>Disposition Effect</td><td>过早卖出盈利股、过久持有亏损股</td></tr>
+  <tr><td>心理账户</td><td>Mental Accounting</td><td>对不同来源的钱区别对待（工资vs奖金vs中奖）</td></tr>
+  <tr><td>框架效应</td><td>Framing Effect</td><td>同一信息用不同方式呈现→不同决策</td></tr>
+  <tr><td>代表性启发</td><td>Representativeness Heuristic</td><td>根据「像不像」而非概率来判断</td></tr>
+  <tr><td>可得性启发</td><td>Availability Heuristic</td><td>越容易想到的事→越高估其发生概率</td></tr>
+  <tr><td>后见之明偏误</td><td>Hindsight Bias</td><td>事后觉得「我早就知道会这样」</td></tr>
+  <tr><td>近因偏误</td><td>Recency Bias</td><td>过度重视最近发生的事→忽略长期趋势</td></tr>
+  <tr><td>沉没成本谬误</td><td>Sunk Cost Fallacy</td><td>因为已经投入了→不舍得放弃→继续投入</td></tr>
+  <tr><td>幸存者偏差</td><td>Survivorship Bias</td><td>只看到活下来的成功案例→忽略大量失败者</td></tr>
+  <tr><td>自利偏误</td><td>Self-Serving Bias</td><td>成功归因于自己→失败归因于外部</td></tr>
+  <tr><td>赌徒谬误</td><td>Gambler's Fallacy</td><td>以为独立事件的概率会「回归」</td></tr>
+  <tr><td>承诺升级</td><td>Escalation of Commitment</td><td>越是证明错了→越加大投入</td></tr>
+  <tr><td>现状偏误</td><td>Status Quo Bias</td><td>偏好维持现状→抗拒改变</td></tr>
+  <tr><td>禀赋效应</td><td>Endowment Effect</td><td>拥有的东西估值远高于未拥有的</td></tr>
+  <tr><td>FOMO</td><td>Fear of Missing Out</td><td>害怕错过机会→冲动追高</td></tr>
+  <tr><td>模糊厌恶</td><td>Ambiguity Aversion</td><td>偏好已知概率而非未知概率</td></tr>
+  <tr><td>社会认同倾向</td><td>Social Proof Tendency</td><td>芒格术语→见羊群效应</td></tr>
+  <tr><td>激励超级倾向</td><td>Incentive Superresponse</td><td>芒格术语→行为几乎完全由激励结构决定</td></tr>
+  <tr><td>Lollapalooza效应</td><td>Lollapalooza Effect</td><td>芒格术语→多重偏误同时叠加的毁灭效应</td></tr>
+  <tr><td>打孔卡法则</td><td>Punch Card Rule</td><td>巴菲特术语→一生只有20次投资机会→提高标准</td></tr>
+</table>
+</div>
+`
+      },
+    ]
+  },
+  {
+    title: '🏢 模块十一：实战案例——行为金融看中国股市',
+    lessons: [
+      {
+        id: 'case-bubble',
+        title: '案例一：2015年A股杠杆牛——Lollapalooza效应的完美风暴',
+        emoji: '📈',
+        duration: '20分钟',
+        level: '🔴 实战',
+        content: `
+<h3>2014下半年-2015上半年：中国股市史上最大的行为金融实验</h3>
+
+<div class="tip">
+  <div class="label">📋 事件速览</div>
+  <p><strong>起点：</strong>2014年7月，上证~2050点<br>
+  <strong>顶点：</strong>2015年6月12日，上证5178点（+153%），创业板4037点（+190%）<br>
+  <strong>结局：</strong>2015年6月-8月股灾，3个月回到2850点，超20万亿市值蒸发</p>
+</div>
+
+<h3>第一步：用误判心理学框架拆解——为什么所有人都疯了一样冲进去？</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>#</th><th>心理倾向</th><th>在2015年的表现</th></tr>
+  <tr><td>①</td><td><strong>社会认同</strong></td><td>「同事买的都翻倍了」「菜市场大妈都在谈股票」——社会压力驱动最终入场</td></tr>
+  <tr><td>②</td><td><strong>嫉妒</strong></td><td>「隔壁老王一个月赚了30万」→焦虑→我要追</td></tr>
+  <tr><td>③</td><td><strong>激励超级反应</strong></td><td>场外配资1:10杠杆→每次上涨都在「奖励」加杠杆的行为</td></tr>
+  <tr><td>④</td><td><strong>确认偏误</strong></td><td>牛市中的任何利空都解读为「洗盘」「震仓」→利空就是加仓机会</td></tr>
+  <tr><td>⑤</td><td><strong>过度乐观</strong></td><td>「这次不一样」「中国崛起牛」「一万点不是梦」</td></tr>
+  <tr><td>⑥</td><td><strong>权威偏误</strong></td><td>官媒说「4000点是牛市起点」→官方背书</td></tr>
+  <tr><td>⑦</td><td><strong>Lollapalooza</strong></td><td>以上六种同时作用→任何理性防线崩溃</td></tr>
+</table>
+</div>
+
+<h3>第二步：股灾阶段——为什么逃不出来？</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>#</th><th>心理倾向</th><th>在股灾中的表现</th></tr>
+  <tr><td>⑧</td><td><strong>损失厌恶</strong></td><td>「亏10%不卖，等反弹再卖」→亏30%→「亏这么多更不能卖了」→亏60%</td></tr>
+  <tr><td>⑨</td><td><strong>一致性倾向</strong></td><td>「我已经在这个仓位里了」「我研究过是好的」→不认错</td></tr>
+  <tr><td>⑩</td><td><strong>压力影响</strong></td><td>每天-5%→压力激素飙升→智力下降→只能被动等死</td></tr>
+  <tr><td>⑪</td><td><strong>稀缺偏误</strong></td><td>「再跌就是黄金坑」→抄底→继续跌→再抄→再跌→失去全部现金</td></tr>
+</table>
+</div>
+
+<h3>第三步：关键教训</h3>
+<div class="deep">
+  <div class="label">🎭 2015年教会我们的</div>
+  <p><strong>1. 泡沫从来不是「理性判断」的结果——是心理偏误叠加的结果。</strong>你不需要预测顶部，你只需要识别「哪种偏误正在主导市场」。</p>
+  <p><strong>2. 社会认同在泡沫中是加速器，在崩盘中是引爆器。</strong>同样的机制让所有人买入，也让所有人同时卖出。戴维斯双杀的心理版本。</p>
+  <p><strong>3. 杠杆是心理偏误的放大器。</strong>1:1杠杆让偏误威力×2，1:10杠杆让偏误威力×10。巴菲特的「永远不用借来的钱买股票」是这个原因——不是不看好机会，是不相信人在压力下能保持理性。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">2015年A股泡沫最核心的心理机制是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 经济基本面驱动</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. Lollapalooza效应——社会认同+嫉妒+激励+确认偏误+过度乐观+权威偏误同时叠加</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 估值合理</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 技术分析发出的信号</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 2015年是中国股市历史上最经典的行为金融案例：六种以上的心理偏误同时作用，没有任何人能靠「意志力」抵抗。芒格的意义在于：提前识别偏误、建立系统来对抗——而不是事后悔恨。</div>
+</div>
+`
+      },
+      {
+        id: 'case-maotai',
+        title: '案例二：茅台——从「万人嫌」到「永远的神」',
+        emoji: '🍶',
+        duration: '20分钟',
+        level: '🔴 实战',
+        content: `
+<h3>一支股票，两个极端——社会认同的完美教材</h3>
+
+<div class="analogy">
+  <div class="label">🔄 茅台的市场情绪过山车</div>
+  <p><strong>2013-2014年（万人嫌）：</strong>八项规定出台→「公款消费没了，茅台要完」→PE跌到8倍。<br>
+  <strong>2020-2021年（永远的神）：</strong>「酱香科技」「YYDS」「茅台是中国的可口可乐」→PE冲到70倍。<br>
+  <strong>2024年（冷静期）：</strong>PE回到25倍左右，价格回归理性中枢。</p>
+  <p style="color:var(--accent);margin-top:8px"><strong>同一家公司。</strong>基本面在这10年里没有发生任何根本变化。变化的是什么？<span class="hl">变化的是市场对它的心理叙事。</span></p>
+</div>
+
+<h3>误判心理学拆解</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>阶段</th><th>主导偏误</th><th>表现</th></tr>
+  <tr><td>2013-2014<br>PE=8x</td><td><strong>讨厌倾向+社会认同</strong></td><td>「白酒是腐败产业」→所有人回避→估值极度压抑</td></tr>
+  <tr><td>2016-2019<br>PE=25x</td><td><strong>确认偏误+激励</strong></td><td>业绩持续增长→「茅台果然不一样」→价值投资者入场</td></tr>
+  <tr><td>2020-2021<br>PE=70x</td><td><strong>喜欢/热爱+社会认同+FOMO+过度乐观</strong></td><td>「永远的神」「酱香科技」→peaking at the worst time</td></tr>
+  <tr><td>2021-2024<br>PE跌至25x</td><td><strong>损失厌恶+一致性</strong></td><td>高位买入者死扛→从PE 70扛到PE 25→亏65%</td></tr>
+</table>
+</div>
+
+<div class="deep">
+  <div class="label">🎭 核心教训：好公司+错的心理位置=一样可以亏大钱</div>
+  <p><strong>茅台是中国最优秀的企业之一。</strong>这个判断在PE=8时和PE=70时都没有改变。</p>
+  <p>但PE=8买入的人翻10倍，PE=70买入的人亏65%。<br>
+  <strong>同一家公司，同样优秀。不同的是你买入时市场在哪个偏误区间。</strong></p>
+  <p style="margin-top:8px;color:var(--accent)">这就是前两课（读财报+周期定位）+这节课（心理定位）组合起来的终极价值：<br>
+  <strong>财报告诉你公司好不好 → 周期告诉你市场在哪 → 心理学告诉你是该买还是该卖。</strong></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">茅台从PE=8到PE=70再回PE=25，基本面变化大吗？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 变化很大</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 不大——同一家优秀企业，变化的是市场的心理叙事：从「万人嫌」到「永远的神」到「回归理性」</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 茅台变差了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 茅台变好了</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 茅台10年间基本面没有根本变化，但市场对它的看法从极度悲观→极度乐观→回归理性。这说明市场价格大部分时间反映的不是企业价值，而是集体情绪。理解这一点 = 理解行为金融学的全部要义。</div>
+</div>
+`
+      },
+    ]
+  }
+];
+
+// ===== FINAL EXAM =====
+const finalExam = {
+  questions: [
+    { q:'芒格把哪个倾向排在25个倾向的第一位？', options:['喜欢/热爱','奖励/惩罚超级反应','社会认同','确认偏误'], correct:1 },
+    { q:'卡尼曼的抛硬币实验证明了什么核心概念？', options:['人是理性的','损失厌恶——亏损的痛苦≈盈利快乐的2倍','人喜欢赌博','概率不重要'], correct:1 },
+    { q:'联邦快递夜班效率问题的本质是什么？', options:['工人太懒','按小时计薪的激励机制鼓励磨洋工','包裹太多','管理层太差'], correct:1 },
+    { q:'「爱上股票」最典型的症状是什么？', options:['频繁交易','对好消息兴奋、对坏消息找借口','技术分析','不关注基本面'], correct:1 },
+    { q:'赛马场实验说明了下注前和下注后判断变化的根本原因是？', options:['新信息','一致性倾向——大脑会事后合理化自己的选择','马变快了','别人给了建议'], correct:1 },
+    { q:'Lollapalooza效应的核心含义是什么？', options:['偏误可以相互抵消','多种偏误叠加时威力不是相加而是相乘','聪明人可以免疫','偏误都是独立的'], correct:1 },
+    { q:'巴菲特的「打孔卡」法则用的是什么机制来对抗偏误？', options:['技术分析','人为创造稀缺——用有限机会迫使深度思考','基本面分析','止损'], correct:1 },
+    { q:'2015年A股杠杆牛最核心的心理机制是什么？', options:['基本面改善','Lollapalooza效应——6种以上偏误同时叠加','技术突破','政策推动'], correct:1 },
+  ]
+};
+
+// ===== APP STATE =====
+let completedLessons = new Set(JSON.parse(localStorage.getItem('psych_course_completed') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem('psych_course_quiz_results') || '{}');
+let currentSection = null;
+let finalExamDone = finalExam.questions.every((_,i) => quizResults['final_' + i] !== undefined);
+
+function save() {
+  localStorage.setItem('psych_course_completed', JSON.stringify([...completedLessons]));
+  localStorage.setItem('psych_course_quiz_results', JSON.stringify(quizResults));
+}
+
+function quickQuiz(btn, correctChoice) {
+  const card = btn.closest('.quiz-card');
+  if (card.dataset.answered) return;
+  card.dataset.answered = 'true';
+  const options = card.querySelectorAll('.quiz-option');
+  options.forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    if (i === correctChoice) o.classList.add('correct');
+    else o.classList.add('wrong');
+  });
+  const result = card.querySelector('.quiz-result');
+  if (result) { result.classList.add('show'); }
+}
+
+function calcProgress() {
+  let totalLessons = 0;
+  modules.forEach(m => { totalLessons += m.lessons.length; });
+  totalLessons += finalExam.questions.length;
+  let done = completedLessons.size;
+  for (let i = 0; i < finalExam.questions.length; i++) {
+    if (quizResults['final_' + i] !== undefined) done++;
+  }
+  return Math.round((done / totalLessons) * 100);
+}
+
+function updateUI() {
+  const pct = calcProgress();
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+
+  const nav = document.getElementById('navContainer');
+  let html = '';
+  modules.forEach((mod) => {
+    html += '<div class="nav-module-title">' + mod.title + '</div>';
+    mod.lessons.forEach((lesson) => {
+      const id = lesson.id;
+      const done = completedLessons.has(id);
+      const active = currentSection === id;
+      html += '<div class="nav-item' + (active ? ' active' : '') + (done ? ' done' : '') + '" onclick="navigateTo(\'' + id + '\')">';
+      html += '<span class="check">' + (done ? '✅' : lesson.emoji || '📖') + '</span>';
+      html += lesson.title + '</div>';
+    });
+  });
+  html += '<div class="nav-item' + (currentSection === 'final' ? ' active' : '') + (finalExamDone ? ' done' : '') + '" onclick="navigateTo(\'final\')">';
+  html += '<span class="check">' + (finalExamDone ? '✅' : '🏆') + '</span> 终极测验</div>';
+  nav.innerHTML = html;
+}
+
+function navigateTo(id) {
+  currentSection = id;
+  updateUI();
+  renderContent(id);
+  window.scrollTo(0, 0);
+}
+
+function markComplete(id) {
+  if (!completedLessons.has(id)) {
+    completedLessons.add(id);
+    save();
+    updateUI();
+  }
+}
+
+function renderContent(id) {
+  const main = document.getElementById('mainContent');
+  if (id === 'final') { renderFinalExam(main); return; }
+
+  let lesson = null, modIndex = -1, lesIndex = -1;
+  for (let mi = 0; mi < modules.length; mi++) {
+    for (let li = 0; li < modules[mi].lessons.length; li++) {
+      if (modules[mi].lessons[li].id === id) {
+        lesson = modules[mi].lessons[li]; modIndex = mi; lesIndex = li; break;
+      }
+    }
+    if (lesson) break;
+  }
+  if (!lesson) { main.innerHTML = '<p>课程未找到</p>'; return; }
+
+  let html = '';
+
+  if (lesson.quiz) {
+    const savedAnswers = quizResults[id] || [];
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">测试你对' + modules[modIndex].title.replace(/^[^\s]+\s/, '') + '的理解—共' + lesson.quiz.questions.length + '题</div>';
+    lesson.quiz.questions.forEach((q, qi) => {
+      const userAnswer = savedAnswers[qi];
+      const answered = userAnswer !== undefined;
+      const isCorrect = answered && userAnswer === q.correct;
+      html += '<div class="quiz-card" id="quiz-' + qi + '"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+      html += '<div class="quiz-question">' + q.q + '</div>';
+      q.options.forEach((opt, oi) => {
+        let cls = 'quiz-option';
+        if (answered && oi === q.correct) cls += ' correct';
+        if (answered && oi === userAnswer && oi !== q.correct) cls += ' wrong';
+        html += '<button class="' + cls + '" onclick="answerQuiz(\'' + id + '\', ' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+      });
+      if (answered) {
+        html += '<div class="quiz-result show ' + (isCorrect ? 'pass' : 'fail') + '" id="result-' + id + '-' + qi + '">';
+        html += '<strong>' + (isCorrect ? '✅ 正确！' : '❌ 不太对') + '</strong><p>' + q.explain + '</p></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">' + modules[modIndex].title.replace(/^[^\s]+\s/, '') + ' · ' + (lesson.duration || '15分钟') + ' · ' + (lesson.level || '🟢 入门') + '</div>';
+    html += lesson.content;
+    html += '</div>';
+    markComplete(id);
+  }
+
+  html += '<div class="nav-btns">';
+  let prevId = null;
+  if (lesIndex > 0) prevId = modules[modIndex].lessons[lesIndex - 1].id;
+  else if (modIndex > 0) { const pm = modules[modIndex - 1]; prevId = pm.lessons[pm.lessons.length - 1].id; }
+  if (prevId) html += '<button class="btn btn-secondary" onclick="navigateTo(\'' + prevId + '\')">⬅ 上一节</button>';
+  else html += '<div></div>';
+
+  let nextId = null;
+  if (lesIndex < modules[modIndex].lessons.length - 1) nextId = modules[modIndex].lessons[lesIndex + 1].id;
+  else if (modIndex < modules.length - 1) nextId = modules[modIndex + 1].lessons[0].id;
+  if (nextId) html += '<button class="btn btn-primary" onclick="navigateTo(\'' + nextId + '\')">下一节 ➡</button>';
+  else html += '<button class="btn btn-success" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>';
+  html += '</div>';
+
+  main.innerHTML = html;
+}
+
+function answerQuiz(lessonId, qi, oi) {
+  if (!quizResults[lessonId]) quizResults[lessonId] = [];
+  quizResults[lessonId][qi] = oi;
+  save();
+  renderContent(lessonId);
+}
+
+function startFinalExam() { navigateTo('final'); }
+
+function renderFinalExam(main) {
+  let html = '<div class="lesson-card"><h2>🏆 终极测验</h2>';
+  html += '<div class="meta">8道题 · 覆盖全部8个理论模块 · 70%及格</div>';
+
+  let allAnswered = true;
+  finalExam.questions.forEach((q, qi) => {
+    const ua = quizResults['final_' + qi];
+    const answered = ua !== undefined;
+    if (!answered) allAnswered = false;
+    const isCorrect = answered && ua === q.correct;
+    html += '<div class="quiz-card" id="final-q-' + qi + '"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+    html += '<div class="quiz-question">' + q.q + '</div>';
+    q.options.forEach((opt, oi) => {
+      let cls = 'quiz-option';
+      if (answered && oi === q.correct) cls += ' correct';
+      if (answered && oi === ua && oi !== q.correct) cls += ' wrong';
+      html += '<button class="' + cls + '" onclick="answerFinal(' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+
+  if (allAnswered) {
+    const score = finalExam.questions.filter((q, i) => quizResults['final_' + i] === q.correct).length;
+    const total = finalExam.questions.length;
+    const pct = Math.round(score / total * 100);
+    const passed = pct >= 70;
+    const grade = pct >= 90 ? '🏅 S级' : pct >= 80 ? '🥇 A级' : pct >= 70 ? '🥈 B级' : '📝 继续加油';
+    html += '<div class="certificate show"><div style="font-size:3em">' + (passed ? '🎉' : '💪') + '</div>';
+    html += '<h2>' + (passed ? '恭喜毕业！' : '还需要再练练') + '</h2>';
+    html += '<div class="grade">' + grade + '</div>';
+    html += '<div style="font-size:1.5em;color:var(--accent2)">' + score + ' / ' + total + ' 题正确（' + pct + '%）</div>';
+    html += '<p style="margin-top:16px;color:var(--sub)">' + (passed ? '你已经掌握了人类误判心理学的核心知识。接下来的挑战：把检查清单带进每一次真实交易。记住芒格的话——「问题的解决不是更聪明，是建立系统。」' : '再看看薄弱环节，重做一次就能过！') + '</p>';
+    html += '<div style="margin-top:20px"><button class="btn btn-secondary" onclick="resetFinalExam()">🔄 重新测验</button>';
+    html += '<button class="btn btn-primary" onclick="resetAll()" style="margin-left:8px">🔁 重学全部课程</button></div></div>';
+    const wrong = finalExam.questions.map((q, i) => ({ q, i })).filter(x => quizResults['final_' + x.i] !== x.q.correct);
+    if (wrong.length > 0) {
+      html += '<div class="tip" style="margin-top:16px"><div class="label">📚 建议补强的知识点</div>';
+      wrong.forEach(w => { 
+        const topics = ['→ 复习「模块一：损失厌恶与卡尼曼实验」','→ 复习「模块二：激励超级倾向」','→ 复习「模块二：FedEx案例」','→ 复习「模块三：喜欢/热爱倾向」','→ 复习「模块四：一致性倾向与赛马场实验」','→ 复习「模块七：Lollapalooza效应」','→ 复习「模块八：打孔卡法则」','→ 复习「模块五：社会认同与2015杠杆牛」'];
+        html += '<p>❌ 第' + (w.i + 1) + '题 ' + topics[w.i] + '</p>'; 
+      });
+      html += '</div>';
+    }
+  }
+  main.innerHTML = html;
+  if (allAnswered) updateUI();
+}
+
+function answerFinal(qi, oi) {
+  quizResults['final_' + qi] = oi;
+  save();
+  renderFinalExam(document.getElementById('mainContent'));
+  updateUI();
+}
+
+function resetFinalExam() {
+  finalExam.questions.forEach((_, i) => delete quizResults['final_' + i]);
+  save(); updateUI();
+  renderFinalExam(document.getElementById('mainContent'));
+}
+
+function resetAll() {
+  localStorage.removeItem('psych_course_completed');
+  localStorage.removeItem('psych_course_quiz_results');
+  location.reload();
+}
+
+// ===== INIT =====
+(function init() {
+  currentSection = 'why-psychology';
+  updateUI();
+  renderContent('why-psychology');
+})();
+</script>
+</body>
+</html>

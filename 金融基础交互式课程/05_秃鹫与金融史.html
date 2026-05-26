@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🦅📜 秃鹫、逆向与非对称投资 · 金融基础交互式课程</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --card-hover: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --sub: #8b949e;
+  --accent: #e28413;
+  --accent2: #d2991d;
+  --green: #3fb950;
+  --red: #f85149;
+  --yellow: #d2991d;
+  --orange: #e28413;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(226,132,19,0.35); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3e50; }
+body {
+  font-family: -apple-system, 'SF Pro Display', 'PingFang SC', sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #1a1208 0%, var(--bg) 70%);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width: 280px;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  padding: 24px 16px;
+  position: sticky; top:0; height:100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.main {
+  flex:1;
+  padding: 32px 48px;
+  max-width: 920px;
+}
+.logo { font-size: 1.2em; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.logo .icon { font-size: 1.4em; }
+.subtitle { color: var(--sub); font-size: 0.82em; margin-bottom: 20px; opacity: 0.8; }
+.progress-bar-wrap { background: var(--border); border-radius: 8px; height: 6px; margin-bottom: 22px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 8px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 0 12px rgba(226,132,19,0.25); }
+.progress-text { font-size: 0.78em; color: var(--sub); margin-bottom: 4px; }
+.nav-module { margin-bottom: 18px; }
+.nav-module-title { font-size: 0.72em; text-transform: uppercase; color: var(--sub); letter-spacing: 1.5px; margin-bottom: 8px; padding: 0 8px; opacity: 0.7; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; font-size: 0.88em; color: var(--sub); border-left: 3px solid transparent; margin-bottom: 2px; }
+.nav-item:hover { background: var(--card-hover); color: var(--text); border-left-color: rgba(226,132,19,0.3); }
+.nav-item.active { background: rgba(226,132,19,0.12); color: var(--accent2); font-weight: 600; border-left-color: var(--accent2); }
+.nav-item.done { color: var(--green); }
+.nav-item .check { width: 20px; text-align: center; font-size: 0.8em; }
+.divider { border-top: 1px solid var(--border); margin: 16px 0; }
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.lesson-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 34px; margin-bottom: 24px; transition: border-color 0.25s, box-shadow 0.25s; }
+.lesson-card:hover { border-color: rgba(226,132,19,0.2); box-shadow: 0 2px 20px rgba(226,132,19,0.06); }
+.lesson-card h2 { font-size: 1.5em; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.lesson-card h2 .emoji { font-size: 1.3em; }
+.lesson-card .meta { color: var(--sub); font-size: 0.85em; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.lesson-card h3 { font-size: 1.1em; margin: 28px 0 14px; color: var(--accent2); position: relative; padding-left: 14px; }
+.lesson-card h3::before { content: ''; position: absolute; left: 0; top: 3px; bottom: 3px; width: 3px; border-radius: 2px; background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+.lesson-card p { margin-bottom: 14px; }
+.lesson-card ul, .lesson-card ol { padding-left: 24px; margin-bottom: 14px; }
+.lesson-card li { margin-bottom: 8px; }
+.analogy { background: linear-gradient(135deg, rgba(210,153,29,0.06), rgba(226,132,19,0.06)); border: 1px solid rgba(210,153,29,0.15); border-left: 3px solid var(--accent2); border-radius: var(--radius); padding: 18px 22px; margin: 20px 0; }
+.analogy .label { font-size: 0.78em; color: var(--accent2); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.diagram-svg { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 12px; margin: 20px 0; text-align: center; overflow-x: auto; }
+.diagram-svg svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+.diagram-svg text { font-family: inherit; }
+.tip, .warning, .deep { border-radius: var(--radius); padding: 18px 22px; margin: 20px 0; position: relative; }
+.tip { background: rgba(63,185,80,0.06); border: 1px solid rgba(63,185,80,0.2); border-left: 3px solid var(--green); }
+.warning { background: rgba(248,81,73,0.06); border: 1px solid rgba(248,81,73,0.2); border-left: 3px solid var(--red); }
+.deep { background: rgba(226,132,19,0.05); border: 1px solid rgba(226,132,19,0.12); border-left: 3px solid var(--accent); }
+.tip .label, .warning .label, .deep .label { font-weight: 700; margin-bottom: 6px; font-size: 0.85em; display: flex; align-items: center; gap: 6px; }
+.tip .label { color: var(--green); }
+.warning .label { color: var(--red); }
+.deep .label { color: var(--accent); }
+.quiz-card { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius); padding: 28px 30px; margin: 28px 0; }
+.quiz-card h3 { font-size: 1.15em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.quiz-question { margin: 18px 0 10px; font-weight: 600; font-size: 0.95em; }
+.quiz-option { display: block; width: 100%; text-align: left; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 13px 18px; margin: 8px 0; cursor: pointer; color: var(--text); font-size: 0.93em; transition: all 0.2s ease; }
+.quiz-option:hover { border-color: var(--accent); background: var(--card-hover); transform: translateX(4px); }
+.quiz-option.correct { border-color: var(--green); background: rgba(63,185,80,0.08); color: var(--green); }
+.quiz-option.wrong { border-color: var(--red); background: rgba(248,81,73,0.08); color: var(--red); }
+.quiz-option:disabled { cursor: default; opacity: 0.8; transform: none; }
+.quiz-result { margin-top: 16px; padding: 16px; border-radius: 8px; display: none; }
+.quiz-result.show { display: block; }
+.quiz-result.pass { background: rgba(63,185,80,0.1); border: 1px solid var(--green); }
+.quiz-result.fail { background: rgba(248,81,73,0.1); border: 1px solid var(--red); }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 11px 26px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.93em; font-weight: 600; transition: all 0.2s ease; letter-spacing: 0.3px; }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--accent); color: #000; box-shadow: 0 2px 8px rgba(226,132,19,0.3); }
+.btn-primary:hover { background: #d2991d; box-shadow: 0 4px 16px rgba(226,132,19,0.4); }
+.btn-secondary { background: var(--border); color: var(--text); }
+.btn-secondary:hover { background: #3a3e50; }
+.btn-success { background: var(--green); color: #fff; box-shadow: 0 2px 8px rgba(63,185,80,0.3); }
+.btn-success:hover { background: #00a381; box-shadow: 0 4px 16px rgba(63,185,80,0.4); }
+.step-list { display: flex; gap: 14px; flex-wrap: wrap; margin: 18px 0; }
+.step-card { flex: 1; min-width: 180px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 16px; text-align: center; transition: all 0.2s ease; }
+.step-card:hover { border-color: rgba(226,132,19,0.3); transform: translateY(-2px); }
+.step-card .num { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #c08020); color: #000; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: 700; font-size: 0.85em; box-shadow: 0 2px 8px rgba(226,132,19,0.3); }
+.step-card .title { font-weight: 600; margin-bottom: 6px; font-size: 0.9em; }
+.step-card .desc { font-size: 0.82em; color: var(--sub); line-height: 1.6; }
+.nav-btns { display: flex; justify-content: space-between; margin-top: 32px; }
+.table-wrap { overflow-x: auto; margin: 18px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+.table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.88em; line-height: 1.6; }
+.table-wrap th { background: rgba(226,132,19,0.08); border-bottom: 1px solid var(--accent2); padding: 10px 14px; font-weight: 600; text-align: left; color: var(--accent); font-size: 0.82em; text-transform: uppercase; letter-spacing: 0.5px; }
+.table-wrap td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.table-wrap tr:last-child td { border-bottom: none; }
+.table-wrap tr:hover td { background: rgba(226,132,19,0.03); }
+.certificate { display: none; background: linear-gradient(135deg, rgba(226,132,19,0.08), rgba(210,153,29,0.06)); border: 2px solid var(--accent2); border-radius: var(--radius); padding: 48px 40px; text-align: center; margin: 28px 0; box-shadow: 0 4px 32px rgba(210,153,29,0.08); }
+.certificate.show { display: block; animation: fadeIn 0.5s ease; }
+.certificate h2 { font-size: 2em; color: var(--accent2); margin-bottom: 8px; }
+.certificate .grade { font-size: 2.5em; color: var(--accent); font-weight: 800; margin: 16px 0 8px; }
+.formula { background: rgba(226,132,19,0.06); border: 1px solid rgba(226,132,19,0.15); border-radius: 8px; padding: 14px 20px; margin: 14px 0; text-align: center; font-family: 'SF Mono', 'Menlo', 'Monaco', monospace; font-size: 0.92em; }
+.hl { color: var(--accent); font-weight: 600; }
+.hl2 { color: var(--green); font-weight: 600; }
+.hl3 { color: var(--yellow); font-weight: 600; }
+@media (max-width: 768px) {
+  .app { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+  .main { padding: 20px 16px; }
+  .step-list { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">🦅📜</span> 秃鹫与金融史</div>
+  <div class="subtitle">塔勒布 · 老木匠 · 卡拉曼 · 达利欧 · 明斯基 · 周金涛</div>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+  <a href="课程首页_金融基础.html" style="display:block;margin-bottom:12px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:0.82em;color:var(--sub);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.borderColor=this.style.color" onmouseout="this.style.borderColor='var(--border)'" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--sub)'">🏠 回到课程总览</a>
+<div id="navContainer"></div>
+  <div class="divider"></div>
+  <button class="btn btn-primary" style="width:100%" onclick="startFinalExam()">🏆 终极测验</button>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="resetAll()">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ===== COURSE DATA =====
+const modules = [
+
+  {
+    title: '🦅 模块五：逆向、秃鹫与特殊机会——非对称收益的艺术',
+    lessons: [
+      {
+        id: 'taleb-blackswan',
+        title: '塔勒布：黑天鹅与反脆弱——在不可预测的世界里生存',
+        emoji: '🦅',
+        content: `
+<h3>塔勒布提供了投资世界最稀缺的能力</h3>
+
+<div class="analogy">
+  <div class="label">🧠 四位大师的分工</div>
+  <p>巴菲特：告诉我好公司长什么样（价值本体）<br>
+  芒格：告诉我怎么思考好公司（思维框架）<br>
+  马克斯：告诉我现在该买还是该卖（时机判断）<br>
+  <strong>塔勒布：告诉我怎么活过黑天鹅（生存结构）</strong></p>
+  <p style="margin-top:8px">四个人合在一起 = <span class="hl">本体 + 思维 + 时机 + 生存</span></p>
+</div>
+
+<h3>框架一：黑天鹅——不可预测的极端事件</h3>
+
+<div class="deep">
+  <div class="label">🦅 黑天鹅三特征</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>特征</th><th>说明</th><th>投资含义</th></tr>
+    <tr><td><strong>稀有性</strong></td><td>在通常预期之外，过去没有证据能预测</td><td>任何基于历史数据的风险模型都会漏掉它</td></tr>
+    <tr><td><strong>极端冲击</strong></td><td>一旦发生，改变一切</td><td>一次黑天鹅可以抹掉多年积累的收益</td></tr>
+    <tr><td><strong>事后可解释</strong></td><td>发生后人们编造理由，让它看起来可预测</td><td>让我们错误地以为自己下次能预测</td></tr>
+  </table>
+  </div>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 塔勒布的核心翻转</div>
+  <p><strong>传统思维：</strong>我知道的越多 → 越能预测 → 越安全<br>
+  <strong>塔勒布：</strong>你不知道的才是危险的 → 承认无知 → 构建结构<br>
+  <strong>黑天鹅不是「小概率事件」，它是「我们不知道概率是多少的事件」。</strong></p>
+</div>
+
+<h3>正负黑天鹅</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>类型</th><th>定义</th><th>策略</th><th>示例</th></tr>
+  <tr><td><strong>负面黑天鹅</strong></td><td>极端损失事件</td><td>防御/保险</td><td>2008金融危机、新冠暴跌</td></tr>
+  <tr><td><strong>正面黑天鹅</strong></td><td>极端收益事件</td><td>暴露/参与</td><td>早期投资腾讯、比特币早期买者</td></tr>
+</table>
+</div>
+
+<p><strong>核心策略：</strong><span class="hl">减少对负面黑天鹅的暴露，增加对正面黑天鹅的暴露。</span></p>
+
+<h3>框架二：平均斯坦 vs 极端斯坦</h3>
+
+<div class="deep">
+  <div class="label">🦅 塔勒布最重要的分类框架</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>维度</th><th>平均斯坦</th><th>极端斯坦</th></tr>
+    <tr><td>特征</td><td>单个事件不影响整体</td><td>单个事件决定一切</td></tr>
+    <tr><td>分布</td><td>正态分布（钟形曲线）</td><td>肥尾分布</td></tr>
+    <tr><td>示例</td><td>身高、体重</td><td>财富、股票收益、城市人口</td></tr>
+    <tr><td>极端事件</td><td>不可能（不会有10米高的人）</td><td>频繁且决定性</td></tr>
+    <tr><td>投资领域</td><td>⚠️ 几乎不存在</td><td><strong>这就是金融市场</strong></td></tr>
+  </table>
+  </div>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 金融模型的核心问题</div>
+  <p>用平均斯坦的数学工具（正态分布、标准差、VaR）去度量极端斯坦的市场。<br>
+  <strong>例子：</strong>1987年黑色星期一标普一天跌20%——按正态分布，这种事件几百万年才发生一次，但实际每10-20年就发生一次。</p>
+</div>
+
+<h3>框架三：反脆弱——三元结构</h3>
+
+<div class="deep">
+  <div class="label">🦅 塔勒布最大的原创贡献</div>
+  <p><strong>脆弱（Fragile）：</strong>害怕波动、混乱、压力 → 被冲击摧毁<br>
+  → 例：过度杠杆的投资组合、单一收入来源</p>
+  <p><strong>强韧（Robust）：</strong>不怕波动，能扛住冲击 → 复原但不进化<br>
+  → 例：国债、充足现金储备、多元化</p>
+  <p><strong>反脆弱（Antifragile）：</strong><span class="hl">从波动中受益，越乱越强</span> → 冲击是养分<br>
+  → 例：期权买方、杠铃策略、进化本身</p>
+</div>
+
+<div class="analogy">
+  <div class="label">💪 反脆弱 ≠ 强韧</div>
+  <p>玻璃杯是强韧的（摔不碎），但它不会因为摔打变得更强。<br>
+  肌肉是反脆弱的——你撕裂它，它长得更强壮。</p>
+</div>
+
+<h3>识别反脆弱性的简单测试</h3>
+
+<div class="formula">
+  不对称性测试：<br>
+  一个随机事件带来的有利结果 > 不利结果 → <span class="hl">反脆弱</span><br>
+  一个随机事件带来的不利结果 > 有利结果 → <span class="hl3">脆弱</span>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">金融市场属于「平均斯坦」还是「极端斯坦」？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 平均斯坦——可以用正态分布预测</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 极端斯坦——单个事件可以改变一切，肥尾分布</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 两者都不是</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 取决于市场情绪</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 金融市场是典型的极端斯坦。1987年黑色星期一（一天跌20%）按正态分布几百万年才发生一次，但现实中每10-20年就发生。用正态分布建模金融风险，是塔勒布所说的「智力大骗局」。</div>
+</div>
+`
+      },
+      {
+        id: 'taleb-barbell',
+        title: '杠铃策略——如何在两端同时下注',
+        emoji: '🏋️',
+        content: `
+<h3>塔勒布最著名的操作策略</h3>
+
+<div class="analogy">
+  <div class="label">🏋️ 不是取平衡，是取两端</div>
+  <p><strong>传统观念：</strong>适度风险 = 最优（60股/40债）<br>
+  <strong>杠铃策略：</strong>极度保守(90%) + 极度激进(10%)</p>
+  <p>不是「不要冒险」，而是<span class="hl">「只在赔得起的领域冒险」</span>。</p>
+</div>
+
+<h3>杠铃策略的三个层级</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>层级</th><th>保守端（90%）</th><th>激进端（10%）</th></tr>
+  <tr><td><strong>资产配置</strong></td><td>国债 + 现金 + 黄金</td><td>早期科技股 + 期权 + 加密货币</td></tr>
+  <tr><td><strong>职业选择</strong></td><td>稳定工作/现金流</td><td>周末创业/副业</td></tr>
+  <tr><td><strong>时间分配</strong></td><td>深度阅读/学习</td><td>广泛试错/跨界</td></tr>
+</table>
+</div>
+
+<h3>为什么杠铃策略具有反脆弱性</h3>
+
+<div class="deep">
+  <div class="label">🏋️ 两端组合的威力</div>
+  <p><strong>保守端：</strong>在最坏情况下你也不会死（不会被清零、不会被强制平仓）→ 这给了你「在别人被迫卖时你还能买」的特权</p>
+  <p><strong>激进端：</strong>你参与了「可能改变一切」的正面黑天鹅 → 损失有限（最多亏10%），回报无限</p>
+  <p><strong>组合效果：</strong>你拥有了<span class="hl">「跌不死 + 可能暴富」</span>的结构</p>
+</div>
+
+<h3>投资中的具体例子</h3>
+
+<div class="deep">
+  <div class="label">💰 例1：现金+期权</div>
+  <p>90% 现金/短债 + 10% 深度虚值看涨期权<br>
+  → 市场暴跌：你拿现金抄底（反脆弱）<br>
+  → 市场暴涨：期权带来超额回报</p>
+</div>
+
+<div class="deep">
+  <div class="label">💰 例2：核心+卫星</div>
+  <p>核心仓位（确定性公司）+ 卫星仓位（高赔率标的）<br>
+  → 腾讯/茅台不动（保守端）<br>
+  → 少量资金投AI/生物科技早期标的（激进端）</p>
+</div>
+
+<div class="deep">
+  <div class="label">💰 例3：主业+副业</div>
+  <p>保持现金流不断（保守端）+ 内容/星球/投资研究变现（激进端）<br>
+  → 这就是「一人公司」模式的杠铃结构</p>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 杠铃策略的反面——最脆弱的投资结构</div>
+  <p>• 高杠杆持股：平时赚得不错，一次崩盘全部清零 → 极度脆弱<br>
+  • 卖出裸看涨期权：最多赚权利金，可能亏无限 → 极度脆弱<br>
+  • 全部资金押注单一标的：一次黑天鹅就出局 → 极度脆弱</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">买入看涨期权和卖出裸看涨期权，哪个是反脆弱的？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 卖出裸看涨期权——赚权利金最稳</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 买入看涨期权——最多亏权利金，可能赚无限（不对称性测试：有利>不利）</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 两者都是反脆弱的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 两者都不是</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 买入期权：下行有限（权利金）、上行无限 → 反脆弱。卖出裸期权：上行有限（权利金）、下行无限 → 极度脆弱。不对称性测试是判断反脆弱性的最简单工具。</div>
+</div>
+`
+      },
+      {
+        id: 'oldcarpenter',
+        title: '老木匠：A股散户的生存智慧——便宜+逆向+周期股',
+        emoji: '🪓',
+        content: `
+<h3>A股散户版的霍华德·马克斯</h3>
+
+<div class="analogy">
+  <div class="label">🪓 老木匠的自我定位</div>
+  <p>巴菲特：我是伯克希尔董事长，我有浮存金和保险帝国<br>
+  段永平：我是步步高/OPPO/vivo创始人，我懂生意<br>
+  <strong>老木匠：我就是一个散户，我只能做散户能做且该做的事</strong></p>
+  <p style="margin-top:8px">他最大的价值：告诉一个普通中国散户，怎么在A股这个残酷市场里活下来、赚到钱。</p>
+</div>
+
+<h3>核心心智一：买股票就是买股票（不是买公司）</h3>
+
+<div class="deep">
+  <div class="label">🪓 老木匠最根本、最容易被误解的理念</div>
+  <p><strong>巴菲特：</strong>买股票 = 买公司 = 永久持有<br>
+  <strong>段永平：</strong>买股票 = 买公司 = 长期持有<br>
+  <strong>老木匠：</strong>买股票 = 买股票 = 赚差价</p>
+  <p style="margin-top:8px"><strong>不是否定巴菲特。是承认自己不是巴菲特。</strong></p>
+  <p>区别在哪？巴菲特买公司：他能控股、换管理层、分拆资产 → 价格不涨也能赚钱。<br>
+  散户买股票：你只能等别人出更高价 → 价格不涨就是亏。</p>
+  <p style="margin-top:8px;color:var(--accent)">「对于我们散户来说，买股票就是买股票。股票的价格不仅仅受基本面的影响，还受宏观经济和股市情绪的影响，甚至还受不同行业之间机会成本的影响。」</p>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 散户自我降维的陷阱</div>
+  <p>自从巴菲特和段永平强调「买股票就是买公司」以后，很多人对投资股票的思考进行了自我降维——只研究基本面，对宏观经济和股市运行不进行任何思考。结果：对公司业务分析头头是道，投资业绩并不理想。<br>
+  <strong>核心洞见：</strong>你不是巴菲特。把自己跟巴菲特相提并论，不仅不是谦虚，反而是放弃了散户唯一的优势——<span class="hl">灵活</span>。</p>
+</div>
+
+<h3>核心心智二：便宜是第一原则</h3>
+
+<div class="deep">
+  <div class="label">🪓 老木匠的全部体系根基</div>
+  <p>「便宜就是硬道理。涨高了就是最大利空，跌多了就是最大利好。」<br>
+  「看一眼就知道便宜就够了——巴菲特说：一个人是多少磅并不重要，关键是我们看一眼就知道他是一个胖子。」</p>
+  <p style="margin-top:8px">老木匠的便宜 = 格雷厄姆的安全边际，但更直白：<br>
+  → 不需要精确计算内在价值<br>
+  → 不需要DCF模型<br>
+  → 「看一眼就知道便宜」才是真便宜</p>
+</div>
+
+<h3>核心心智三：逆向投资——别人恐慌时出手</h3>
+
+<div class="deep">
+  <div class="label">🪓 芒格 × 老木匠 逆向对照</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>维度</th><th>芒格</th><th>老木匠</th></tr>
+    <tr><td>市场</td><td>美股（成熟市场）</td><td>A股（新兴市场）</td></tr>
+    <tr><td>核心标签</td><td>多元思维、逆向思维</td><td>逆向投资、安全边际</td></tr>
+    <tr><td>风格</td><td>理论建构者、哲学化</td><td>实战操作者、通俗化</td></tr>
+    <tr><td>逆向定义</td><td>反过来想，总是反过来想</td><td>别人恐慌时贪婪，别人贪婪时恐慌</td></tr>
+    <tr><td>安全边际</td><td>来自理论推理</td><td>来自血泪教训</td></tr>
+  </table>
+  </div>
+</div>
+
+<h3>七大核心心智模型速查</h3>
+
+<div class="step-list">
+  <div class="step-card">
+    <div class="num">1</div>
+    <div class="title">💰 便宜第一</div>
+    <div class="desc">涨高是最大利空<br>跌多是最大利好</div>
+  </div>
+  <div class="step-card">
+    <div class="num">2</div>
+    <div class="title">🔄 逆向投资</div>
+    <div class="desc">全市场恐慌时买<br>全市场狂热时卖</div>
+  </div>
+  <div class="step-card">
+    <div class="num">3</div>
+    <div class="title">⏰ 忍耐</div>
+    <div class="desc">不是什么时候买<br>是什么时候值得等</div>
+  </div>
+  <div class="step-card">
+    <div class="num">4</div>
+    <div class="title">📊 周期股</div>
+    <div class="desc">周期底部买<br>周期顶部卖</div>
+  </div>
+  <div class="step-card">
+    <div class="num">5</div>
+    <div class="title">🔍 散户优势</div>
+    <div class="desc">灵活+没有赎回压力<br>不用像基金经理那样</div>
+  </div>
+  <div class="step-card">
+    <div class="num">6</div>
+    <div class="title">🧠 情绪利用</div>
+    <div class="desc">A股散户化程度高<br>情绪波动大=机会多</div>
+  </div>
+  <div class="step-card">
+    <div class="num">7</div>
+    <div class="title">🛡️ 活下去</div>
+    <div class="desc">先保证不亏大钱<br>再追求收益</div>
+  </div>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">老木匠认为散户相对于巴菲特最大的优势是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 资金量大</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 灵活——不需要像基金经理那样受赎回压力，可以等，可以快速进出</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 信息优势</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 专业分析能力</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 老木匠的核心洞见：散户最大的优势是灵活+没有赎回压力。如果散户模仿巴菲特的「永久持有」，反而放弃了自己唯一的优势。巴菲特的优势是能换管理层，散户不能——所以散户必须考虑价格波动。</div>
+</div>
+`
+      },
+      {
+        id: 'klarman-greenblatt',
+        title: '卡拉曼与格林布拉特：安全边际与特殊机会——极端市场中的猎人',
+        emoji: '🎯',
+        content: `
+<div class="analogy">
+  <div class="label">🧠 特殊机会投资——价值投资的「暗黑版」</div>
+  <p>巴菲特模式：找到好公司，用合理价格买入，长期持有<br>
+  格雷厄姆模式（捡烟蒂）：找到便宜货，不管公司好坏，买一堆等回归<br>
+  <strong>卡拉曼/格林布拉特模式：找到市场定价错误的地方——破产、重组、分拆、并购——用极度安全边际参与</strong></p>
+</div>
+
+<h3>塞思·卡拉曼——《安全边际》的作者，价值投资的隐士</h3>
+
+<div class="deep">
+  <div class="label">🎯 卡拉曼的三大投资类别</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>类别</th><th>策略</th><th>典型机会</th><th>风险</th></tr>
+    <tr><td><strong>1. 被低估的证券</strong></td><td>低于清算价值买入</td><td>熊市中被错杀的优质公司</td><td>价值陷阱（公司真在变差）</td></tr>
+    <tr><td><strong>2. 特殊情况</strong></td><td>事件驱动的确定性套利</td><td>并购套利、破产重组、分拆上市</td><td>事件失败（概率风险）</td></tr>
+    <tr><td><strong>3. 不良债务</strong></td><td>以极低价格买入陷入困境的债券</td><td>公司破产但资产价值>债务</td><td>清算价值判断错误</td></tr>
+  </table>
+  </div>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 卡拉曼的核心警告</div>
+  <p><strong>「安全边际不是可选的。」</strong></p>
+  <p>不是「便宜了就买」——是<strong>便宜到即使你错了也不会亏大钱</strong>。卡拉曼把安全边际推到极致：你买入的价格必须低于公司最保守的清算价值。如果你用DCF估出价值100元，那买入价至少要在50元以下——因为你的DCF假设可能全错。</p>
+</div>
+
+<h3>乔尔·格林布拉特——《股市天才》与特殊情况投资</h3>
+
+<div class="deep">
+  <div class="label">🎯 格林布拉特的核心洞察</div>
+  <p>最好机会出现在<strong>「机构不能买、散户不敢买」</strong>的领域。</p>
+</div>
+
+<h3>三种经典特殊情况</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>机会类型</th><th>为什么会出现</th><th>怎么操作</th><th>A股案例</th></tr>
+  <tr><td><strong>分拆上市</strong></td><td>母公司股东收到子公司股票后，可能不懂/不想要→抛售</td><td>研究子公司真实价值，在抛售潮中买入</td><td>平安好医生分拆、京东物流分拆</td></tr>
+  <tr><td><strong>破产重组</strong></td><td>旧股东被清零，新投资者可以极低价格参与重组</td><td>判断「清算价值 vs 重组后价值」</td><td>海航重组、华晨重组</td></tr>
+  <tr><td><strong>并购套利</strong></td><td>宣布并购后，目标公司股价通常低于收购价（反映失败风险）</td><td>计算「价差/失败概率」的期望收益</td><td>美的收购库卡、闻泰收购安世</td></tr>
+  <tr><td><strong>小盘股折价</strong></td><td>机构不能买（流动性不够）、分析师不覆盖→定价失灵</td><td>在小市值中找优质公司</td><td>A股大量50亿以下被忽视的隐形冠军</td></tr>
+</table>
+</div>
+
+<div class="analogy">
+  <div class="label">🎯 格林布拉特的操作心法</div>
+  <p>1. <strong>只在定价错误明显时出手</strong>——不需要精确计算，只需要确定「错了也不会死」</p>
+  <p>2. <strong>被忽视=被错误定价</strong>——市场忽略的角落是信息不对称最大的地方</p>
+  <p>3. <strong>催化剂驱动</strong>——不投「不知道什么时候价值会实现」的机会，必须有明确的事件触发价值释放</p>
+</div>
+
+<h3>量化接口：特殊机会如何变成信号？</h3>
+
+<div class="tip">
+  <div class="label">💡 特殊机会信号框架</div>
+  <p><strong>破产重组信号：</strong>股价<每股净流动资产（NCAV）×0.5 → 警报级别信号</p>
+  <p><strong>并购套利信号：</strong>（收购价-当前股价）/当前股价 = 套利价差 → 价差>15%且完成概率>70% → 候选</p>
+  <p><strong>分拆套利信号：</strong>母公司公告分拆→未来3个月子公司股票开始交易→关注首月换手率异常低的标的</p>
+  <p><strong>核心公式：</strong>期望收益 = 成功概率 × 成功收益 - 失败概率 × 失败损失 → 期望收益>年化20%才值得参与</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">格林布拉特认为最好的投资机会出现在哪里？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 热门赛道——大家都在买</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 「机构不能买、散户不敢买」的定价失灵区域</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 蓝筹股——最安全的标的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 指数基金——分散风险</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 格林布拉特的核心理念：机构因流动性/规则不能买，散户因恐惧不敢买的标的→定价最可能出错→安全边际最大的地方。这就是「非对称收益」的来源——不是预测方向，是找定价错误。</div>
+</div>
+`
+      },
+      {
+        id: 'asymmetry-cases',
+        title: '实战案例：三次非对称收益的经典战役',
+        emoji: '📖',
+        content: `
+<h3>案例一：LTCM崩溃——当「最聪明的人」忽视尾部风险</h3>
+
+<div class="deep">
+  <div class="label">📖 1998年长期资本管理公司(LTCM)崩溃</div>
+  <p><strong>背景：</strong>LTCM由所罗门兄弟前副董事长John Meriwether创立，团队包括两位诺贝尔经济学奖得主（Myron Scholes和Robert Merton）。他们用复杂的数学模型进行收敛交易——当两只高度相关的债券价差偏离历史均值时，做空贵的、做多便宜的，赌价差会回归。</p>
+  <p><strong>为什么失败：</strong>
+    <br>① <strong>杠杆倍数：</strong>资产负债表杠杆约25倍，表外衍生品杠杆超过250倍——一点波动就是灾难
+    <br>② <strong>模型盲区：</strong>模型假设价差服从正态分布，但1998年俄罗斯违约是肥尾事件——价差不但不收敛，反而急剧扩大
+    <br>③ <strong>流动性陷阱：</strong>所有人都用类似的模型做类似的交易——当需要平仓时，没有对手盘
+    <br>④ <strong>尾部依赖：</strong>崩盘时所有资产相关性同时飙升——分散化瞬间失效</p>
+  <p><strong>塔勒布的点评：</strong>「LTCM的人在玩俄罗斯轮盘，一把左轮有1000个弹仓，但里面有一颗真子弹。他们赌那颗子弹永远不会来——而他们的模型告诉他们，这颗子弹每10亿年才来一次。问题在于，他们不是玩一把，他们每天都在玩。」</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 量化启示</div>
+  <p>① <strong>杠杆是反脆弱的敌人：</strong>高杠杆让系统从反脆弱变成脆弱——一个小冲击就可能是致命的<br>
+  ② <strong>模型不是现实：</strong>任何假设正态分布的模型都在低估尾部风险——金融市场的实际尾部是正态分布的10-100倍厚<br>
+  ③ <strong>拥挤交易=定时炸弹：</strong>当所有人都用类似的策略，策略本身就变成了风险源<br>
+  ④ <strong>相关性在危机中失效：</strong>崩盘时一切资产的相关性→1，分散化保护不了你</p>
+</div>
+
+<h3>案例二：2020年3月——COVID崩盘中的非对称机会</h3>
+
+<div class="deep">
+  <div class="label">📖 2020年3月全球市场崩盘</div>
+  <p><strong>事件：</strong>2020年2月19日至3月23日，标普500暴跌34%，史上最快熊市。恐慌指数VIX飙升至82.7。</p>
+  <p><strong>非对称机会在哪里：</strong>
+    <br>① <strong>杠铃策略显现：</strong>持有90%国债+10%深度虚值看跌期权的组合——国债在崩盘中上涨（避险），期权价值爆炸（波动率飙升）
+    <br>② <strong>老木匠时刻：</strong>3月23日——市场最恐慌的时刻——恰恰是过去10年最好的买入点。标普从3月23日低点到年底上涨了68%
+    <br>③ <strong>塔勒布的Universa基金：</strong>塔勒布担任顾问的尾部对冲基金Universa在2020年3月回报率超过4000%——正是「在别人被迫卖的时候你有弹药买」的完美示范</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 核心教训</div>
+  <p>① <strong>最好的机会出现在最恐慌的时刻：</strong>但你必须在恐慌之前就准备好了弹药（保守端的现金/国债）<br>
+  ② <strong>尾部对冲不是成本，是保险：</strong>平时看起来是「浪费」的期权费，在黑天鹅来临时是救命的<br>
+  ③ <strong>不要在恐慌中做决策：</strong>提前设定规则——「当VIX>40时，逐步加仓；当VIX>60时，更大胆」——用规则替代情绪</p>
+</div>
+
+<h3>案例三：老木匠的「便宜」实战——2013-2014年的茅台</h3>
+
+<div class="deep">
+  <div class="label">📖 2013-2014年茅台暴跌</div>
+  <p><strong>背景：</strong>2012年底反腐+塑化剂事件，茅台从2012年7月的266元跌至2014年1月的118元，跌幅56%。市场共识：白酒行业完了。</p>
+  <p><strong>老木匠式思考：</strong>
+    <br>① <strong>看一眼就知道便宜：</strong>2014年初茅台PE约8-10倍——不需要复杂的DCF，看一眼就知道「一个人明显是胖子」
+    <br>② <strong>逆向：</strong>所有人都在说「白酒没有未来了」「年轻人不喝白酒了」→ 这是逆向信号，不是卖出信号
+    <br>③ <strong>关键洞察：</strong>茅台不是「白酒公司」，是「品牌奢侈品公司」——它的护城河不是产量，是心智占有率。塑化剂和反腐不会摧毁这个护城河
+    <br>④ <strong>结果：</strong>从2014年低点到2021年高点，茅台上涨超过20倍</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 量化映射</div>
+  <p>① <strong>便宜信号：</strong>PE<历史10%分位 + PB<历史20%分位 + 股息率>历史80%分位 → 老木匠的「便宜三信号」<br>
+  ② <strong>逆向信号：</strong>分析师一致预期下调人数>上调人数×3 + 媒体负面报道激增 → 逆向买入窗口<br>
+  ③ <strong>护城河不变法则：</strong>问题是否威胁公司的核心护城河？塑化剂是食品安全事件（可修复）→ 不是护城河危机</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">LTCM崩溃的核心教训是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 模型不够复杂</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 高杠杆+正态分布假设+拥挤交易——三重错误同时发生</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 团队不专业</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 市场操纵</button>
+  <div class="quiz-result"><strong>答案：B。</strong> LTCM不是「坏运气」，是系统性设计缺陷。高杠杆让任何波动都是致命的，正态分布假设让模型根本看不到尾部风险，拥挤交易让平仓时没有出路。三个错误单独出现可能扛得住，同时出现=毁灭。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">2020年3月崩盘中最有价值的「弹药」是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 股票</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 现金+国债——在别人被迫卖出时，你还有能力买入</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 黄金</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 比特币</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 塔勒布的杠铃策略之所以有效，不是因为在崩盘中赚了很多钱，而是保守端的现金让你在全世界都在卖的时候还有能力买。这就是反脆弱的来源。</div>
+</div>
+`
+      },
+      {
+        id: 'quiz-module5',
+        title: '🧪 小测验 #1',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '塔勒布的核心策略是什么？',
+              options: ['预测黑天鹅', '减少对负面黑天鹅的暴露，增加对正面黑天鹅的暴露', '永远满仓', '分散投资到极致'],
+              correct: 1,
+              explain: '塔勒布不试图预测黑天鹅——他构建一个「在负面黑天鹅中不被打倒、在正面黑天鹅中能够受益」的结构。这就是反脆弱。'
+            },
+            {
+              q: '老木匠「买股票就是买股票」的核心含义是什么？',
+              options: ['否定价值投资', '承认散户无法像巴菲特那样控股/换管理层，必须考虑价格波动——灵活是散户唯一优势', '鼓励频繁交易', '否认基本面分析'],
+              correct: 1,
+              explain: '老木匠不是否定巴菲特，是承认自己和巴菲特不同。巴菲特买完可以换管理层，散户只能等别人出更高价。所以散户不能只研究基本面，还要考虑市场情绪和周期。'
+            },
+            {
+              q: '杠铃策略的保守端（90%）的作用是什么？',
+              options: ['追求高收益', '确保在最坏情况下你不会死——给你在别人被迫卖时还能买的特权', '赚取稳定利息', '对冲通胀'],
+              correct: 1,
+              explain: '保守端不是用来赚钱的，是用来「保命」的。它的价值在于：当市场崩盘、别人被迫卖出时，你还有弹药可以抄底。这就是反脆弱性的来源。'
+            },
+            {
+              q: '老木匠认为「便宜」的判断标准是什么？',
+              options: ['精确计算内在价值', 'DCF模型', '看一眼就知道便宜——不需要精确计算', 'PE<10'],
+              correct: 2,
+              explain: '老木匠说巴菲特的原话：「一个人是多少磅并不重要，关键是我们看一眼就知道他是一个胖子。」真正的便宜是一目了然的——如果还需要复杂的计算来证明它便宜，那它可能不够便宜。'
+            }
+          ]
+        }
+      }
+    ]
+  },
+{
+    title: '📜 模块六：金融史、泡沫与崩溃——历史的韵律',
+    lessons: [
+      {
+        id: 'dalio-machine',
+        title: '达利欧：经济机器与债务周期——理解宏观的底层操作系统',
+        emoji: '⚙️',
+        content: `
+<h3>经济就像一台机器，虽然复杂，但原理简单</h3>
+
+<div class="analogy">
+  <div class="label">⚙️ 达利欧的定位</div>
+  <p>巴菲特：告诉我好公司值多少钱（微观价值）<br>
+  芒格：告诉我怎么正确思考（多元模型）<br>
+  马克斯：告诉我现在该进攻还是防守（周期定位）<br>
+  <strong>达利欧：告诉我在历史周期中处于什么位置（宏观系统）</strong></p>
+</div>
+
+<h3>经济的三股驱动力</h3>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 840 200" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="20" width="800" height="70" rx="8" fill="rgba(63,185,80,0.08)" stroke="#3fb950" stroke-width="1"/>
+  <text x="420" y="45" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="700">① 生产力增长：每年约2% → 决定了「长期趋势线」（唯一真正创造财富的东西）</text>
+  <text x="420" y="65" text-anchor="middle" fill="#8b949e" font-size="11">知识积累 + 技术进步 + 资本积累</text>
+  
+  <rect x="20" y="105" width="800" height="35" rx="8" fill="rgba(210,153,29,0.08)" stroke="#d2991d" stroke-width="1"/>
+  <text x="420" y="128" text-anchor="middle" fill="#d2991d" font-size="12" font-weight="600">② 短期债务周期：5-8年一个循环 → 央行通过利率调控（过热加息、过冷降息）</text>
+  
+  <rect x="20" y="155" width="800" height="35" rx="8" fill="rgba(248,81,73,0.08)" stroke="#f85149" stroke-width="1"/>
+  <text x="420" y="178" text-anchor="middle" fill="#f85149" font-size="12" font-weight="600">③ 长期债务周期：50-75年一个循环 → 当短期周期失效时的「大重置」</text>
+</svg>
+</div>
+
+<h3>交易——经济的最小单元</h3>
+
+<div class="formula">
+  经济体 = 无数笔交易的总和<br>
+  每一笔交易：买方用货币/信用 交换 卖方的商品/服务/金融资产<br>
+  <span style="font-size:0.82em;color:var(--sub)">货币 + 信用 = 总支出 → 总支出 / 总产出 = 价格</span>
+</div>
+
+<h3>三大宏观驱动力在投资中的应用</h3>
+
+<div class="deep">
+  <div class="label">⚙️ 短期债务周期 → 择时</div>
+  <p>• 扩张期：央行降息→信贷扩张→消费投资增加→经济过热→央行加息<br>
+  • 收缩期：央行加息→信贷收缩→消费投资减少→经济过冷→央行降息<br>
+  • <strong>投资：</strong>扩张初期买入，扩张末期减仓；收缩末期买入</p>
+</div>
+
+<div class="deep">
+  <div class="label">⚙️ 长期债务周期 → 大趋势判断</div>
+  <p>• 当债务/GDP高到无法通过常规降息解决时 → 进入「去杠杆化」<br>
+  • 去杠杆化的四种方式：①债务削减 ②紧缩 ③财富转移 ④印钞<br>
+  • <strong>投资：</strong>长期债务周期顶部→减仓权益资产，增加黄金/实物资产</p>
+</div>
+
+<div class="deep">
+  <div class="label">⚙️ 去杠杆化的四种方式——达利欧的漂亮去杠杆</div>
+  <p><strong>丑陋的去杠杆：</strong>只做紧缩（①+②）→大萧条<br>
+  <strong>漂亮去杠杆：</strong>平衡四种方式——紧缩+债务重组+财富转移+印钞同时进行<br>
+  • 2008年美国就是「漂亮去杠杆」的典范<br>
+  • <strong>投资启示：</strong>识别当前处于去杠杆的哪个阶段，决定大类资产配置</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">达利欧认为，长期来看唯一真正创造财富的是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 印钞</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 生产力增长——知识积累+技术进步+资本积累</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 借贷</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 投机</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 达利欧反复强调：债务周期只是围绕生产力趋势线的波动。长期来看，只有生产力增长（知识+技术+资本）真正创造财富。借钱消费只是把未来的消费提前，必须用未来的生产力来偿还。</div>
+</div>
+`
+      },
+      {
+        id: 'bubble-anatomy',
+        title: '经典泡沫解剖——人性不变，历史永远重演',
+        emoji: '🫧',
+        content: `
+<h3>太阳底下没有新鲜事</h3>
+
+<div class="analogy">
+  <div class="label">🫧 金融史上最贵的四个字</div>
+  <p><strong>「这次不一样。」</strong></p>
+  <p>每一次泡沫，人们都说这句话。每一次泡沫，结果都一样。</p>
+</div>
+
+<h3>五大经典泡沫对比</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>泡沫</th><th>核心机制</th><th>现代映射</th><th>教训</th></tr>
+  <tr><td><strong>南海泡沫(1720)</strong></td><td>特许权炒作+全民投机</td><td>SPAC狂潮(2020-21)</td><td>任何东西都可以变成投机筹码</td></tr>
+  <tr><td><strong>1929大崩盘</strong></td><td>杠杆+保证金交易+银行混业</td><td>2021杠杆牛</td><td>杠杆是泡沫的加速器和引爆器</td></tr>
+  <tr><td><strong>2008金融危机</strong></td><td>复杂金融工程+评级失灵+信用崩塌</td><td>任何「新金融产品」</td><td>复杂≠安全。评级不可信</td></tr>
+  <tr><td><strong>LTCM(1998)</strong></td><td>诺奖得主+过度杠杆+模型盲点→40亿瞬间蒸发</td><td>AI量化模型过度自信</td><td>模型永远是对现实的简化</td></tr>
+  <tr><td><strong>日本泡沫(1989)</strong></td><td>资产价格永涨信仰+宽松货币</td><td>任何「XX永远涨」</td><td>「永远涨」是泡沫最可靠的标志</td></tr>
+</table>
+</div>
+
+<h3>明斯基时刻——稳定本身孕育着不稳定</h3>
+
+<div class="deep">
+  <div class="label">🫧 明斯基金融不稳定假说</div>
+  <p><strong>三个阶段：</strong></p>
+  <p>① <strong>对冲融资：</strong>借款人现金流能覆盖本息 → 安全<br>
+  ② <strong>投机融资：</strong>借款人现金流只够付息，本金需要续借 → 需要信贷持续宽松<br>
+  ③ <strong>庞氏融资：</strong>借款人现金流连利息都不够，靠资产价格上涨维持 → 一旦价格不涨就崩</p>
+  <p style="margin-top:8px"><strong>明斯基时刻：</strong>当系统从②过渡到③的那个节点——<span class="hl">越久的平静，越大的风暴。</span></p>
+</div>
+
+<h3>泡沫的共同模式</h3>
+
+<div class="step-list">
+  <div class="step-card">
+    <div class="num">1</div>
+    <div class="title">📈 位移</div>
+    <div class="desc">某种真正的创新或变革出现</div>
+  </div>
+  <div class="step-card">
+    <div class="num">2</div>
+    <div class="title">💰 信贷扩张</div>
+    <div class="desc">便宜的资金大量涌入</div>
+  </div>
+  <div class="step-card">
+    <div class="num">3</div>
+    <div class="title">🎉 狂热</div>
+    <div class="desc">「这次不一样」成为共识</div>
+  </div>
+  <div class="step-card">
+    <div class="num">4</div>
+    <div class="title">💥 困境</div>
+    <div class="desc">内部人悄悄退出</div>
+  </div>
+  <div class="step-card">
+    <div class="num">5</div>
+    <div class="title">📉 反转</div>
+    <div class="desc">某个触发事件引爆</div>
+  </div>
+</div>
+
+<div class="tip">
+  <div class="label">💡 达利欧式模板——每次危机前相同的信号</div>
+  <p>• 债务/GDP飙升<br>
+  • 资产价格泡沫（股市/房地产）<br>
+  • 政治极端化<br>
+  • 央行开始收紧货币政策<br>
+  <strong>四个信号同时出现 = 高风险期。不是预测，是识别。</strong></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">明斯基时刻的核心含义是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 市场永远上涨</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 稳定本身孕育着不稳定——越久的平静，越大的风暴</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 应该永远满仓</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 政府会救市</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 明斯基指出：在经济长期稳定期，人们会越来越敢于加杠杆——从对冲融资→投机融资→庞氏融资。稳定本身让人忘记风险，而忘记风险恰恰是最大风险。这是金融史上最深刻的悖论。</div>
+</div>
+`
+      },
+      {
+        id: 'zhou-kondratieff',
+        title: '周金涛：人生就是一场康波——财富的波动不是线性的',
+        emoji: '🌊',
+        content: `
+<h3>周金涛最重要的一句话</h3>
+
+<div class="analogy">
+  <div class="label">🌊 人生财富靠康波</div>
+  <p><strong>「人生就是一场康波。人生的财富积累，根本不是你有多努力，而是你是否踩准了周期的节奏。」</strong></p>
+  <p>— 周金涛（中信建投首席经济学家，中国康波研究第一人，2016年病逝）</p>
+</div>
+
+<h3>康波周期的四阶段</h3>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 840 180" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wave curve -->
+  <path d="M 30 150 Q 150 150 200 90 Q 250 30 400 30 Q 550 30 600 100 Q 650 160 810 160" 
+        fill="none" stroke="#e28413" stroke-width="2.5"/>
+  
+  <!-- Phase labels -->
+  <text x="130" y="170" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="700">🌱 回升/繁荣</text>
+  <text x="300" y="20" text-anchor="middle" fill="#e28413" font-size="12" font-weight="700">🔴 过热/顶部</text>
+  <text x="500" y="170" text-anchor="middle" fill="#f85149" font-size="12" font-weight="700">📉 衰退/萧条</text>
+  <text x="720" y="20" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="700">🔄 回升启动</text>
+
+  <!-- Time markers -->
+  <line x1="30" y1="130" x2="30" y2="155" stroke="#8b949e" stroke-width="0.8"/>
+  <text x="30" y="100" fill="#8b949e" font-size="10">第5波</text>
+  <text x="400" y="100" fill="#8b949e" font-size="10">≈50-60年一个完整周期</text>
+  <text x="810" y="100" fill="#8b949e" font-size="10">第6波?</text>
+</svg>
+</div>
+
+<h3>周金涛的关键预测：2015-2025 萧条期</h3>
+
+<div class="deep">
+  <div class="label">🌊 康波中的位置</div>
+  <p>• 第5次康波（信息技术革命）从1980年代开始，2000-2010繁荣，2015后进入萧条<br>
+  • 萧条期的特征：资产价格低迷、大宗商品熊市、经济增速放缓<br>
+  • <strong>现在（2026）：</strong>处于第5次康波萧条末期→第6次康波（AI+能源革命）回升初期</p>
+</div>
+
+<h3>康波周期对投资的启示</h3>
+
+<div class="deep">
+  <div class="label">🌊 三大财富密码</div>
+  <p><strong>① 人生只有三次康波机会：</strong>一个康波约50-60年，一个人的黄金投资期约30年，最多赶上两次繁荣期。错过一次，就少了一半的机会。<br>
+  <strong>② 萧条期是布局期：</strong>康波萧条期资产价格最便宜——虽然痛苦，但是播种的季节。<br>
+  <strong>③ 繁荣期是收获期：</strong>不要在繁荣期才入场——那时资产已经很贵。入场时机决定了最终收益。</p>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 康波思维的误区</div>
+  <p>康波不是精确的时间表——它是「模糊的正确」，用来定位大方向。不要用它做精确择时。周金涛本人也说过：周期可以识别大方向，但无法精确到年。用来理解「我们现在在哪」，而不是「下个月该买什么」。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">周金涛「人生就是一场康波」的核心含义是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 努力不重要</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 财富的波动不是线性的——踩准周期节奏比个人努力更重要</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 应该频繁交易</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 技术分析最重要</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 一个人在康波萧条期出生的投资回报，和在繁荣期出生的完全不同——不是因为谁更努力，而是周期位置不同。理解这一点，就不会在萧条期绝望，也不会在繁荣期自大。努力决定下限，周期位置决定上限。</div>
+</div>
+`
+      },
+      {
+        id: 'japan-bubble',
+        title: '深度案例：日本泡沫经济——人类史上最昂贵的泡沫',
+        emoji: '🏯',
+        content: `
+<h3>为什么研究日本泡沫？——因为它是一面镜子</h3>
+
+<div class="analogy">
+  <div class="label">🏯 日本泡沫(1985-1990)为什么重要？</div>
+  <p>日本泡沫是人类金融史上<strong>估值最高、持续时间最长、后遗症最深远</strong>的泡沫之一。更关键的是——今天的中国与当年的日本有太多相似之处：老龄化、房地产主导、出口驱动增长见顶、央行宽松。读日本泡沫，就是读一面可能照到自己的镜子。</p>
+</div>
+
+<h3>泡沫的时间线：从广场协议到崩盘</h3>
+
+<div class="deep">
+  <div class="label">📅 关键时间节点</div>
+  <table>
+    <tr><th style="text-align:left;padding:6px 12px">时间</th><th style="text-align:left;padding:6px 12px">事件</th><th style="text-align:left;padding:6px 12px">市场反应</th></tr>
+    <tr><td style="padding:6px 12px">1985.09</td><td style="padding:6px 12px">广场协议——日元被迫升值</td><td style="padding:6px 12px">日股开始上涨</td></tr>
+    <tr><td style="padding:6px 12px">1986-1987</td><td style="padding:6px 12px">央行大幅降息（5%→2.5%）应对日元升值冲击</td><td style="padding:6px 12px">资产价格开始脱离基本面</td></tr>
+    <tr><td style="padding:6px 12px">1987-1989</td><td style="padding:6px 12px">企业用低成本资金疯狂炒股炒地</td><td style="padding:6px 12px"><strong>日经从20,000→38,957</strong></td></tr>
+    <tr><td style="padding:6px 12px">1989.12</td><td style="padding:6px 12px">日经225触及38,957历史最高点</td><td style="padding:6px 12px">PE=60倍（标普同期15倍）</td></tr>
+    <tr><td style="padding:6px 12px">1990.01</td><td style="padding:6px 12px">央行开始加息，限制房地产贷款</td><td style="padding:6px 12px">股市开始下跌</td></tr>
+    <tr><td style="padding:6px 12px">1990-1992</td><td style="padding:6px 12px">股市暴跌60%，地产腰斩</td><td style="padding:6px 12px"><strong>失去的十年开始</strong></td></tr>
+    <tr><td style="padding:6px 12px">1992-至今</td><td style="padding:6px 12px">零利率+量化宽松+财政刺激</td><td style="padding:6px 12px">日经至今未回到1989年高点</td></tr>
+  </table>
+</div>
+
+<h3>泡沫的五大驱动因素——放在今天的中国看</h3>
+
+<div class="deep">
+  <div class="label">🔍 日本泡沫的五重奏</div>
+  <p><strong>① 汇率冲击→超宽松货币：</strong>广场协议后日元2年内升值50%，严重冲击出口。央行被迫将利率从5%降至2.5%，并维持了2年3个月。大量廉价资金涌入股市和地产。<br>
+  <span class="hl">对照中国：</span>2015年汇改后人民币贬值压力，央行长期维持偏宽松货币环境。</p>
+  
+  <p><strong>② 企业「财技」替代主业：</strong>日本企业以极低成本融资，然后用这些钱炒股炒地——金融收益超过主业利润。1987-1989年，日本企业金融收益占总利润的40-60%。<br>
+  <span class="hl">对照中国：</span>部分上市公司理财+炒股收益超过主业利润的现象值得警惕。</p>
+  
+  <p><strong>③ 银行「土地本位」：</strong>银行以土地为抵押品放贷→土地价格上涨→抵押品价值上升→更多贷款→土地价格进一步上涨。1989年东京皇宫的地价超过整个加州。<br>
+  <span class="hl">对照中国：</span>2016-2020年房地产抵押贷款的正反馈循环。</p>
+
+  <p><strong>④ 「这次不一样」的集体信念：</strong>日本独特论——日本式经营、终身雇佣、高储蓄率、技术立国，都成了「日本不会崩盘」的理由。就像2007年美国的「大稳健」论点。<br>
+  <span class="hl">核心教训：</span>每次泡沫都有一整套自洽的理论解释为什么「这次不一样」。</p>
+
+  <p><strong>⑤ 政策失误：</strong>1990年央行同时加息+限制房地产贷款，双管齐下刺破泡沫——不是温柔放气，是直接戳爆。<br>
+  <span class="hl">核心教训：</span>泡沫管理最难的从来不是「识别泡沫」，而是「怎么以不引发崩盘的方式退出」。</p>
+</div>
+
+<h3>泡沫后遗症：失去的三十年</h3>
+
+<div class="deep">
+  <div class="label">📉 不只是股市不涨</div>
+  <p><strong>资产负债表衰退（辜朝明理论）：</strong>泡沫破裂后，企业和家庭资产大幅缩水，但债务不变。集体行为从「利润最大化」转为「债务最小化」——即使利率为零也不借钱投资。这就是日本零利率无效的根本原因。</p>
+  <p><strong>量化信号——泡沫破灭前的共同特征：</strong><br>
+  ① Shiller PE > 30且仍在上升（日本1989年PE=60）<br>
+  ② 家庭资产中房地产占比 > 60%（日本泡沫期超70%）<br>
+  ③ 企业金融收益/经营利润 > 30%<br>
+  ④ 银行对地产建筑业贷款占比 > 25%<br>
+  ⑤ 5年内房价涨幅 > 100%</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 对量化投资者的核心启示</div>
+  <p>① <strong>估值极端值不会永远持续：</strong>PE=60意味着即使盈利不变，需要60年回本——这需要极不合理的增长假设<br>
+  ② <strong>识别「这次不一样」叙事：</strong>当一个市场中出现了系统性的「XX永远涨」「XX永远不会跌」的叙事→这是泡沫的必要不充分条件<br>
+  ③ <strong>关注资金流向结构：</strong>企业金融收益占比和银行地产贷款占比是两个被低估的泡沫预警指标<br>
+  ④ <strong>退出时机比识别更重要：</strong>知道泡沫存在不够，关键是在它破裂之前退出——而「退出」往往比「不参与」更难做到</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">日本泡沫中企业「财技」替代主业的信号是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 企业利润下降</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 金融收益占总利润40-60%——企业不靠经营赚钱，靠炒股炒地</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 出口减少</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 员工工资下降</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 当企业的主要利润来源不是主营业务而是金融投资时，这是经济金融化的危险信号。今天任何经济体中企业金融收益占比快速上升都应引起警惕。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">辜朝明「资产负债表衰退」理论的核心是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 日本人不爱消费</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 泡沫破裂后，企业和家庭从「利润最大化」转为「债务最小化」——即使零利率也不借钱</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 政府干预太多</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 人口老龄化</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这一理论解释了为什么日本零利率+量化宽松都拉不动经济——不是因为货币政策不够松，而是借款人消失了。这对理解当前中国的「流动性陷阱」风险有直接参考价值。</div>
+</div>
+`
+      },
+      {
+        id: 'quiz-module6',
+        title: '🧪 小测验 #2',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '达利欧的「漂亮去杠杆」指什么？',
+              options: ['只紧缩', '平衡四种方式——紧缩+债务重组+财富转移+印钞同时进行', '只印钞', '不干预'],
+              correct: 1,
+              explain: '漂亮去杠杆平衡使用四种工具，避免经济崩溃。2008年美国就是典范——丑陋去杠杆是大萧条（只紧缩）。投资者需要识别当前处于去杠杆的哪个阶段。'
+            },
+            {
+              q: 'LTCM崩溃的核心教训是什么？',
+              options: ['不要用杠杆', '诺奖得主+过度杠杆+模型盲点——模型永远是对现实的简化，极端事件会超出模型覆盖范围', '不要做量化', '不要用衍生品'],
+              correct: 1,
+              explain: 'LTCM有两位诺奖得主和华尔街最聪明的人，但他们的模型用平均斯坦的工具度量极端斯坦的市场。一次俄罗斯违约就蒸发了40亿美元。这个教训对今天的AI量化模型同样适用。'
+            },
+            {
+              q: '康波周期的长度大约是多少？',
+              options: ['1-2年', '5-8年', '50-60年', '100年以上'],
+              correct: 2,
+              explain: '康波周期约50-60年，一个人的黄金投资期约30年，最多赶上两次繁荣期。周金涛说：人生只有三次康波机会，错过一次就少了一半。'
+            },
+            {
+              q: '所有泡沫的共同模式中，第3阶段是什么？',
+              options: ['位移（创新出现）', '信贷扩张', '狂热——「这次不一样」成为共识', '反转'],
+              correct: 2,
+              explain: '泡沫五阶段：①位移②信贷扩张③狂热（「这次不一样」）④困境（内部人退出）⑤反转。识别「这次不一样」的叙事，是发现泡沫最可靠的信号。'
+            }
+          ]
+        }
+      }
+    ]
+
+  },
+  {
+    title: '📉 模块七：秃鹫投资与事件驱动实战',
+    lessons: [
+{
+        id: 'vulture-investing',
+        title: '破产重组与困境证券：价值博弈的艺术',
+        emoji: '📉',
+        content: `
+<h3>秃鹫投资者：在尸体上觅食——但这需要极高的专业性</h3>
+<div class="analogy">
+  <div class="label">🦅 秃鹫类比</div>
+  <p>秃鹫不吃活物——它们等动物死了才去吃。<br>
+  <strong>秃鹫投资者</strong>不在公司蒸蒸日上时买入，而是在公司陷入困境、破产重组时进入。<br>
+  不是因为喜欢「悲惨」，而是因为：<span class="hl">困境=价值被错误定价=巨大的安全边际。</span></p>
+</div>
+
+<h3>秃鹫投资的三大战场</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>战场</th><th>场景</th><th>核心技能</th><th>代表人物</th></tr>
+  <tr><td><strong>破产重组</strong></td><td>公司申请破产保护，原股东出局，债权人获得新股权</td><td>法律+财务+债权优先级分析</td><td>霍华德·马克斯</td></tr>
+  <tr><td><strong>困境证券</strong></td><td>公司濒临违约，债券跌到30-50美分</td><td>清算价值vs持续经营价值判断</td><td>大卫·泰珀</td></tr>
+  <tr><td><strong>特殊情况</strong></td><td>分拆上市·资产出售·资本重组</td><td>事件路径+定价分析</td><td>乔尔·格林布拉特</td></tr>
+</table>
+</div>
+
+<h3>清算价值 vs 持续经营价值——秃鹫投资的核心判断</h3>
+<div class="diagram-svg">
+<svg viewBox="0 0 780 200" xmlns="http://www.w3.org/2000/svg">
+  <rect x="30" y="20" width="310" height="70" rx="10" fill="rgba(226,132,19,0.08)" stroke="#e28413" stroke-width="1.5"/>
+  <text x="185" y="48" text-anchor="middle" fill="#e28413" font-size="14" font-weight="700">🏚️ 清算价值</text>
+  <text x="185" y="74" text-anchor="middle" fill="#8b949e" font-size="12">把公司拆了卖零件值多少钱</text>
+
+  <text x="360" y="58" fill="#e28413" font-size="20" font-weight="700">vs</text>
+
+  <rect x="400" y="20" width="350" height="70" rx="10" fill="rgba(63,185,80,0.08)" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="575" y="48" text-anchor="middle" fill="#3fb950" font-size="14" font-weight="700">🏢 持续经营价值</text>
+  <text x="575" y="74" text-anchor="middle" fill="#8b949e" font-size="12">如果公司继续经营下去值多少钱</text>
+
+  <rect x="80" y="120" width="620" height="60" rx="8" fill="rgba(226,132,19,0.06)" stroke="#e28413" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="390" y="145" text-anchor="middle" fill="#e28413" font-size="14" font-weight="700">🔑 核心判断</text>
+  <text x="390" y="168" text-anchor="middle" fill="#e6edf3" font-size="12">如果清算价值 > 持续经营价值 → 公司该拆了（但管理层不会主动拆）→ 秃鹫投资者的机会</text>
+</svg>
+</div>
+
+<h3>格林布拉特的「特殊情况投资」框架</h3>
+<p>乔尔·格林布拉特是特殊情况投资的大师，他的核心方法：</p>
+<ol>
+  <li><strong>风险套利：</strong>已宣布的并购交易中，目标公司股价通常低于收购价——这个价差就是套利空间。年化回报=(收购价-当前价)/当前价×(365/预计天数)</li>
+  <li><strong>分拆上市：</strong>母公司分拆子公司上市→子公司往往被机构卖出（不在原持有范围内）→短期错误定价→买入窗口</li>
+  <li><strong>破产重组：</strong>买入破产公司的债券(跌到30-50美分)→重组后获得新公司股权→复原增值</li>
+  <li><strong>资本重组：</strong>公司出售非核心资产/大规模回购→股价重估</li>
+</ol>
+
+<div class="warning">
+  <div class="label">⚠️ 秃鹫投资的危险</div>
+  <p>• 你需要理解破产法、债权优先级、重组流程——这不是「看PE低就买」<br>
+  • 清算价值很难精确计算——存货可能卖不掉，应收账款可能收不回来<br>
+  • 时间不确定——重组可能拖几年，期间资产可能继续贬值<br>
+  • <strong>不适合没有法律/财务专业知识的普通投资者</strong>——可以学习思维，但实操需谨慎</p>
+</div>
+`
+      },
+      {
+        id: 'quiz-3',
+        title: '🧪 小测验 #3',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '秃鹫投资中，「清算价值」和「持续经营价值」的关系决定了什么？',
+              options: [
+                '决定公司该不该继续存在',
+                '决定PE是多少',
+                '决定分红率',
+                '没有关系'
+              ],
+              correct: 0,
+              explain: '如果清算价值>持续经营价值，说明公司拆了卖零件比继续经营更值钱——这是秃鹫投资者的核心判断逻辑。但管理层通常不会主动拆公司，需要外部力量推动。'
+            },
+            {
+              q: '格林布拉特的「特殊情况投资」不包括以下哪一项？',
+              options: [
+                '并购套利',
+                '分拆上市',
+                '破产重组',
+                '追涨热门股'
+              ],
+              correct: 3,
+              explain: '格林布拉特专注非主流机会：并购套利、分拆上市、破产重组、资本重组。他从不追涨热门股——这些已经是「共识」了，没有错误定价空间。'
+            }
+          ]
+        }
+      },
+{
+        id: 'event-driven',
+        title: '事件驱动：在特定催化事件中捕捉确定性',
+        emoji: '⚡',
+        content: `
+<h3>事件驱动 = 找到有「催化剂」的投资机会</h3>
+<div class="analogy">
+  <div class="label">🎬 导演类比</div>
+  <p>普通价值投资像是在等电影自然上映——你不知道具体时间。<br>
+  事件驱动投资像是拿着排片表的发行商——你知道<strong>什么事件在什么时间会发生</strong>，以及这件事会如何影响股价。</p>
+</div>
+
+<h3>四大事件驱动策略</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>策略类型</th><th>原理</th><th>收益来源</th><th>时间框架</th></tr>
+  <tr><td><strong>并购套利</strong></td><td>已宣布收购→目标公司股价<收购价</td><td>价差收敛</td><td>3-12个月</td></tr>
+  <tr><td><strong>分拆上市</strong></td><td>母公司分拆→被机构强制卖出→低估值</td><td>估值修复</td><td>6-24个月</td></tr>
+  <tr><td><strong>破产重组</strong></td><td>债券跌到30-50美分→重组后换股</td><td>复原增值</td><td>1-3年</td></tr>
+  <tr><td><strong>A股特有</strong></td><td>ST摘帽·定增·股权争夺·国企改革</td><td>事件催化</td><td>不定</td></tr>
+</table>
+</div>
+
+<h3>并购套利：概率 + 时间加权的期望收益</h3>
+<div class="deep">
+  <div class="label">🧮 计算方法</div>
+  <p>假设A公司宣布以100元/股收购B公司，B当前股价85元：</p>
+  <p>• 成功概率80%：80% × (100-85) = 12元期望收益<br>
+  • 失败概率20%：20% × (70-85) = -3元期望亏损（假设失败后跌到70）<br>
+  • <strong>期望收益 = 12 - 3 = 9元</strong>（期望回报率 = 9/85 = 10.6%）</p>
+  <p>年化 = 10.6% × (365/预计完成天数)</p>
+</div>
+
+<h3>A股特有的事件驱动机会</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>事件类型</th><th>触发条件</th><th>机会逻辑</th><th>风险</th></tr>
+  <tr><td><strong>ST摘帽</strong></td><td>ST公司扭亏为盈，撤销风险警示</td><td>摘帽前后估值修复，机构重新纳入股票池</td><td>业绩不可持续，二次戴帽</td></tr>
+  <tr><td><strong>定增/配股</strong></td><td>上市公司计划增发融资</td><td>定增价通常折价→股价有「托底」效应</td><td>增发摊薄每股收益</td></tr>
+  <tr><td><strong>股权争夺</strong></td><td>多个大股东争夺控制权</td><td>竞相增持→推高股价</td><td>争夺结束→股价回落</td></tr>
+  <tr><td><strong>国企改革</strong></td><td>混改·资产注入·整体上市</td><td>资产重组→估值重塑</td><td>时间不确定，方案反复</td></tr>
+  <tr><td><strong>高送转</strong></td><td>高比例送转股方案</td><td>除权前有抢权行情</td><td>纯炒作，无基本面支撑</td></tr>
+</table>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 事件驱动投资的铁律</div>
+  <p>1. <strong>事件必须已经宣布</strong>——不要押注「可能会发生」的事件，那不是投资是赌博<br>
+  2. <strong>计算期望收益</strong>——不是「如果成功能赚多少」，而是「考虑失败概率后的期望值」<br>
+  3. <strong>分散</strong>——单个套利交易可能因监管否决而失败，需要多笔交易分摊风险</p>
+</div>
+`
+      },
+      {
+        id: 'quiz-4',
+        title: '🧪 小测验 #4',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '并购套利的年化回报应该怎么算？',
+              options: [
+                '（收购价-当前价）= 回报',
+                '将期望收益年化：期望收益/当前价 × (365/预计天数)',
+                '看PE',
+                '不需要算'
+              ],
+              correct: 1,
+              explain: '并购套利关键：考虑失败概率后的期望收益 ÷ 当前价格 × (365/预计完成天数)。如果并购3个月完成，单笔收益5%，年化就是~20%。时间越短，年化越高。'
+            },
+            {
+              q: 'A股ST摘帽的机会逻辑是什么？',
+              options: [
+                'ST公司最安全',
+                '扭亏后撤销风险警示→机构重新纳入股票池→估值修复',
+                'ST公司分红最多',
+                '没有逻辑'
+              ],
+              correct: 1,
+              explain: 'ST公司摘帽后：①风险警示撤销→更多投资者可以买（很多基金不允许买ST）②财务指标恢复→估值从「困境」回归正常。但前提是业绩可持续，如果只是靠卖资产扭亏，二次戴帽风险极大。'
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    title: '📊 模块八：非对称量化与安全边际',
+    lessons: [
+{
+        id: 'asymmetric-metrics',
+        title: '量化非对称：收益分布偏度、下行保护和凯利公式',
+        emoji: '📊',
+        content: `
+<h3>非对称投资的数学——让直觉变成可计算的策略</h3>
+<div class="analogy">
+  <div class="label">🎰 赌场类比</div>
+  <p>赌场的商业模式就是非对称收益的极致：<br>
+  每一把：赌场赢的概率51%，你赢的概率49%。<br>
+  <strong>期望值 = 51%×小赚 - 49%×小赔 = 微正。</strong><br>
+  但赌场开了100年——为什么？因为<strong>它做了无数次交易，大数定律让它稳赚。</strong></p>
+</div>
+
+<h3>核心指标一：收益分布偏度（Skewness）</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>偏度类型</th><th>特征</th><th>投资策略</th><th>例子</th></tr>
+  <tr><td><strong>正偏度</strong></td><td>大多数时候小亏，偶尔大赚</td><td class="hl3">✅ 追求此类</td><td>买期权·困境股·早期投资</td></tr>
+  <tr><td><strong>零偏度</strong></td><td>收益对称，正态分布</td><td>— 中性</td><td>宽基指数定投</td></tr>
+  <tr><td><strong>负偏度</strong></td><td>大多数时候小赚，偶尔大亏</td><td class="hl4">❌ 避免此类</td><td>卖期权·高杠杆·火鸡</td></tr>
+</table>
+</div>
+
+<h3>核心指标二：下行保护量化</h3>
+<div class="deep">
+  <div class="label">🔢 关键比率</div>
+  <p><strong>非对称比 = 最大可能收益 / 最大可能损失</strong></p>
+  <p>• 非对称比 > 3 → 好机会（赚3块钱只冒亏1块钱的风险）<br>
+  • 非对称比 1-3 → 一般（需要更高的胜率补偿）<br>
+  • 非对称比 < 1 → 灾难（亏的钱比赚的还多——反向非对称）</p>
+</div>
+
+<h3>核心指标三：凯利公式——仓位管理的最优解</h3>
+<div class="diagram-svg">
+<svg viewBox="0 0 780 180" xmlns="http://www.w3.org/2000/svg">
+  <rect x="80" y="15" width="620" height="80" rx="10" fill="rgba(226,132,19,0.08)" stroke="#e28413" stroke-width="2"/>
+  <text x="390" y="48" text-anchor="middle" fill="#e28413" font-size="18" font-weight="700">📐 凯利公式： f* = (p × b - q) / b</text>
+  <text x="390" y="72" text-anchor="middle" fill="#e6edf3" font-size="14">p = 胜率 · b = 盈亏比（赔率） · q = 败率(1-p) · f* = 最优仓位比例</text>
+  <text x="390" y="92" text-anchor="middle" fill="#8b949e" font-size="12">f* > 0 → 可以下注 · f* &lt; 0 → 不下注（期望为负）</text>
+
+  <rect x="80" y="115" width="280" height="50" rx="8" fill="rgba(63,185,80,0.06)" stroke="#3fb950" stroke-width="1"/>
+  <text x="220" y="138" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="700">例1：p=60% b=2</text>
+  <text x="220" y="156" text-anchor="middle" fill="#e6edf3" font-size="12">f*=(0.6×2-0.4)/2=40%仓位</text>
+
+  <rect x="400" y="115" width="300" height="50" rx="8" fill="rgba(248,81,73,0.06)" stroke="#f85149" stroke-width="1"/>
+  <text x="550" y="138" text-anchor="middle" fill="#f85149" font-size="13" font-weight="700">例2：p=30% b=5</text>
+  <text x="550" y="156" text-anchor="middle" fill="#e6edf3" font-size="12">f*=(0.3×5-0.7)/5=16%仓位</text>
+</svg>
+</div>
+
+<h3>凯利公式在投资中的实际应用</h3>
+<div class="tip">
+  <div class="label">💡 实战要点</div>
+  <p>1. <strong>凯利公式给出的是理论上限</strong>——实际仓位应该更保守（半凯利或更少）<br>
+  2. <strong>最大的难点：</strong>胜率p和盈亏比b都是你估计的，你可能高估了<br>
+  3. 如果f*计算出来是负的 → <span class="hl4">绝对不下注</span>——期望值为负的交易永远不要做<br>
+  4. f* > 50%时也要谨慎——你很可能高估了胜率</p>
+</div>
+
+<h3>互动计算器：算你的最优仓位</h3>
+<div class="calc-grid">
+  <div class="calc-input">
+    <label>胜率 p（%）</label>
+    <input type="range" min="10" max="90" value="55" id="kelly-p" oninput="calcKelly()" style="width:100%">
+    <span id="kelly-p-v" style="font-size:0.9em;color:var(--accent)">55%</span>
+  </div>
+  <div class="calc-input">
+    <label>盈亏比 b（对了赚几倍于亏的钱）</label>
+    <input type="range" min="0.5" max="10" step="0.5" value="2" id="kelly-b" oninput="calcKelly()" style="width:100%">
+    <span id="kelly-b-v" style="font-size:0.9em;color:var(--accent)">2.0</span>
+  </div>
+  <div class="calc-result">
+    <div class="clabel">最优仓位 f*</div>
+    <div class="cval" id="kelly-result">32.5%</div>
+    <div id="kelly-advice" style="font-size:0.85em;color:var(--sub);margin-top:4px"></div>
+  </div>
+</div>
+`
+      },
+      {
+        id: 'quiz-6',
+        title: '🧪 小测验 #6',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '正偏度（Positive Skew）的投资策略有什么特征？',
+              options: [
+                '大多数时候大赚，偶尔小亏',
+                '大多数时候小亏，偶尔大赚——这正是反脆弱投资追求的',
+                '每次赚的一样多',
+                '每次都亏'
+              ],
+              correct: 1,
+              explain: '正偏度=大多数时候小亏+偶尔大赚。这正是买期权、困境投资、风险投资的收益特征。塔勒布的杠铃策略（90%安全+10%激进）就是在构建正偏度的回报分布。'
+            },
+            {
+              q: '凯利公式 f* = (p×b - q)/b 中，如果计算结果 f*=0%，意味着什么？',
+              options: [
+                '可以全仓',
+                '不值得下注——期望值为零或负',
+                '应该半仓',
+                '公式出错了'
+              ],
+              correct: 1,
+              explain: 'f* ≤ 0 意味着这笔交易的期望值≤0。凯利公式告诉你：不下注。这就是数学版的「Stop Doing List」——不是凭感觉判断，是用公式验证。'
+            }
+          ]
+        }
+      },
+{
+        id: 'stress-test',
+        title: '压力测试三情景：乐观·基准·崩溃',
+        emoji: '🛡️',
+        content: `
+<h3>不是预测未来——是为所有可能的未来做准备</h3>
+<div class="analogy">
+  <div class="label">🏗️ 抗震建筑类比</div>
+  <p>你不能预测地震什么时候来。但你可以建造<strong>抗震楼</strong>。<br>
+  投资也一样：你不能预测黑天鹅什么时候来，但你可以<strong>测试你的组合在极端情景下会不会崩</strong>。<br>
+  这就是压力测试的意义——<span class="hl">不是为了预测，是为了准备。</span></p>
+</div>
+
+<h3>三情景压力测试框架</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>情景</th><th>假设</th><th>发生概率</th><th>组合表现</th><th>行动</th></tr>
+  <tr><td><span class="hl3">🟢 乐观</span></td><td>经济复苏·利率下降·盈利超预期</td><td>25%</td><td>+30-50%</td><td>逐步兑现利润</td></tr>
+  <tr><td><span class="hl2">🟡 基准</span></td><td>经济平稳·利率中性·盈利符合预期</td><td>55%</td><td>+8-12%</td><td>持有不动</td></tr>
+  <tr><td><span class="hl4">🔴 崩溃</span></td><td>金融危机·信用紧缩·盈利腰斩</td><td>20%</td><td>-40-60%</td><td>确保能活下来</td></tr>
+</table>
+</div>
+
+<h3>最关键的测试：「买错了会怎样」——逆向测算</h3>
+<div class="deep">
+  <div class="label">🔍 破产清算情景下的最低估值</div>
+  <p>假设你以100元买入一家公司，你应该问自己：</p>
+  <p><strong>问题1：</strong>如果公司破产清算，我能拿回多少钱？<br>
+  → 清算价值 = 现金 + 应收账款×0.5 + 存货×0.3 + 固定资产×0.2 - 全部负债<br>
+  → 如果清算价值 > 买入价 → <span class="hl3">无风险套利</span></p>
+  <p><strong>问题2：</strong>如果盈利下降50%，PE压缩一半，股价是多少？<br>
+  → 戴维斯双杀价格 = 买入价 × 0.5 × 0.5 = <span class="hl4">买入价的25%</span><br>
+  → 你能承受75%的亏损吗？</p>
+  <p><strong>问题3：</strong>在最坏情况下，公司还需要多少钱才能活下去？<br>
+  → 现金/月消耗 = 存活月数<br>
+  → 如果<6个月 → <span class="hl4">极度危险</span></p>
+</div>
+
+<h3>极限测试互动：调整参数看结果</h3>
+<div class="calc-grid">
+  <div class="calc-input">
+    <label>买入价（元）</label>
+    <input type="number" id="st-price" value="100" oninput="calcStress()">
+  </div>
+  <div class="calc-input">
+    <label>利润下降幅度（%）</label>
+    <input type="range" min="10" max="90" value="50" id="st-earn" oninput="calcStress()" style="width:100%">
+    <span id="st-earn-v" style="font-size:0.9em;color:var(--accent)">50%</span>
+  </div>
+  <div class="calc-input">
+    <label>PE压缩幅度（%）</label>
+    <input type="range" min="10" max="90" value="50" id="st-pe" oninput="calcStress()" style="width:100%">
+    <span id="st-pe-v" style="font-size:0.9em;color:var(--accent)">50%</span>
+  </div>
+  <div class="calc-result">
+    <div class="clabel">崩溃情景股价</div>
+    <div class="cval" id="st-result" style="color:#f85149">25.0 元</div>
+    <div id="st-advice" style="font-size:0.85em;color:var(--sub);margin-top:4px">亏损幅度：75%</div>
+  </div>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 残酷真相</div>
+  <p>如果你发现崩溃情景下的亏损幅度超过50%，而你无法承受——<strong>不是加保险，是减仓位。</strong>仓位是唯一真正可控的风险变量。</p>
+</div>
+
+<div class="quote-box">
+  <p>"投资的第一条规则是不要亏钱。第二条规则是不要忘记第一条。"</p>
+  <div style="color:var(--accent2);font-size:0.85rem;margin-top:8px;font-style:normal">— 沃伦·巴菲特</div>
+</div>
+`
+      },
+      {
+        id: 'quiz-7',
+        title: '🧪 小测验 #7',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '压力测试三情景中最重要的是哪个？',
+              options: [
+                '乐观情景——因为赚钱是目的',
+                '崩溃情景——只有确保在最坏情况下能活下来，才有资格谈收益',
+                '基准情景——最常见',
+                '三个一样重要'
+              ],
+              correct: 1,
+              explain: '塔勒布的遍历性原理：如果你在最坏情况下会死（清零），你永远活不到收益兑现的那一天。压力测试的第一问永远是：「我会不会死？」不会死 → 再谈收益。'
+            },
+            {
+              q: '戴维斯双杀是什么？股价会跌多少？（利润降50%+PE压缩50%）',
+              options: [
+                '跌50%',
+                '跌75%——利润×PE=0.5×0.5=0.25，只剩原来的1/4',
+                '跌25%',
+                '不会跌'
+              ],
+              correct: 1,
+              explain: '戴维斯双杀=利润下降×PE压缩=0.5×0.5=股价只剩25%。不是加法的-50%-50%=-100%，是乘法的×0.5×0.5=×0.25。这就是为什么安全边际如此重要。'
+            }
+          ]
+        }
+      },
+{
+        id: 'vulture-toolbox',
+        title: '困境识别工具：从Altman Z-score到事件套利日历',
+        emoji: '🧰',
+        content: `
+<h3>秃鹫投资者的武器库——从经典模型到实战框架</h3>
+
+<h3>工具一：Altman Z-score——破产预测经典模型</h3>
+<div class="deep">
+  <div class="label">🧮 公式</div>
+  <p><strong>Z = 1.2A + 1.4B + 3.3C + 0.6D + 1.0E</strong></p>
+  <p>A = 营运资金/总资产 · B = 留存收益/总资产 · C = EBIT/总资产<br>
+  D = 市值/总负债 · E = 销售额/总资产</p>
+</div>
+<div class="table-wrap">
+<table>
+  <tr><th>Z-score</th><th>区域</th><th>含义</th><th>行动</th></tr>
+  <tr><td>Z > 2.99</td><td class="hl3">🟢 安全区</td><td>破产概率极低</td><td>正常分析即可</td></tr>
+  <tr><td>1.81 < Z < 2.99</td><td class="hl2">🟡 灰色区</td><td>有破产风险</td><td>深入分析·控制仓位</td></tr>
+  <tr><td>Z < 1.81</td><td class="hl4">🔴 困境区</td><td>破产概率高</td><td>秃鹫投资者开始关注</td></tr>
+</table>
+</div>
+
+<h3>工具二：破产概率模型——多维困境信号</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>信号维度</th><th>指标</th><th>危险阈值</th><th>说明</th></tr>
+  <tr><td><strong>流动性</strong></td><td>流动比率</td><td>&lt;1.0</td><td>短期偿债能力不足</td></tr>
+  <tr><td><strong>杠杆</strong></td><td>资产负债率</td><td>>&gt;80%</td><td>负债压顶</td></tr>
+  <tr><td><strong>利息覆盖</strong></td><td>EBIT/利息费用</td><td>&lt;1.5</td><td>利润不够还利息</td></tr>
+  <tr><td><strong>现金流</strong></td><td>经营CF/流动负债</td><td>&lt;0.3</td><td>造血能力枯竭</td></tr>
+  <tr><td><strong>盈利能力</strong></td><td>连续亏损</td><td>3年以上</td><td>持续失血</td></tr>
+  <tr><td><strong>审计意见</strong></td><td>非标意见</td><td>保留/否定/无法表示</td><td>会计问题</td></tr>
+</table>
+</div>
+
+<h3>工具三：A股特殊机会监控框架</h3>
+<div class="deep">
+  <div class="label">🇨🇳 A股专属机会信号</div>
+  <p><strong>ST摘帽倒计时：</strong></p>
+  <p>1. 净利润扭亏（连续2年盈利）→ 可申请摘帽<br>
+  2. 净资产转正 → 消除退市风险<br>
+  3. 营收>1亿 → 避免营收退市<br>
+  4. 无重大违规 → 审计无保留意见</p>
+  <p><strong>定增机会：</strong>关注定增价与市场价的价差——当市场价接近或低于定增价时，大股东/机构有强烈动机维护股价（否则定增失败）。</p>
+  <p><strong>回购信号：</strong>公司大规模回购+管理层增持=内部人用真金白银投票。</p>
+</div>
+
+<h3>工具四：事件套利日历</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>事件类型</th><th>关键时间节点</th><th>关注指标</th><th>机会窗口</th></tr>
+  <tr><td>并购套利</td><td>公告日→股东大会→监管审批→交割</td><td>价差·审批风险</td><td>公告后-审批前</td></tr>
+  <tr><td>分拆上市</td><td>董事会决议→股东会→IPO</td><td>分拆后估值·母公司折价</td><td>上市后1-3月</td></tr>
+  <tr><td>ST摘帽</td><td>年报发布→审计→申请→交易所批准</td><td>净利润·净资产</td><td>年报后-摘帽前</td></tr>
+  <tr><td>股权争夺</td><td>举牌公告→增持→要约收购</td><td>持股比例·增持节奏</td><td>首次举牌后</td></tr>
+  <tr><td>定增</td><td>预案→股东大会→证监会→发行</td><td>定增价折扣·锁定期</td><td>股价接近定增价时</td></tr>
+</table>
+</div>
+
+<h3>秃鹫投资终极心法</h3>
+<div class="tip">
+  <div class="label">🧠 三个不投</div>
+  <p><strong>1. 看不懂不投</strong>——秃鹫投资需要法律+财务+行业三重知识，不是「跌多了就买」<br>
+  <strong>2. 熬不起不投</strong>——重组可能拖2-3年，期间可能继续跌30-50%<br>
+  <strong>3. 亏不起不投</strong>——仓位控制：单笔秃鹫投资不超过总资产的5%</p>
+</div>
+`
+      },
+      {
+        id: 'quiz-8',
+        title: '🧪 小测验 #8',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: 'Altman Z-score < 1.81 意味着什么？',
+              options: [
+                '公司非常安全',
+                '公司处于困境区，破产概率高——这正是秃鹫投资者开始关注的区域',
+                '应该买入',
+                '数据有误'
+              ],
+              correct: 1,
+              explain: 'Z<1.81=困境区。但注意：高破产概率≠应该买入。秃鹫投资者还要判断：①清算价值是否>债券价格 ②重组后能否复原 ③你的买入价是否足够低。'
+            },
+            {
+              q: '破产概率模型中，哪个信号是最致命的？',
+              options: [
+                '流动比率<1',
+                'EBIT/利息费用<1.5——公司赚的钱连利息都还不起，这是最直接的死亡信号',
+                '资产负债率>60%',
+                '毛利率下降'
+              ],
+              correct: 1,
+              explain: '利息覆盖倍数<1.5意味着公司赚的钱刚够还利息（或不够）。一旦银行抽贷或利率上升→立即违约。这是从「困境」到「死亡」的最后一道防线。其他指标可以缓冲，利息覆盖不行。'
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  {
+    title: '📖 中英文术语对照表',
+    lessons: [
+      {
+        id: 'glossary',
+        title: '秃鹫投资与金融史·术语双语速查',
+        emoji: '📖',
+        content: `
+<h3>金融危机的历史用一套共同的语言书写——掌握这些关键词，你就能通读200年金融史</h3>
+
+<div class="tip">
+  <div class="label">💡 为什么需要中英对照</div>
+  <p>所有经典金融史著作——金德尔伯格《疯狂、惊恐与崩溃》、莱因哈特《这次不一样》、加尔布雷思《1929年大崩盘》——原文都是英文。这些术语是200年金融危机的通用语言。</p>
+</div>
+
+<h3>一、投资策略与资产类型</h3>
+<div class="table-wrap"><table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>秃鹫投资</td><td>Vulture Investing</td><td>秃鹫</td></tr>
+  <tr><td>困境证券</td><td>Distressed Securities</td><td>困境债</td></tr>
+  <tr><td>破产重组</td><td>Bankruptcy Restructuring</td><td>破产重组</td></tr>
+  <tr><td>清算价值</td><td>Liquidation Value</td><td>清盘价</td></tr>
+  <tr><td>持续经营价值</td><td>Going Concern Value</td><td>经营价值</td></tr>
+  <tr><td>秃鹫基金</td><td>Vulture Fund</td><td>秃鹫基金</td></tr>
+  <tr><td>不良资产</td><td>Non-Performing Assets (NPA)</td><td>NPA</td></tr>
+</table></div>
+
+<h3>二、危机与债务</h3>
+<div class="table-wrap"><table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>债务危机</td><td>Debt Crisis</td><td>债务危机</td></tr>
+  <tr><td>明斯基时刻</td><td>Minsky Moment</td><td>明斯基</td></tr>
+  <tr><td>庞氏融资</td><td>Ponzi Finance</td><td>庞氏</td></tr>
+  <tr><td>去杠杆</td><td>Deleveraging</td><td>去杠杆</td></tr>
+  <tr><td>违约</td><td>Default</td><td>违约</td></tr>
+  <tr><td>信用利差</td><td>Credit Spread</td><td>信用利差</td></tr>
+  <tr><td>金融传染</td><td>Financial Contagion</td><td>传染</td></tr>
+</table></div>
+
+<h3>三、政策与工具</h3>
+<div class="table-wrap"><table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>最后贷款人</td><td>Lender of Last Resort</td><td>LoLR</td></tr>
+  <tr><td>量化宽松</td><td>Quantitative Easing (QE)</td><td>QE</td></tr>
+</table></div>
+
+<h3>四、历史上的著名危机</h3>
+<div class="table-wrap"><table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>郁金香狂热</td><td>Tulip Mania</td><td>1637</td></tr>
+  <tr><td>南海泡沫</td><td>South Sea Bubble</td><td>1720</td></tr>
+  <tr><td>大萧条</td><td>Great Depression</td><td>1929</td></tr>
+</table></div>
+
+<div class="analogy">
+  <div class="label">🧠 记忆技巧</div>
+  <p><strong>明斯基三部曲 = Hedge → Speculative → Ponzi</strong>（对冲→投机→庞氏）——三个阶段对应杠杆从健康到疯狂。<br>
+  <strong>金融传染（Contagion）</strong> —— 金融危机的「传染病」模型：一国的违约→全球信贷冻结。<br>
+  <strong>LoLR（最后贷款人）= 央行</strong> —— 当所有银行都不愿借钱时，央行扮演「最终兜底者」。</p>
+</div>
+
+<h3>秃鹫投资术语补充</h3>
+<div class="table-wrap"><table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>逆向投资</td><td>Contrarian Investing</td><td>—</td></tr>
+  <tr><td>反脆弱</td><td>Antifragile</td><td>越摔越强</td></tr>
+  <tr><td>黑天鹅</td><td>Black Swan</td><td>极小概率·极大冲击</td></tr>
+  <tr><td>尾部风险</td><td>Tail Risk</td><td>极端事件风险</td></tr>
+  <tr><td>肥尾分布</td><td>Fat-Tailed Distribution</td><td>极端值概率 > 正态分布</td></tr>
+  <tr><td>非对称收益</td><td>Asymmetric Returns</td><td>涨跌不对称</td></tr>
+  <tr><td>杠铃策略</td><td>Barbell Strategy</td><td>两端重、中间轻</td></tr>
+  <tr><td>下凸收益</td><td>Convex Payoff</td><td>像期权：跌有限涨无限</td></tr>
+  <tr><td>凯利公式</td><td>Kelly Criterion</td><td>最优仓位计算</td></tr>
+  <tr><td>安全边际极限测试</td><td>Margin of Safety Stress Test</td><td>MoS压力测试</td></tr>
+  <tr><td>压力测试</td><td>Stress Testing</td><td>极端场景推演</td></tr>
+  <tr><td>事件驱动</td><td>Event-Driven</td><td>—</td></tr>
+  <tr><td>并购套利</td><td>Merger Arbitrage</td><td>—</td></tr>
+  <tr><td>困境反转</td><td>Distressed Turnaround</td><td>买入最烂、等变好</td></tr>
+  <tr><td>波动率偏度</td><td>Volatility Skew</td><td>跌端波动率 ≠ 涨端</td></tr>
+  <tr><td>Altman Z-score</td><td>Z-score Bankruptcy Model</td><td>破产概率量化模型</td></tr>
+</table></div>
+
+<div class="analogy">
+  <div class="label">🧠 记忆技巧</div>
+  <p><strong>Antifragile ≠ Robust</strong>：稳健是不怕摔，反脆弱是越摔越强。<br>
+  <strong>Barbell Strategy</strong> = 极度保守 + 极度冒险，不碰中庸。<br>
+  <strong>Convex Payoff</strong> = 跌有限涨无限——期权结构的核心。<br>
+  <strong>Kelly Criterion</strong>不仅用于仓位，也是判断优势多大的思维框架。<br>
+  <strong>Contrarian Investing</strong> = 别人恐惧我贪婪，别人贪婪我恐惧。</p>
+</div>
+`
+      }
+    ]
+  }
+
+];
+
+// ===== FINAL EXAM =====
+
+// ===== APP STATE =====
+
+const finalExam = {
+  questions: [{ q:'金融市场属于平均斯坦还是极端斯坦？', options:['平均斯坦','极端斯坦——单个事件可改变一切，肥尾分布','两者之间','取决于情绪'], correct:1 },
+{ q:'老木匠「买股票就是买股票」的核心含义是什么？', options:['否定价值投资','承认散户无法像巴菲特控股/换管理层，灵活是唯一优势','鼓励频繁交易','否认基本面'], correct:1 },
+{ q:'达利欧的「漂亮去杠杆」指什么？', options:['只紧缩','平衡四种方式——紧缩+债务重组+财富转移+印钞同时进行','只印钞','不干预'], correct:1 },
+{ q:'明斯基时刻的核心含义是什么？', options:['市场永远涨','稳定本身孕育着不稳定——越久的平静越大的风暴','政府会救市','永远满仓'], correct:1 },
+{ q:'周金涛「人生就是一场康波」的核心含义是什么？', options:['努力不重要','财富波动不是线性的——踩准周期节奏比个人努力更重要','应频繁交易','技术分析最重要'], correct:1 },
+{
+      q: '塔勒布「反脆弱」与「强韧」的区别是什么？',
+      options: [
+        '没有区别',
+        '强韧=能扛住冲击；反脆弱=从冲击中获益，越打越强',
+        '反脆弱就是脆弱',
+        '强韧比反脆弱更好'
+      ],
+      correct: 1
+    },
+{
+      q: '杠铃策略的核心是什么？',
+      options: [
+        '60%股票+40%债券',
+        '90%极度保守(安全资产)+10%极度冒险(高赔率下注)——下行有限，上行无限',
+        '全部投资高风险标的',
+        '全部持有现金'
+      ],
+      correct: 1
+    },
+{
+      q: '老木匠「来市场是打猎的，不是打靶的」是什么意思？',
+      options: [
+        '打靶追求极致精准（买最低卖最高），打猎追求安全获得猎物（赚到差价就行）',
+        '要频繁交易',
+        '只买一股',
+        '追求完美收益'
+      ],
+      correct: 0
+    },
+{
+      q: '凯利公式 f* = (p×b - q)/b 中，f*为负意味着什么？',
+      options: [
+        '应该全仓',
+        '期望值为负——绝对不下注',
+        '公式算错了',
+        '可以小仓位试试'
+      ],
+      correct: 1
+    },
+{
+      q: '戴维斯双杀：利润降50% + PE降50%，股价变为原来的多少？',
+      options: [
+        '50%',
+        '25%——0.5×0.5=0.25，只剩原来的1/4',
+        '0%',
+        '75%'
+      ],
+      correct: 1
+    },
+{
+      q: '老木匠说的「分仓代替止损」和塔勒布的哪个概念对应？',
+      options: [
+        '黑天鹅',
+        '杠铃策略——通过结构设计确保单一事件不会灭顶',
+        '林迪效应',
+        '否定法'
+      ],
+      correct: 1
+    }
+  ]
+};
+
+let completedLessons = new Set(JSON.parse(localStorage.getItem('master_finance_5_merged_course_completed') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem('master_finance_5_merged_quiz_results') || '{}');
+let currentSection = null;
+let finalExamDone = finalExam.questions.every((_,i) => quizResults['final_' + i] !== undefined);
+
+function save() {
+  localStorage.setItem('master_finance_5_merged_course_completed', JSON.stringify([...completedLessons]));
+  localStorage.setItem('master_finance_5_merged_quiz_results', JSON.stringify(quizResults));
+}
+
+function quickQuiz(btn, correctChoice) {
+  const card = btn.closest('.quiz-card');
+  if (card.dataset.answered) return;
+  card.dataset.answered = 'true';
+  const options = card.querySelectorAll('.quiz-option');
+  options.forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    if (i === correctChoice) o.classList.add('correct');
+    else o.classList.add('wrong');
+  });
+  const result = card.querySelector('.quiz-result');
+  if (result) { result.classList.add('show'); }
+}
+
+function calcProgress() {
+  let totalLessons = 0;
+  modules.forEach(m => { totalLessons += m.lessons.length; });
+  totalLessons += finalExam.questions.length;
+  let done = completedLessons.size;
+  for (let i = 0; i < finalExam.questions.length; i++) {
+    if (quizResults['final_' + i] !== undefined) done++;
+  }
+  return Math.round((done / totalLessons) * 100);
+}
+
+function updateUI() {
+  const pct = calcProgress();
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+
+  const nav = document.getElementById('navContainer');
+  let html = '';
+  modules.forEach((mod) => {
+    html += '<div class="nav-module-title">' + mod.title + '</div>';
+    mod.lessons.forEach((lesson) => {
+      const id = lesson.id;
+      const done = completedLessons.has(id);
+      const active = currentSection === id;
+      html += '<div class="nav-item' + (active ? ' active' : '') + (done ? ' done' : '') + '" onclick="navigateTo(\'' + id + '\')">';
+      html += '<span class="check">' + (done ? '✅' : lesson.emoji || '📖') + '</span>';
+      html += lesson.title + '</div>';
+    });
+  });
+  html += '<div class="nav-item' + (currentSection === 'final' ? ' active' : '') + (finalExamDone ? ' done' : '') + '" onclick="navigateTo(\'final\')">';
+  html += '<span class="check">' + (finalExamDone ? '✅' : '🏆') + '</span> 终极测验</div>';
+  nav.innerHTML = html;
+}
+
+function navigateTo(id) {
+  currentSection = id;
+  updateUI();
+  renderContent(id);
+  window.scrollTo(0, 0);
+}
+
+function markComplete(id) {
+  if (!completedLessons.has(id)) {
+    completedLessons.add(id);
+    save();
+    updateUI();
+  }
+}
+
+function renderContent(id) {
+  const main = document.getElementById('mainContent');
+  if (id === 'final') { renderFinalExam(main); return; }
+
+  let lesson = null, modIndex = -1, lesIndex = -1;
+  for (let mi = 0; mi < modules.length; mi++) {
+    for (let li = 0; li < modules[mi].lessons.length; li++) {
+      if (modules[mi].lessons[li].id === id) {
+        lesson = modules[mi].lessons[li]; modIndex = mi; lesIndex = li; break;
+      }
+    }
+    if (lesson) break;
+  }
+  if (!lesson) { main.innerHTML = '<p>课程未找到</p>'; return; }
+
+  let html = '';
+
+  if (lesson.quiz) {
+    const savedAnswers = quizResults[id] || [];
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">测试你对' + modules[modIndex].title.replace(/^[^\s]+\s/, '') + '的理解—共' + lesson.quiz.questions.length + '题</div>';
+    lesson.quiz.questions.forEach((q, qi) => {
+      const userAnswer = savedAnswers[qi];
+      const answered = userAnswer !== undefined;
+      const isCorrect = answered && userAnswer === q.correct;
+      html += '<div class="quiz-card" id="quiz-' + qi + '"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+      html += '<div class="quiz-question">' + q.q + '</div>';
+      q.options.forEach((opt, oi) => {
+        let cls = 'quiz-option';
+        if (answered && oi === q.correct) cls += ' correct';
+        if (answered && oi === userAnswer && oi !== q.correct) cls += ' wrong';
+        html += '<button class="' + cls + '" onclick="answerQuiz(\'' + id + '\', ' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+      });
+      if (answered) {
+        html += '<div class="quiz-result show ' + (isCorrect ? 'pass' : 'fail') + '" id="result-' + id + '-' + qi + '">';
+        html += '<strong>' + (isCorrect ? '✅ 正确！' : '❌ 不太对') + '</strong><p>' + q.explain + '</p></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">' + modules[modIndex].title.replace(/^[^\s]+\s/, '') + '</div>';
+    html += lesson.content;
+    html += '</div>';
+    markComplete(id);
+  }
+
+  html += '<div class="nav-btns">';
+  let prevId = null;
+  if (lesIndex > 0) prevId = modules[modIndex].lessons[lesIndex - 1].id;
+  else if (modIndex > 0) { const pm = modules[modIndex - 1]; prevId = pm.lessons[pm.lessons.length - 1].id; }
+  if (prevId) html += '<button class="btn btn-secondary" onclick="navigateTo(\'' + prevId + '\')">⬅ 上一节</button>';
+  else html += '<div></div>';
+
+  let nextId = null;
+  if (lesIndex < modules[modIndex].lessons.length - 1) nextId = modules[modIndex].lessons[lesIndex + 1].id;
+  else if (modIndex < modules.length - 1) nextId = modules[modIndex + 1].lessons[0].id;
+  if (nextId) html += '<button class="btn btn-primary" onclick="navigateTo(\'' + nextId + '\')">下一节 ➡</button>';
+  else html += '<button class="btn btn-success" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>';
+  html += '</div>';
+
+  main.innerHTML = html;
+
+  // Init interactive components from merged modules
+  if (id === 'asymmetric-metrics') { setTimeout(function() { if (window.calcKelly) calcKelly(); }, 50); }
+  if (id === 'stress-test') { setTimeout(function() { if (window.calcStress) calcStress(); }, 50); }
+}
+
+function answerQuiz(lessonId, qi, oi) {
+  if (!quizResults[lessonId]) quizResults[lessonId] = [];
+  quizResults[lessonId][qi] = oi;
+  save();
+  renderContent(lessonId);
+}
+
+function startFinalExam() { navigateTo('final'); }
+
+function renderFinalExam(main) {
+  let html = '<div class="lesson-card"><h2>🏆 终极测验</h2>';
+  html += '<div class="meta">11道题 · 覆盖全部5个模块 · 70%及格</div>';
+
+  let allAnswered = true;
+  finalExam.questions.forEach((q, qi) => {
+    const ua = quizResults['final_' + qi];
+    const answered = ua !== undefined;
+    if (!answered) allAnswered = false;
+    const isCorrect = answered && ua === q.correct;
+    html += '<div class="quiz-card" id="final-q-' + qi + '"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+    html += '<div class="quiz-question">' + q.q + '</div>';
+    q.options.forEach((opt, oi) => {
+      let cls = 'quiz-option';
+      if (answered && oi === q.correct) cls += ' correct';
+      if (answered && oi === ua && oi !== q.correct) cls += ' wrong';
+      html += '<button class="' + cls + '" onclick="answerFinal(' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+
+  if (allAnswered) {
+    const score = finalExam.questions.filter((q, i) => quizResults['final_' + i] === q.correct).length;
+    const total = finalExam.questions.length;
+    const pct = Math.round(score / total * 100);
+    const passed = pct >= 70;
+    const grade = pct >= 90 ? '🏅 S级·秃鹫大师' : pct >= 80 ? '🥇 A级·逆向投资专家' : pct >= 70 ? '🥈 B级·非对称投资者' : '📝 继续加油';
+    html += '<div class="certificate show"><div style="font-size:3em">' + (passed ? '🎉' : '💪') + '</div>';
+    html += '<h2>' + (passed ? '恭喜毕业！' : '还需要再练练') + '</h2>';
+    html += '<div class="grade">' + grade + '</div>';
+    html += '<div style="font-size:1.5em;color:var(--accent2)">' + score + ' / ' + total + ' 题正确（' + pct + '%）</div>';
+    html += '<p style="margin-top:16px;color:var(--sub)">' + (passed ?
+      '你已经完成了秃鹫、逆向与非对称投资课程！从塔勒布的反脆弱体系到老木匠的A股实战智慧、从秃鹫投资与事件驱动到非对称收益量化、从达利欧的债务周期到周金涛的康波——你不仅学会了识别市场极端机会，更学会了<span class="hl">用杠铃策略、凯利公式和压力测试构建一个反脆弱的投资系统</span>。记住：最好的机会出现在市场最恐惧的时候，但前提是你已经准备好了弹药和判断框架。'
+      : '再看看薄弱环节，重做一次就能过！') + '</p>';
+    html += '<div style="margin-top:20px"><button class="btn btn-secondary" onclick="resetFinalExam()">🔄 重新测验</button>';
+    html += '<button class="btn btn-primary" onclick="resetAll()" style="margin-left:8px">🔁 重学全部课程</button></div></div>';
+    const wrong = finalExam.questions.map((q, i) => ({ q, i })).filter(x => quizResults['final_' + x.i] !== x.q.correct);
+    if (wrong.length > 0) {
+      html += '<div class="tip" style="margin-top:16px"><div class="label">📚 建议补强的知识点</div>';
+      const topicMap = {
+        0: '→ 复习「模块五：黑天鹅与极端斯坦」',
+        1: '→ 复习「模块五：老木匠的散户生存智慧」',
+        2: '→ 复习「模块六：达利欧经济机器与去杠杆」',
+        3: '→ 复习「模块六：明斯基时刻与泡沫解剖」',
+        4: '→ 复习「模块六：周金涛康波周期」',
+        5: '→ 复习「模块五：塔勒布反脆弱三元结构」',
+        6: '→ 复习「模块五：塔勒布杠铃策略」',
+        7: '→ 复习「模块五：老木匠决策启发式」',
+        8: '→ 复习「模块八：凯利公式」',
+        9: '→ 复习「模块八：戴维斯双杀与安全边际」',
+        10: '→ 复习「模块五：老木匠分仓代替止损」'
+      };
+      wrong.forEach(w => { html += '<p>❌ 第' + (w.i + 1) + '题 ' + topicMap[w.i] + '</p>'; });
+      html += '</div>';
+    }
+  }
+  main.innerHTML = html;
+  if (allAnswered) updateUI();
+}
+
+function answerFinal(qi, oi) {
+  quizResults['final_' + qi] = oi;
+  save();
+  renderFinalExam(document.getElementById('mainContent'));
+  updateUI();
+}
+
+function resetFinalExam() {
+  finalExam.questions.forEach((_, i) => delete quizResults['final_' + i]);
+  save(); updateUI();
+  renderFinalExam(document.getElementById('mainContent'));
+}
+
+function resetAll() {
+  localStorage.removeItem('master_finance_5_merged_quiz_results');
+  localStorage.removeItem('master_finance_5_merged_course_completed');
+  location.reload();
+}
+
+// ===== INTERACTIVE CALCULATORS =====
+window.calcKelly = function() {
+  const p = parseInt(document.getElementById('kelly-p').value) / 100;
+  const b = parseFloat(document.getElementById('kelly-b').value);
+  const f = (p * b - (1 - p)) / b;
+  document.getElementById('kelly-p-v').textContent = (p * 100).toFixed(0) + '%';
+  document.getElementById('kelly-b-v').textContent = b.toFixed(1);
+  let resultEl = document.getElementById('kelly-result');
+  let adviceEl = document.getElementById('kelly-advice');
+  if (f <= 0) {
+    resultEl.textContent = '不下注！';
+    resultEl.style.color = '#f85149';
+    adviceEl.textContent = '期望值为负或零——放弃这笔交易';
+    adviceEl.style.color = '#f85149';
+  } else if (f > 0.8) {
+    resultEl.textContent = (f * 100).toFixed(1) + '%（过高！）';
+    resultEl.style.color = '#d2991d';
+    adviceEl.textContent = '你可能高估了胜率。建议仓位：半凯利 ≈ ' + (f * 50).toFixed(1) + '%';
+    adviceEl.style.color = '#d2991d';
+  } else {
+    resultEl.textContent = (f * 100).toFixed(1) + '%';
+    resultEl.style.color = '#3fb950';
+    adviceEl.textContent = '半凯利建议仓位：' + (f * 50).toFixed(1) + '%';
+    adviceEl.style.color = '#3fb950';
+  }
+};
+
+window.calcStress = function() {
+  const price = parseFloat(document.getElementById('st-price').value) || 0;
+  const earnDrop = parseInt(document.getElementById('st-earn').value) / 100;
+  const peDrop = parseInt(document.getElementById('st-pe').value) / 100;
+  const crash = price * (1 - earnDrop) * (1 - peDrop);
+  const loss = ((1 - crash / price) * 100).toFixed(0);
+  document.getElementById('st-earn-v').textContent = (earnDrop * 100) + '%';
+  document.getElementById('st-pe-v').textContent = (peDrop * 100) + '%';
+  document.getElementById('st-result').textContent = crash.toFixed(1) + ' 元';
+  const advice = document.getElementById('st-advice');
+  if (parseInt(loss) > 70) {
+    advice.textContent = '亏损幅度：' + loss + '% —— 🔴 极度危险！必须减仓或放弃';
+    advice.style.color = '#f85149';
+  } else if (parseInt(loss) > 40) {
+    advice.textContent = '亏损幅度：' + loss + '% —— 🟡 需要较大的安全边际';
+    advice.style.color = '#d2991d';
+  } else {
+    advice.textContent = '亏损幅度：' + loss + '% —— 🟢 可接受范围';
+    advice.style.color = '#3fb950';
+  }
+};
+
+// ===== INIT =====
+(function init() {
+  currentSection = 'taleb-blackswan';
+  updateUI();
+  renderContent('taleb-blackswan');
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📈 时间序列与动态建模 · 量化金融专家课程</title>
+<style>
+:root {
+  --bg: #06080d; --card: #0e131f; --card-hover: #151c2b; --border: #253049;
+  --text: #e4eaf2; --sub: #7c8aa2;
+  --accent: #6c5ce7; --accent2: #a880e0;
+  --green: #3fb950; --red: #f85149; --yellow: #d2991d;
+  --radius: 14px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(108,92,231,0.3); color: #fff; }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+body {
+  font-family: -apple-system,'SF Pro Display','PingFang SC',sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #0a0a18 0%, var(--bg) 70%);
+  color: var(--text); line-height: 1.75; min-height:100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width:280px; background:var(--card); border-right:1px solid var(--border);
+  padding:24px 16px; position:sticky; top:0; height:100vh; overflow-y:auto; flex-shrink:0;
+}
+.main { flex:1; padding:32px 48px; max-width:920px; }
+
+.logo { font-size:1.2em; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+.subtitle { color:var(--sub); font-size:0.82em; margin-bottom:10px; opacity:0.8; }
+.back-link { display:block; margin-bottom:14px; padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:8px; font-size:0.82em; color:var(--sub); text-decoration:none; text-align:center; transition:all 0.15s; }
+.back-link:hover { border-color:var(--accent); color:var(--accent); }
+.progress-text { font-size:0.78em; color:var(--sub); margin-bottom:4px; }
+.progress-bar-wrap { background:var(--border); border-radius:8px; height:6px; margin-bottom:18px; overflow:hidden; }
+.progress-bar { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:8px; transition:width 0.5s; }
+.nav-module { margin-bottom:16px; }
+.nav-module-title { font-size:0.7em; text-transform:uppercase; color:var(--sub); letter-spacing:1.5px; margin-bottom:6px; padding:0 8px; opacity:0.7; }
+.nav-item { display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; cursor:pointer; transition:all 0.2s; font-size:0.86em; color:var(--sub); border-left:3px solid transparent; margin-bottom:2px; }
+.nav-item:hover { background:var(--card-hover); color:var(--text); border-left-color:rgba(108,92,231,0.3); }
+.nav-item.active { background:rgba(108,92,231,0.1); color:var(--accent); font-weight:600; border-left-color:var(--accent); }
+.nav-item.done { color:var(--green); }
+.nav-item .check { width:20px; text-align:center; font-size:0.8em; }
+.divider { border-top:1px solid var(--border); margin:14px 0; }
+
+.section { display:none; }
+.section.active { display:block; animation:fadeIn 0.3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+.lesson-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:32px 34px; margin-bottom:24px; transition:border-color 0.25s; }
+.lesson-card:hover { border-color:rgba(108,92,231,0.2); }
+.lesson-card h2 { font-size:1.45em; margin-bottom:6px; display:flex; align-items:center; gap:10px; }
+.lesson-card h2 .emoji { font-size:1.2em; }
+.lesson-card .meta { color:var(--sub); font-size:0.85em; margin-bottom:22px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.lesson-card h3 { font-size:1.1em; margin:26px 0 12px; color:var(--accent); position:relative; padding-left:14px; }
+.lesson-card h3::before { content:''; position:absolute; left:0; top:3px; bottom:3px; width:3px; border-radius:2px; background:linear-gradient(180deg,var(--accent),var(--accent2)); }
+.lesson-card p { margin-bottom:14px; }
+.lesson-card ul,.lesson-card ol { padding-left:24px; margin-bottom:14px; }
+.lesson-card li { margin-bottom:8px; }
+
+.analogy { background:linear-gradient(135deg, rgba(108,92,231,0.05), rgba(168,128,224,0.05)); border:1px solid rgba(108,92,231,0.15); border-left:3px solid var(--accent); border-radius:var(--radius); padding:18px 22px; margin:18px 0; }
+.analogy .label { font-size:0.78em; color:var(--accent); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; font-weight:600; display:flex; align-items:center; gap:6px; }
+.diagram-svg { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px 12px; margin:18px 0; text-align:center; overflow-x:auto; }
+.diagram-svg svg { max-width:100%; height:auto; display:block; margin:0 auto; }
+.diagram-svg text { font-family:inherit; }
+
+.tip,.warning,.deep { border-radius:var(--radius); padding:18px 22px; margin:18px 0; }
+.tip { background:rgba(63,185,80,0.06); border:1px solid rgba(63,185,80,0.2); border-left:3px solid var(--green); }
+.warning { background:rgba(248,81,73,0.06); border:1px solid rgba(248,81,73,0.2); border-left:3px solid var(--red); }
+.deep { background:rgba(108,92,231,0.05); border:1px solid rgba(108,92,231,0.12); border-left:3px solid var(--accent); }
+.tip .label,.warning .label,.deep .label { font-weight:700; margin-bottom:6px; font-size:0.85em; display:flex; align-items:center; gap:6px; }
+.tip .label { color:var(--green); } .warning .label { color:var(--red); } .deep .label { color:var(--accent); }
+
+.formula { background:rgba(108,92,231,0.06); border:1px solid rgba(108,92,231,0.15); border-radius:8px; padding:14px 20px; margin:14px 0; text-align:center; font-family:'SF Mono','Menlo',monospace; font-size:0.95em; }
+.step-list { display:flex; gap:12px; flex-wrap:wrap; margin:16px 0; }
+.step-card { flex:1; min-width:160px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:18px 14px; text-align:center; transition:all 0.2s; }
+.step-card:hover { border-color:rgba(108,92,231,0.3); transform:translateY(-2px); }
+.step-card .num { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#4540b0); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:700; font-size:0.85em; }
+.step-card .title { font-weight:600; margin-bottom:4px; font-size:0.9em; }
+.step-card .desc { font-size:0.8em; color:var(--sub); line-height:1.5; }
+
+.table-wrap { overflow-x:auto; margin:16px 0; border-radius:var(--radius); border:1px solid var(--border); }
+table { width:100%; border-collapse:collapse; font-size:0.86em; }
+th { background:rgba(108,92,231,0.07); padding:11px 14px; text-align:left; font-weight:600; color:var(--accent); font-size:0.8em; text-transform:uppercase; letter-spacing:0.5px; }
+td { padding:11px 14px; border-bottom:1px solid var(--border); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(108,92,231,0.03); }
+
+.quiz-card { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:var(--radius); padding:26px 28px; margin:24px 0; transition:border-color 0.25s; }
+.quiz-card:hover { border-color:rgba(108,92,231,0.3); }
+.quiz-card h3 { font-size:1.1em; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.quiz-question { margin:16px 0 8px; font-weight:600; font-size:0.93em; }
+.quiz-option { display:block; width:100%; text-align:left; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin:7px 0; cursor:pointer; color:var(--text); font-size:0.9em; transition:all 0.2s; }
+.quiz-option:hover { border-color:var(--accent); background:var(--card-hover); transform:translateX(3px); }
+.quiz-option.correct { border-color:var(--green); background:rgba(63,185,80,0.08); color:var(--green); }
+.quiz-option.wrong { border-color:var(--red); background:rgba(248,81,73,0.08); color:var(--red); }
+.quiz-option:disabled { cursor:default; opacity:0.85; transform:none; }
+.quiz-result { margin-top:14px; padding:14px; border-radius:8px; display:none; font-size:0.88em; }
+.quiz-result.show { display:block; }
+.quiz-result.pass { background:rgba(63,185,80,0.1); border:1px solid var(--green); }
+.quiz-result.fail { background:rgba(248,81,73,0.1); border:1px solid var(--red); }
+
+.calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+.calc-input { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px; }
+.calc-input label { display:block; font-size:0.8em; color:var(--sub); margin-bottom:4px; }
+.calc-input input,.calc-input select { width:100%; background:var(--card); border:1px solid var(--border); border-radius:6px; padding:8px 10px; color:var(--text); font-size:0.9em; font-family:'SF Mono','Menlo',monospace; }
+.calc-input input:focus,.calc-input select:focus { outline:none; border-color:var(--accent); }
+.calc-result { grid-column:1/-1; background:linear-gradient(135deg, rgba(108,92,231,0.08), rgba(168,128,224,0.06)); border:1px solid var(--accent2); border-radius:var(--radius); padding:18px; text-align:center; }
+.calc-result .clabel { font-size:0.82em; color:var(--sub); }
+.calc-result .cval { font-size:1.8em; font-weight:700; color:var(--accent); margin:6px 0; }
+.calc-result .csub { font-size:0.8em; color:var(--sub); }
+
+.btn { display:inline-flex; align-items:center; gap:6px; padding:10px 22px; border-radius:8px; border:none; cursor:pointer; font-size:0.9em; font-weight:600; transition:all 0.2s; }
+.btn:active { transform:scale(0.97); }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:#5750d8; }
+.btn-secondary { background:var(--border); color:var(--text); }
+.btn-secondary:hover { background:#3a4a60; }
+.nav-btns { display:flex; justify-content:space-between; margin-top:28px; }
+
+.certificate { display:none; background:linear-gradient(135deg, rgba(108,92,231,0.08), rgba(168,128,224,0.05)); border:2px solid var(--accent2); border-radius:var(--radius); padding:44px 36px; text-align:center; margin:24px 0; }
+.certificate.show { display:block; animation:fadeIn 0.5s ease; }
+.certificate h2 { font-size:1.8em; color:var(--accent2); margin-bottom:6px; }
+.certificate .grade { font-size:2.5em; color:var(--accent); font-weight:800; margin:14px 0 6px; }
+
+.hl { color:var(--accent); font-weight:600; }
+.hl2 { color:var(--green); font-weight:600; }
+.hl3 { color:var(--yellow); font-weight:600; }
+
+@media(max-width:768px) {
+  .app { flex-direction:column; }
+  .sidebar { width:100%; height:auto; position:static; border-right:none; border-bottom:1px solid var(--border); }
+  .main { padding:20px 16px; }
+  .step-list { flex-direction:column; }
+  .calc-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">📈</span> 时间序列</div>
+  <div class="subtitle">捕捉周期的脉搏 · 模块二</div>
+  <a href="课程首页_数学与统计学.html" class="back-link">🏠 回到课程总览</a>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div id="navContainer"></div>
+  <div class="divider"></div>
+  <button class="btn btn-primary" style="width:100%" onclick="startFinalExam()">🏆 终极测验</button>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="var b=this;if(b.dataset.confirm){b.textContent='🔄 重置进度';delete b.dataset.confirm;b.style.background='var(--border)';resetAll()}else{b.textContent='⚠️ 确认重置？';b.dataset.confirm='1';b.style.background='var(--yellow)';setTimeout(function(){if(b.dataset.confirm){b.textContent='🔄 重置进度';delete b.dataset.confirm;b.style.background='var(--border)'}},3000)}">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ===== COURSE DATA =====
+const modules = [
+  {
+    title: '📈 模块一：时间序列基础——为什么昨天的收益率影响今天',
+    lessons: [
+      {
+        id: 'why-timeseries',
+        title: '金融数据的独特性——为什么不能用普通回归',
+        emoji: '📈',
+        content: `
+<h3>普通回归的三个假设，金融数据全部违反</h3>
+
+<div class="warning">
+  <div class="label">⚠️ OLS回归的三个前提</div>
+  <p><strong>1. 观测独立：</strong>第i个数据点和第i+1个无关<br><span class="hl4">金融现实：</span>昨天的收益率强烈影响今天的波动率（波动率聚集）</p>
+  <p><strong>2. 同方差：</strong>误差的方差恒定<br><span class="hl4">金融现实：</span>危机时方差是平时的3-5倍（异方差）</p>
+  <p><strong>3. 正态分布：</strong>误差~N(0,σ²)<br><span class="hl4">金融现实：</span>肥尾——极端事件比正态预测多10-100倍</p>
+</div>
+
+<h3>自相关——时间序列最核心的概念</h3>
+
+<div class="deep">
+  <div class="label">📈 什么是自相关？</div>
+  <p><strong>自相关 = 今天的值和昨天的值之间的相关性。</strong></p>
+  <p>• 如果今天涨的股票明天倾向于继续涨 → <span class="hl">正自相关（动量效应）</span><br>
+  • 如果今天涨的股票明天倾向于跌回来 → <span class="hl3">负自相关（均值回归）</span><br>
+  • 如果今天的涨跌和明天毫无关系 → 自相关≈0（随机游走）</p>
+</div>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 780 220" xmlns="http://www.w3.org/2000/svg">
+  <text x="30" y="30" fill="#6c5ce7" font-size="13" font-weight="600">正自相关：趋势延续（动量）</text>
+  <path d="M30,70 Q120,40 200,55 Q280,70 360,40 Q440,20 520,45 Q600,70 680,35 Q720,25 750,40" fill="none" stroke="#6c5ce7" stroke-width="2.5"/>
+  
+  <text x="30" y="130" fill="#d2991d" font-size="13" font-weight="600">负自相关：均值回归（反转）</text>
+  <path d="M30,150 Q120,190 200,160 Q280,130 360,170 Q440,200 520,160 Q600,120 680,165 Q720,185 750,155" fill="none" stroke="#d2991d" stroke-width="2.5"/>
+  
+  <text x="30" y="200" fill="#7c8aa2" font-size="11">自相关系数 ρ(1) = Corr(Yₜ, Yₜ₋₁) —— 时间序列建模从这里开始</text>
+</svg>
+</div>
+
+<h3>平稳性——时间序列建模的前提条件</h3>
+
+<div class="deep">
+  <div class="label">📈 平稳 = 统计特性不随时间变化</div>
+  <p><strong>严平稳：</strong>任何时间窗口的联合分布相同<br>
+  <strong>弱平稳（我们关心的）：</strong>均值恒定 + 方差恒定 + 自协方差只依赖于时间间隔</p>
+  <p><strong>为什么平稳性重要？</strong>ARIMA、GARCH等所有经典时序模型都假设数据平稳。非平稳数据的均值和方差随时间漂移→基于历史数据的任何推断都不可靠。</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 实战检查清单</div>
+  <p>拿到任何金融时间序列，第一件事：<br>
+  1. 画图看趋势（肉眼判断有没有明显的向上/向下漂移）<br>
+  2. ADF检验（Augmented Dickey-Fuller）——统计检验单位根<br>
+  3. 如果不平稳→差分（对价格取对数收益率）→再检验</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">金融收益率数据最显著违反OLS回归的哪个假设？</div>
+  <button class="quiz-option" onclick="answerQuiz('why-timeseries',0,0)">A. 线性假设——金融关系是非线性的</button>
+  <button class="quiz-option" onclick="answerQuiz('why-timeseries',0,1)">B. 独立同分布假设——存在自相关（动量/反转）+ 异方差（波动率聚集）+ 肥尾</button>
+  <button class="quiz-option" onclick="answerQuiz('why-timeseries',0,2)">C. 无多重共线性</button>
+  <button class="quiz-option" onclick="answerQuiz('why-timeseries',0,3)">D. 大样本假设</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'acf-pacf',
+        title: '自相关(ACF)与偏自相关(PACF)——怎么读懂这些图',
+        emoji: '📉',
+        content: `
+<h3>ACF和PACF是时间序列的「指纹」</h3>
+
+<div class="analogy">
+  <div class="label">🕵️ 侦探破案</div>
+  <p>你看到地上有一串脚印（时间序列数据）。ACF告诉你「每一步和上一步有多像」——如果第3步和第2步高度相关，可能是同一个人。PACF告诉你「去掉中间步骤的间接影响后，第3步和第1步还有直接关系吗」——纯直接影响。</p>
+</div>
+
+<h3>ACF（自相关函数）——看原始相关性</h3>
+
+<div class="deep">
+  <div class="label">📉 ACF(k) = Corr(Yₜ, Yₜ₋ₖ)</div>
+  <p><strong>含义：</strong>今天的值和k天前的值的相关系数。</p>
+  <p><strong>ACF的典型模式：</strong></p>
+  <p>• <strong>AR(1)模型：</strong>ACF指数衰减——今天的值通过明天→后天→大后天间接影响……像涟漪慢慢消散</p>
+  <p>• <strong>MA(1)模型：</strong>ACF在滞后1期后截尾（突然变0）——冲击只直接影响今天和明天，后天就消失了</p>
+  <p>• <strong>ARMA模型：</strong>ACF从某点开始衰减——既有直接又有间接影响</p>
+</div>
+
+<h3>PACF（偏自相关函数）——去掉中间干扰</h3>
+
+<div class="deep">
+  <div class="label">📉 PACF(k) = 控制Yₜ₋₁...Yₜ₋ₖ₋₁后，Yₜ与Yₜ₋ₖ的纯相关</div>
+  <p><strong>含义：</strong>「如果我已经知道昨天和前天的值，再知道大前天的值，对预测今天还有额外帮助吗？」</p>
+  <p><strong>PACF的典型模式：</strong></p>
+  <p>• <strong>AR(p)模型：</strong>PACF在滞后p期后截尾——p阶之后就没了直接贡献</p>
+  <p>• <strong>MA(q)模型：</strong>PACF衰减——没有明确的「截断点」</p>
+</div>
+
+<h3>如何用ACF/PACF确定ARIMA的p和q</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>模型类型</th><th>ACF的形态</th><th>PACF的形态</th></tr>
+  <tr><td><strong>AR(p)</strong></td><td>指数衰减（拖尾）</td><td>滞后p后截尾</td></tr>
+  <tr><td><strong>MA(q)</strong></td><td>滞后q后截尾</td><td>衰减（拖尾）</td></tr>
+  <tr><td><strong>ARMA(p,q)</strong></td><td>衰减（拖尾）</td><td>衰减（拖尾）</td></tr>
+</table>
+</div>
+
+<div class="tip">
+  <div class="label">💡 实战口诀</div>
+  <p>「ACF截尾选MA，PACF截尾选AR，俩都拖尾选ARMA，俩都截尾→数据有问题。」</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">如果你画出的PACF图在第2期之后突然都落在置信区间内（截尾），ACF图缓慢衰减（拖尾）。你应该选什么模型？</div>
+  <button class="quiz-option" onclick="answerQuiz('acf-pacf',0,0)">A. MA(2)</button>
+  <button class="quiz-option" onclick="answerQuiz('acf-pacf',0,1)">B. AR(2)——PACF截尾在p=2，ACF拖尾，正是AR模型的指纹</button>
+  <button class="quiz-option" onclick="answerQuiz('acf-pacf',0,2)">C. ARIMA(0,1,0)</button>
+  <button class="quiz-option" onclick="answerQuiz('acf-pacf',0,3)">D. 数据有问题</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'arima-basics',
+        title: 'ARIMA——时间序列预测的经典模型',
+        emoji: '📐',
+        content: `
+<h3>ARIMA = AR（自回归）+ I（差分）+ MA（移动平均）</h3>
+
+<div class="deep">
+  <div class="label">📐 AR(p)：用过去的值预测现在</div>
+  <div class="formula">Yₜ = c + φ₁Yₜ₋₁ + φ₂Yₜ₋₂ + ... + φₚYₜ₋ₚ + εₜ</div>
+  <p><strong>直觉：</strong>「今天的气温 = 昨天的气温 × 0.8 + 前天的气温 × 0.15 + 随机波动」</p>
+  <p><strong>投资映射：</strong>AR(1) 的 φ₁=0.3 → 昨天的收益率解释了今天30%的变化。φ₁>0=动量，φ₁<0=反转。|φ₁|必须<1（否则过程爆炸）。</p>
+</div>
+
+<div class="deep">
+  <div class="label">📐 MA(q)：用过去的冲击解释现在</div>
+  <div class="formula">Yₜ = μ + εₜ + θ₁εₜ₋₁ + θ₂εₜ₋₂ + ... + θ_qεₜ₋_q</div>
+  <p><strong>直觉：</strong>「今天的股价不只是今天的信息，还受昨天和前天意外事件余波的持续影响」</p>
+  <p><strong>投资映射：</strong>一个政策冲击（如降息）的影响不是一次性的——MA模型捕捉冲击的衰减模式。</p>
+</div>
+
+<h3>ARIMA(p,d,q) —— 三个参数的含义</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>参数</th><th>含义</th><th>如何选择</th><th>投资中对应的思考</th></tr>
+  <tr><td><strong>p</strong></td><td>AR阶数——用过去p个值预测</td><td>看PACF图（偏自相关截尾）</td><td>过去p天的收益率对今天的影响</td></tr>
+  <tr><td><strong>d</strong></td><td>差分次数——做几次差分才平稳</td><td>ADF检验——d=1最常见（价格→收益率）</td><td>d=0=平稳序列；d=1=带趋势</td></tr>
+  <tr><td><strong>q</strong></td><td>MA阶数——过去q个冲击的影响</td><td>看ACF图（自相关截尾）</td><td>突发事件冲击持续q天</td></tr>
+</table>
+</div>
+
+<h3>🎛️ 互动：感受AR(1)参数的影响</h3>
+<div class="calc-grid">
+  <div class="calc-input"><label>AR系数 φ₁ (-1 ~ 1)</label><input type="number" id="ar1-phi" value="0.7" step="0.1" min="-0.99" max="0.99" oninput="simAR1()"></div>
+  <div class="calc-input"><label>序列长度</label><input type="number" id="ar1-n" value="50" min="10" max="200" oninput="simAR1()"></div>
+  <div class="calc-result" id="ar1Result">
+    <div class="clabel">φ₁ = 0.7 → 强动量（趋势延续），φ₁ = -0.7 → 强反转（均值回归），φ₁ = 0 → 白噪声</div>
+    <div class="cval" id="ar1Val" style="font-family:'SF Mono',monospace;font-size:0.7em;line-height:1.6;white-space:pre-wrap"></div>
+  </div>
+</div>
+
+<h3>📝 案例：沪深300周收益率AR(1)建模</h3>
+
+<div class="deep">
+  <div class="label">🇨🇳 用真实风格的数据走一遍AR建模</div>
+  <p><strong>数据：</strong>沪深300过去50周的周收益率（模拟真实数据）：均值0.12%，标准差2.8%，一阶自相关=0.18。</p>
+  <p><strong>第一步——平稳性：</strong>ADF检验p<0.01→收益率已平稳→d=0。不需要差分。</p>
+  <p><strong>第二步——选阶：</strong>PACF在第1期后截尾→p=1。ACF拖尾→排除纯MA。</p>
+  <p><strong>第三步——拟合AR(1)：</strong>MLE估计 φ₁=0.18（正自相关，轻微动量），c=0.001（周均0.1%），σ=0.027。</p>
+  <p><strong>第四步——预测下周：</strong>本周收益率=-2.1%。预测下周=0.001+0.18×(-0.021)=-0.28%。95%区间=(-0.28±1.96×2.7%)=[-5.6%,+5.0%]。</p>
+  <p><strong>解读：</strong>φ₁=0.18→动量较弱，上周跌2%只意味着本周有微弱惯性（-0.28%），而非强势延续。<span class="hl">如果φ₁=0.6→预测会是-1.26%——动量越强，反转越难。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">ARIMA(1,1,0)模型中，d=1意味着什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('arima-basics',0,0)">A. 需要1个AR项</button>
+  <button class="quiz-option" onclick="answerQuiz('arima-basics',0,1)">B. 原始序列非平稳，需要差分1次后变为平稳——典型场景：股价→对数收益率</button>
+  <button class="quiz-option" onclick="answerQuiz('arima-basics',0,2)">C. 需要1个MA项</button>
+  <button class="quiz-option" onclick="answerQuiz('arima-basics',0,3)">D. 模型有1个参数</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'arima-practice',
+        title: 'ARIMA实战——从数据到预测的完整流程',
+        emoji: '🔧',
+        content: `
+<h3>ARIMA建模五步法</h3>
+
+<div class="step-list">
+  <div class="step-card">
+    <div class="num">1</div>
+    <div class="title">画图 + ADF检验</div>
+    <div class="desc">判断是否平稳。不平稳→差分（d的选择）</div>
+  </div>
+  <div class="step-card">
+    <div class="num">2</div>
+    <div class="title">画ACF/PACF</div>
+    <div class="desc">选p和q的候选值。ACF截尾→q，PACF截尾→p</div>
+  </div>
+  <div class="step-card">
+    <div class="num">3</div>
+    <div class="title">估计参数</div>
+    <div class="desc">用MLE或OLS拟合候选模型</div>
+  </div>
+  <div class="step-card">
+    <div class="num">4</div>
+    <div class="title">残差诊断</div>
+    <div class="desc">残差应该是白噪声。如果不是→模型不够好</div>
+  </div>
+  <div class="step-card">
+    <div class="num">5</div>
+    <div class="title">AIC/BIC选最优</div>
+    <div class="desc">在多个候选模型中选AIC最低的（兼顾拟合+简洁）</div>
+  </div>
+</div>
+
+<h3>📝 实战例题：预测某指数的周收益率</h3>
+
+<div class="deep">
+  <div class="label">📊 手算ARIMA(1,0,1)预测</div>
+  <p><strong>数据（最近5周收益率）：</strong>+1.2%, -0.8%, +0.5%, +2.1%, -1.5%</p>
+  <p><strong>拟合得到：</strong>AR(1)系数 φ₁=0.35, MA(1)系数 θ₁=-0.22, 常数 c=0.08</p>
+  <div class="formula\">
+    预测下一周：Ŷ₆ = 0.08 + 0.35×(-1.5) + (-0.22)×ε₅<br>
+    ε₅ = 实际值₅ - 预测值₅（需要从第一步递归算出所有残差）
+  </div>
+  <p><strong>简化版本（忽略MA项看趋势）：</strong>Ŷ₆ ≈ 0.08 + 0.35×(-1.5%) = -0.45%</p>
+  <p><strong>95%预测区间：</strong>-0.45% ± 1.96×σ ≈ [-2.8%, +1.9%]</p>
+  <p style="margin-top:8px"><span class="hl">核心洞察：ARIMA给你一个点预测+一个区间。区间往往比点预测更有用——它诚实地告诉你「我不知道精确值，但知道范围」。</span></p>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ ARIMA的三大局限</div>
+  <p><strong>1. 线性假设：</strong>ARIMA假设关系是线性的——金融市场大量非线性关系被忽略</p>
+  <p><strong>2. 恒定方差：</strong>ARIMA假设误差方差恒定——但在危机时方差飙升。这就引出了下一讲：GARCH</p>
+  <p><strong>3. 单变量：</strong>ARIMA只用一个变量预测自己——忽略了其他变量（利率、PMI等）的影响</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">ARIMA建模第三步「估计参数」通常用什么方法？</div>
+  <button class="quiz-option" onclick="answerQuiz('arima-practice',0,0)">A. 手动试验</button>
+  <button class="quiz-option" onclick="answerQuiz('arima-practice',0,1)">B. MLE（极大似然估计）——找到让观测数据最可能出现的参数值</button>
+  <button class="quiz-option" onclick="answerQuiz('arima-practice',0,2)">C. 随机猜测</button>
+  <button class="quiz-option" onclick="answerQuiz('arima-practice',0,3)">D. 查表</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '📊 模块二：波动率建模——GARCH与风险预测',
+    lessons: [
+      {
+        id: 'why-volatility',
+        title: '为什么需要波动率建模——从恒定方差到时变方差',
+        emoji: '🌊',
+        content: `
+<h3>ARIMA的致命盲区：假设方差恒定</h3>
+
+<div class="analogy">
+  <div class="label">🚗 开车不看路况</div>
+  <p><strong>ARIMA：</strong>假设每天开车的路况都一样（方差恒定），只用平均速度预测到达时间。<br>
+  <strong>现实：</strong>周一早高峰（高波动）和周日清晨（低波动）的路况完全不同。</p>
+  <p><span class="hl">ARIMA预测了「平均涨跌」，但完全不告诉你「今天是危险还是安全」——而这恰恰是投资者最需要知道的。</span></p>
+</div>
+
+<h3>金融收益率的方差不是常数——证据</h3>
+
+<div class="deep">
+  <div class="label">🌊 2008 vs 2017——同是股市，方差天差地别</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>时期</th><th>日均收益率</th><th>日波动率(σ)</th><th>日VaR₉₅(1000万组合)</th></tr>
+    <tr><td>2017年（平静年）</td><td>+0.03%</td><td class="hl2">0.6%</td><td>~10万</td></tr>
+    <tr><td>2008年10月（危机）</td><td>-0.15%</td><td class="hl4">4.2%</td><td>~69万</td></tr>
+  </table>
+  </div>
+  <p><strong>差距：</strong>同样的1000万组合，危机时的风险是平静时的<strong>7倍</strong>。如果风控系统只用「历史平均波动率=18%」来做仓位决策——在2017年你太保守（浪费机会），在2008年你太激进（暴露过量风险）。</p>
+</div>
+
+<h3>GARCH的核心洞察：波动率本身可以预测</h3>
+
+<div class="deep">
+  <div class="label">🌊 波动率的两个可预测特征</div>
+  <p><strong>1. 波动率聚集（Volatility Clustering）：</strong>高波动日后跟着高波动。今天σ=3%→明天σ大概率还是2-4%</p>
+  <p><strong>2. 均值回归（Mean Reversion）：</strong>长期来看波动率会回到「正常」水平。极端波动不会永久持续</p>
+  <p><strong>GARCH同时捕捉这两点：</strong>α项捕捉「昨天的大波动→今天波动率跳升」（聚集），β项捕捉「波动率不会永远保持高位」（回归）。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">为什么ARIMA不能替代GARCH做风险预测？</div>
+  <button class="quiz-option" onclick="answerQuiz('why-volatility',0,0)">A. ARIMA太慢</button>
+  <button class="quiz-option" onclick="answerQuiz('why-volatility',0,1)">B. ARIMA假设方差恒定——预测的是均值而非波动率。危机时实际风险是平时的7倍，ARIMA给不出这个信息</button>
+  <button class="quiz-option" onclick="answerQuiz('why-volatility',0,2)">C. ARIMA需要更多数据</button>
+  <button class="quiz-option" onclick="answerQuiz('why-volatility',0,3)">D. ARIMA只适合股票</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'garch-model',
+        title: 'GARCH——捕捉波动率聚集的行业标准',
+        emoji: '📊',
+        content: `
+<h3>金融数据最重要的特征：波动率聚集</h3>
+
+<div class="analogy">
+  <div class="label">🌊 暴风雨的规律</div>
+  <p>大浪后面往往跟着大浪，小浪后面往往跟着小浪——海面不会「今天狂风巨浪，明天立刻风平浪静」。</p>
+  <p><span class="hl">金融市场完全一样：高波动日之后是高波动日，低波动日之后是低波动日。</span>这就是波动率聚集。</p>
+</div>
+
+<h3>GARCH(1,1)——最简单但最强大的波动率模型</h3>
+
+<div class="formula">
+  σ²ₜ = ω + α · ε²ₜ₋₁ + β · σ²ₜ₋₁<br>
+  <span style="font-size:0.8em;color:var(--sub)">今天的方差 = 基础水平 + α×昨天的冲击² + β×昨天的方差</span>
+</div>
+
+<div class="table-wrap">
+<table>
+  <tr><th>参数</th><th>含义</th><th>典型值</th><th>投资含义</th></tr>
+  <tr><td><strong>ω</strong></td><td>长期基础波动率水平</td><td>>0（很小）</td><td>市场的「底色」波动——永远不会消失</td></tr>
+  <tr><td><strong>α</strong></td><td>新信息对波动率的即时冲击</td><td>0.05~0.15</td><td>昨天的大涨大跌→今天波动率飙升</td></tr>
+  <tr><td><strong>β</strong></td><td>波动率的持续性</td><td>0.80~0.95</td><td>β越接近1→波动率越「粘」→高波动持续很久</td></tr>
+  <tr><td><strong>α+β</strong></td><td>波动率持续性总和</td><td>越接近1越持续</td><td>α+β>1=方差爆炸；α+β→1=IGARCH（永久冲击）</td></tr>
+</table>
+</div>
+
+<h3>🎛️ 互动：感受GARCH参数的影响</h3>
+<div class="calc-grid">
+  <div class="calc-input"><label>α（冲击敏感度）</label><input type="number" id="garch-alpha" value="0.10" step="0.01" min="0" max="0.3" oninput="simGARCH()"></div>
+  <div class="calc-input"><label>β（波动持续性）</label><input type="number" id="garch-beta" value="0.85" step="0.01" min="0.5" max="0.98" oninput="simGARCH()"></div>
+  <div class="calc-result" id="garchResult">
+    <div class="clabel">α+β = <span id="garchSum">0.95</span></div>
+    <div class="cval" id="garchVal" style="font-family:'SF Mono',monospace;font-size:0.72em;line-height:1.5;white-space:pre-wrap"></div>
+  </div>
+</div>
+
+<div class="tip">
+  <div class="label">💡 GARCH的量化应用</div>
+  <p><strong>1. 动态仓位调整：</strong>GARCH预测波动率↑→降低仓位；波动率↓→恢复仓位<br>
+  <strong>2. VaR动态更新：</strong>用GARCH波动率替代历史波动率→VaR随市场状态自适应<br>
+  <strong>3. 期权定价改进：</strong>Black-Scholes假设波动率恒定→GARCH提供了时变波动率→更准确定价</p>
+</div>
+
+<h3>📝 案例：用GARCH做动态仓位管理</h3>
+
+<div class="deep">
+  <div class="label">💰 从波动率预测到实际仓位调整</div>
+  <p><strong>场景：</strong>你管理1000万组合，风控规则是「日VaR₉₅不超过总资产的3%」——即单日亏损上限30万。</p>
+  <p><strong>第一步——GARCH预测明天波动率：</strong>今天收盘后，GARCH(1,1)输出 σ̂ₜ₊₁=1.8%（基于最近波动率聚集）。</p>
+  <p><strong>第二步——计算「安全仓位」：</strong>组合VaR₉₅=1.645×σ̂ₜ₊₁×仓位。仓位=30万/(1.645×1.8%)≈1013万→当前1000万仓位在安全范围内。</p>
+  <p><strong>第三天——波动率飙升：</strong>前天大跌3%，GARCH更新σ̂=3.5%→安全仓位=30万/(1.645×3.5%)≈521万→<span class="hl4">当前1000万仓位超出安全范围近一倍！需要减仓至500万。</span></p>
+  <p><strong>两周后——波动率回归：</strong>市场平静，GARCH预测σ̂=1.2%→安全仓位=30万/(1.645×1.2%)≈1520万→可以加回仓位。</p>
+  <p style="margin-top:8px"><span class="hl">这就是GARCH的动态仓位管理：波动率高→自动减仓；波动率低→自动加仓。不需要人判断「是不是该减仓了」——模型替你算。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">GARCH(1,1)中 α+β 接近1意味着什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('garch-model',0,0)">A. 模型不稳定</button>
+  <button class="quiz-option" onclick="answerQuiz('garch-model',0,1)">B. 波动率高度持续——今天的高波动预示着未来很长一段时间的高波动，冲击衰减非常缓慢</button>
+  <button class="quiz-option" onclick="answerQuiz('garch-model',0,2)">C. 模型需要更多数据</button>
+  <button class="quiz-option" onclick="answerQuiz('garch-model',0,3)">D. α=0</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'egarch',
+        title: 'EGARCH——A股跌比涨更剧烈（非对称波动率）',
+        emoji: '⚡',
+        content: `
+<h3>GARCH的盲区：好消息和坏消息对波动率的影响一样大</h3>
+
+<div class="warning">
+  <div class="label">⚠️ 杠杆效应——A股最显著的特征</div>
+  <p><strong>GARCH假设：</strong>昨天跌5%和涨5%→今天波动率增加同样的量（α×0.05²）。<br>
+  <strong>A股现实：</strong>跌5%对波动率的冲击远大于涨5%。原因？跌5%=亏钱=恐慌→卖盘增加→波动加剧。涨5%=赚钱=开心但不会恐慌性买入。</p>
+  <p><span class="hl">EGARCH（指数GARCH）专门捕捉这种不对称性。</span></p>
+</div>
+
+<h3>EGARCH的核心创新：允许正负冲击不对称</h3>
+
+<div class="formula">
+  ln(σ²ₜ) = ω + α·|εₜ₋₁/σₜ₋₁| + γ·(εₜ₋₁/σₜ₋₁) + β·ln(σ²ₜ₋₁)
+</div>
+
+<div class="deep">
+  <div class="label">⚡ EGARCH的三个关键参数</div>
+  <p><strong>α（幅度效应）：</strong>无论好消息还是坏消息，冲击的「幅度」对波动率的影响。α>0→大冲击（不管正负）都增加波动。</p>
+  <p><strong>γ（非对称效应——EGARCH的签名参数）：</strong>γ<0→坏消息比好消息更剧烈地推高波动率。这是A股的典型特征。</p>
+  <p><strong>β（持续性）：</strong>同GARCH。α+β仍是波动率持续性指标。</p>
+</div>
+
+<h3>📝 实战对比：GARCH vs EGARCH拟合同一段数据</h3>
+
+<div class="deep">
+  <div class="label">🔬 A股沪深300，2015-2016年（包含股灾）</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>模型</th><th>α</th><th>β</th><th>γ（非对称）</th><th>解读</th></tr>
+    <tr><td>GARCH(1,1)</td><td>0.12</td><td>0.85</td><td>—</td><td>跌5%和涨5%的波动冲击相同</td></tr>
+    <tr><td><strong>EGARCH(1,1)</strong></td><td>0.15</td><td>0.88</td><td><strong>-0.08</strong></td><td><span class="hl4">γ<0→跌比涨多推高波动率约30%</span></td></tr>
+  </table>
+  </div>
+  <p><strong>结论：</strong>EGARCH更准确地反映了A股的恐慌特征——<span class="hl">在A股做风控，EGARCH比GARCH更安全。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">EGARCH的γ参数<0意味着什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('egarch',0,0)">A. 模型不收敛</button>
+  <button class="quiz-option" onclick="answerQuiz('egarch',0,1)">B. 坏消息（下跌）比好消息（上涨）更剧烈地推高波动率——杠杆效应，A股的典型特征</button>
+  <button class="quiz-option" onclick="answerQuiz('egarch',0,2)">C. 好消息的影响更大</button>
+  <button class="quiz-option" onclick="answerQuiz('egarch',0,3)">D. 数据有问题</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '🤖 模块三：隐马尔可夫模型(HMM)——让模型自己发现周期',
+    lessons: [
+      {
+        id: 'hmm-model',
+        title: 'HMM：比美林时钟更客观的周期识别工具',
+        emoji: '🤖',
+        content: `
+<h3>美林时钟的致命缺陷：人为主观</h3>
+
+<div class="analogy">
+  <div class="label">🩺 医生 vs AI诊断</div>
+  <p><strong>美林时钟：</strong>像老医生凭经验说「你看起来像感冒」——判断取决于医生今天心情好不好。<br>
+  <strong>HMM：</strong>像AI看了你的全部化验单，用统计模型推断「你处于感冒早期的概率73%，流感概率22%」。</p>
+</div>
+
+<h3>HMM的两个核心组件</h3>
+
+<div class="deep">
+  <div class="label">🤖 隐藏状态 + 可观测变量</div>
+  <p><strong>隐藏状态（你看不到的）：</strong>市场真实处于复苏/过热/滞胀/衰退的哪个阶段<br>
+  <strong>可观测变量（你能看到的）：</strong>PMI、信用利差、期限利差、行业库存、CPI、失业率</p>
+  <p><strong>核心任务：</strong>从可观测变量推断隐藏状态——「PMI=50.8、利差收窄、库存下降 → 当前处于复苏期的概率是73%」</p>
+</div>
+
+<h3>HMM三个矩阵——模型的全部参数</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>矩阵</th><th>含义</th><th>投资映射</th></tr>
+  <tr><td><strong>转移矩阵 A</strong></td><td>P(Sₜ=j | Sₜ₋₁=i)——从状态i到j的概率</td><td>「复苏→过热的概率是多少？」→ 判断拐点</td></tr>
+  <tr><td><strong>发射矩阵 B</strong></td><td>P(Oₜ=v | Sₜ=i)——在状态i下观测到v的概率</td><td>「在衰退期，PMI<48的概率是多少？」</td></tr>
+  <tr><td><strong>初始分布 π</strong></td><td>P(S₀=i)——初始状态概率</td><td>「当前最可能处于哪个周期阶段？」</td></tr>
+</table>
+</div>
+
+<h3>HMM实战框架</h3>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 780 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- States -->
+  <rect x="50" y="70" width="140" height="45" rx="8" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="120" y="97" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="600">复苏</text>
+  <rect x="240" y="70" width="140" height="45" rx="8" fill="rgba(248,81,73,0.1)" stroke="#f85149" stroke-width="1.5"/>
+  <text x="310" y="97" text-anchor="middle" fill="#f85149" font-size="13" font-weight="600">过热</text>
+  <rect x="430" y="70" width="140" height="45" rx="8" fill="rgba(226,132,19,0.1)" stroke="#e28413" stroke-width="1.5"/>
+  <text x="500" y="97" text-anchor="middle" fill="#e28413" font-size="13" font-weight="600">滞胀</text>
+  <rect x="620" y="70" width="140" height="45" rx="8" fill="rgba(108,92,231,0.1)" stroke="#6c5ce7" stroke-width="1.5"/>
+  <text x="690" y="97" text-anchor="middle" fill="#6c5ce7" font-size="13" font-weight="600">衰退</text>
+  <!-- Arrows -->
+  <path d="M190,92 L230,92" fill="none" stroke="#7c8aa2" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <path d="M380,92 L420,92" fill="none" stroke="#7c8aa2" stroke-width="1.5"/>
+  <path d="M570,92 L610,92" fill="none" stroke="#7c8aa2" stroke-width="1.5"/>
+  <!-- Observed -->
+  <text x="390" y="30" text-anchor="middle" fill="#7c8aa2" font-size="11">隐藏状态（你看不到）</text>
+  <text x="390" y="170" text-anchor="middle" fill="#a880e0" font-size="12">↑ 可观测变量：PMI · 信用利差 · 期限利差 · CPI · 库存 ↑</text>
+</svg>
+</div>
+
+<div class="tip">
+  <div class="label">💡 HMM > 美林时钟的三个理由</div>
+  <p><strong>1. 概率输出而非二元判断：</strong>「复苏73% + 过热22% + 滞胀4% + 衰退1%」→ 头寸可以分档<br>
+  <strong>2. 自动学习转移模式：</strong>不用人判断「衰退之后通常是复苏」——模型从数据中学<br>
+  <strong>3. 多维度融合：</strong>可以同时输入PMI、利差、库存、通胀——比人脑综合判断更系统</p>
+</div>
+
+<h3>📝 实战例题：HMM识别A股周期</h3>
+
+<div class="deep">
+  <div class="label">🇨🇳 用四个指标跑HMM</div>
+  <p><strong>输入：</strong>PMI（制造业景气）+ 信用利差（AA企业债-国债）+ 期限利差（10Y-2Y）+ 工业库存同比。月度数据，2010-2025。</p>
+  <p><strong>HMM输出（假设4个隐藏状态）：</strong></p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>状态</th><th>PMI特征</th><th>信用利差</th><th>期限利差</th><th>最优资产</th></tr>
+    <tr><td>复苏</td><td>PMI>50且上升</td><td>收窄</td><td>陡峭</td><td class="hl2">股票（盈利改善）</td></tr>
+    <tr><td>过热</td><td>PMI高位</td><td>极窄</td><td>平坦</td><td class="hl3">商品（通胀受益）</td></tr>
+    <tr><td>滞胀</td><td>PMI下滑</td><td>走阔</td><td>倒挂</td><td class="hl4">现金（防守）</td></tr>
+    <tr><td>衰退</td><td>PMI<50</td><td>极宽</td><td>陡峭</td><td class="hl">债券（降息受益）</td></tr>
+  </table>
+  </div>
+  <p><strong>当前状态（2026模拟）：</strong>复苏概率58%·过热15%·滞胀20%·衰退7% → <span class="hl">倾向复苏→超配股票</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">HMM相比美林时钟的核心优势是什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('hmm-model',0,0)">A. 计算速度更快</button>
+  <button class="quiz-option" onclick="answerQuiz('hmm-model',0,1)">B. 输出概率分布而非二元判断 + 自动从数据学习 + 多维度融合——让数据说话而非人为主观划分</button>
+  <button class="quiz-option" onclick="answerQuiz('hmm-model',0,2)">C. 更简单的模型</button>
+  <button class="quiz-option" onclick="answerQuiz('hmm-model',0,3)">D. 需要更少的数据</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'baum-welch',
+        title: 'Baum-Welch与Viterbi——HMM怎么学习和解码',
+        emoji: '🧬',
+        content: `
+<h3>HMM的两个核心算法——一个学习、一个推断</h3>
+
+<div class="deep">
+  <div class="label">🧬 Baum-Welch（学习）——HMM怎么「训练」</div>
+  <p><strong>问题：</strong>给你一堆历史数据（PMI、利差、库存等），但你不知道历史上每个月的真实周期状态。怎么估计转移矩阵和发射矩阵？</p>
+  <p><strong>解法：</strong>Baum-Welch算法（EM算法的特例）——迭代两步直到收敛：</p>
+  <p><strong>E步（期望）：</strong>基于当前参数估计，推断每个时间点最可能处于哪个状态（这是软分配——73%复苏+22%过热+5%滞胀）</p>
+  <p><strong>M步（最大化）：</strong>基于E步的状态分配，重新估计转移矩阵和发射矩阵</p>
+  <p><strong>收敛：</strong>重复E→M→E→M……直到参数不再明显变化</p>
+  <p style="margin-top:8px"><span class="hl">关键：Baum-Welch不需要人工标注「2015年6月是过热期」——模型自己从数据中学习什么是过热。</span></p>
+</div>
+
+<h3>Viterbi算法（解码）——给定观测序列，最优状态路径是什么</h3>
+
+<div class="deep">
+  <div class="label">🧬 Viterbi——找到最可能的状态序列</div>
+  <p><strong>问题：</strong>模型已经训练好了（已知A、B、π），现在给你一段观测序列（比如过去12个月的PMI和利差），这12个月各自处于什么周期阶段？</p>
+  <p><strong>解法：</strong>Viterbi算法用动态规划高效找到最优路径——不是逐月独立推断，而是全局最优。</p>
+  <p><strong>为什么不逐月独立推断？</strong>因为状态有持续性——如果上个月是复苏，这个月大概率还是复苏（转移矩阵的自我转移概率很高）。Viterbi考虑了这种持续性。</p>
+</div>
+
+<h3>📝 实战例题：Viterbi解码12个月的经济状态</h3>
+
+<div class="deep">
+  <div class="label">📅 简化案例——只有2个状态（正常/衰退）</div>
+  <p><strong>转移矩阵：</strong>P(正常→正常)=0.9, P(衰退→衰退)=0.85</p>
+  <p><strong>观测：</strong>过去3个月PMI分别为51、48、47</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>月份</th><th>PMI</th><th>P(正常|PMI)</th><th>P(衰退|PMI)</th><th>Viterbi最优</th></tr>
+    <tr><td>第1月</td><td>51</td><td>0.75</td><td>0.25</td><td class="hl2">正常</td></tr>
+    <tr><td>第2月</td><td>48</td><td>0.35</td><td>0.65</td><td class="hl4">衰退</td></tr>
+    <tr><td>第3月</td><td>47</td><td>0.20</td><td>0.80</td><td class="hl4">衰退</td></tr>
+  </table>
+  </div>
+  <p><strong>如果只看单月：</strong>第2月PMI=48→衰退概率65%。但如果第1月是正常，转入衰退只有10%的概率→Viterbi可能仍然判第2月为正常（全局最优 ≠ 逐月独立推断）。</p>
+  <p><strong>这就是Viterbi的价值：</strong><span class="hl">不只看这一个月的观测，还考虑前后的状态连贯性。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">Baum-Welch算法训练HMM的最大优势是什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('baum-welch',0,0)">A. 计算最快</button>
+  <button class="quiz-option" onclick="answerQuiz('baum-welch',0,1)">B. 不需要人工标注——模型自己从数据中学习什么是「复苏」「过热」「衰退」——克服了美林时钟人为主观划分的致命缺陷</button>
+  <button class="quiz-option" onclick="answerQuiz('baum-welch',0,2)">C. 需要更少的数据</button>
+  <button class="quiz-option" onclick="answerQuiz('baum-welch',0,3)">D. 更简单的公式</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'cointegration',
+        title: '协整——配对交易的数学基础',
+        emoji: '🔗',
+        content: `
+<h3>两只股票各自乱走，但它们的价差是平稳的</h3>
+
+<div class="analogy">
+  <div class="label">🐕 遛狗模型</div>
+  <p>狗（股票A）和主人（股票B）各自随机走动，但狗始终在主人周围活动。狗可能跑到前面也可能落到后面，但最终会回到主人身边。</p>
+  <p><span class="hl">价差 = 狗与主人的距离——偏离太远时，做空跑远的、做多落后的，赌它们回归。</span></p>
+</div>
+
+<div class="formula">
+  Yₜ − βXₜ ~ I(0) （平稳）<br>
+  <span style="font-size:0.8em;color:var(--sub)">Yₜ和Xₜ各自是非平稳的(I(1))，但它们的线性组合是平稳的 → 协整</span>
+</div>
+
+<h3>协整 vs 相关——本质区别</h3>
+
+<div class="warning">
+  <div class="label">⚠️ 高相关 ≠ 协整</div>
+  <p><strong>相关性：</strong>两只股票是否同涨同跌（短期同步性）<br>
+  <strong>协整：</strong>两只股票是否有长期均衡关系（长期不会越走越远）</p>
+  <p>两只股票可以高度相关但不协整——它们每天同涨同跌1%，但一年后价格可能差了50%。<br>
+  <span class="hl">协整才是配对交易的根基——不是「它们一起动」，是「它们最终会回到一起」。</span></p>
+</div>
+
+<h3>三步协整交易框架</h3>
+<div class="step-list">
+  <div class="step-card">
+    <div class="num">1</div>
+    <div class="title">找配对</div>
+    <div class="desc">同一行业·相似市值·相似业务——工商银行vs建设银行、茅台vs五粮液</div>
+  </div>
+  <div class="step-card">
+    <div class="num">2</div>
+    <div class="title">验协整</div>
+    <div class="desc">对价差做ADF检验→p<0.05=协整存在→可以做配对交易</div>
+  </div>
+  <div class="step-card">
+    <div class="num">3</div>
+    <div class="title">设信号</div>
+    <div class="desc">价差>均值+2σ→做空贵的·做多便宜的。价差回归均值→平仓</div>
+  </div>
+</div>
+
+<h3>📝 实战例题：银行股配对</h3>
+
+<div class="deep">
+  <div class="label">🏦 工商银行 vs 建设银行</div>
+  <p><strong>数据：</strong>过去3年日收盘价。工行(A)和建行(B)的价格比长期均值=0.92，标准差=0.03。</p>
+  <p><strong>信号触发：</strong>某天价格比=0.98（偏离均值2σ），工行相对建行「太贵了」。</p>
+  <p><strong>操作：</strong>做空工行 + 做多建行（等金额）→ 等价格比回归0.92→平仓。收益≈6%减去交易成本。</p>
+  <p><strong>风险：</strong>如果协整关系破裂（比如工行出了重大利好改变了相对估值）→ 止损。这就是为什么需要持续监控ADF检验。</p>
+</div>
+
+<h3>📝 案例：茅台vs五粮液——白酒双雄配对</h3>
+
+<div class="deep">
+  <div class="label">🍶 最经典的A股配对——两家高端白酒龙头</div>
+  <p><strong>为什么它们是天然配对：</strong>同行业（白酒）、相似商业模式（高端品牌）、相似估值逻辑（消费升级）、市值接近。历史上价格比长期稳定。</p>
+  <p><strong>数据：</strong>过去5年日收盘价。茅台/五粮液价格比均值=2.85，标准差=0.18。</p>
+  <p><strong>信号触发的两种情景：</strong></p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>情景</th><th>价格比</th><th>偏离</th><th>操作</th></tr>
+    <tr><td>茅台「太贵」</td><td>3.21</td><td>+2σ</td><td>做空茅台 + 做多五粮液</td></tr>
+    <tr><td>茅台「太便宜」</td><td>2.49</td><td>-2σ</td><td>做多茅台 + 做空五粮液</td></tr>
+  </table>
+  </div>
+  <p><strong>收益测算：</strong>假设价格比从3.21回归到2.95（未完全回归，保守止盈）。做空100万茅台+做多100万五粮液。茅台跌7.5%+五粮液涨1%→组合收益≈8.5万（4.25%），耗时约2-4周。</p>
+  <p><strong>风险控制：</strong>如果价格比继续扩大到3.50（+3.6σ）→止损。协整关系破裂（ADF检验p>0.10）→立即平仓。<span class="hl">核心原则：不赌单一方向，赌价差回归。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">两只银行股相关系数0.95</div>，但ADF检验显示它们的价差不平稳。能做配对交易吗？</div>
+  <button class="quiz-option" onclick="answerQuiz('cointegration',0,0)">A. 能——相关性很高</button>
+  <button class="quiz-option" onclick="answerQuiz('cointegration',0,1)">B. 不能——高相关性≠协整。价差不平稳意味着它们可能越走越远，不存在可靠的均值回归</button>
+  <button class="quiz-option" onclick="answerQuiz('cointegration',0,2)">C. 能——只需增加仓位</button>
+  <button class="quiz-option" onclick="answerQuiz('cointegration',0,3)">D. 能——相关性足够高就行</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '📖 中英文术语对照表',
+    lessons: [
+      {
+        id: 'glossary',
+        title: '时间序列核心术语 · 中英文速查',
+        emoji: '📖',
+        content: `
+<h3>本课所有核心术语——按模块分类，中英文对照</h3>
+
+<div style="margin-bottom:14px">
+  <input type="text" id="glossaryFilter" placeholder="🔍 搜索术语（中英文均可）…" style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.9em;font-family:inherit;outline:none" oninput="var q=this.value.toLowerCase();document.querySelectorAll('.gloss-row').forEach(r=>r.style.display=(!q||r.textContent.toLowerCase().includes(q)?'':'none'))">
+</div>
+
+<div class="table-wrap">
+<table>
+  <tr><th style="width:28%">English</th><th style="width:20%">中文</th><th>定义</th><th style="width:12%">模块</th></tr>
+  <tr class="gloss-row"><td><strong>Autocorrelation</strong></td><td>自相关</td><td style="font-size:0.85em">时间序列中当前值与历史值的相关性。ρ(k)=Corr(Yₜ,Yₜ₋ₖ)。正自相关=动量趋势，负自相关=均值回归。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Stationarity</strong></td><td>平稳性</td><td style="font-size:0.85em">统计特性（均值·方差·自协方差）不随时间变化。所有经典时序模型的前提。ADF检验判断。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>AR(p)</strong></td><td>自回归模型</td><td style="font-size:0.85em">Yₜ=c+φ₁Yₜ₋₁+...+φₚYₜ₋ₚ+εₜ。用过去p个值预测现在。|φ₁|>1=爆炸。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>MA(q)</strong></td><td>移动平均模型</td><td style="font-size:0.85em">Yₜ=μ+εₜ+θ₁εₜ₋₁+...+θ_qεₜ₋_q。用过去冲击解释现在——捕捉事件衰减效应。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>ARIMA(p,d,q)</strong></td><td>差分自回归移动平均</td><td style="font-size:0.85em">AR+I(差分)+MA。d=差分次数使序列平稳。最通用的单变量线性时序模型。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>ADF Test</strong></td><td>单位根检验</td><td style="font-size:0.85em">Augmented Dickey-Fuller。H₀=有单位根(不平稳)。p<0.05→拒绝H₀→序列平稳。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Volatility Clustering</strong></td><td>波动率聚集</td><td style="font-size:0.85em">高波动日后跟着高波动，低波动日后低波动。金融数据最核心特征——GARCH的建模对象。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>GARCH(1,1)</strong></td><td>广义自回归条件异方差</td><td style="font-size:0.85em">σ²ₜ=ω+αε²ₜ₋₁+βσ²ₜ₋₁。波动率预测的行业标准。α+β接近1→波动高度持续。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>α (GARCH)</strong></td><td>ARCH效应参数</td><td style="font-size:0.85em">衡量新信息对波动率的即时冲击。α=0.10→昨天1%意外涨跌，今天波动率增加0.10。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>β (GARCH)</strong></td><td>GARCH效应参数</td><td style="font-size:0.85em">衡量波动率的持续性。β=0.90→昨天的方差今天还保留90%。β越大→波动越粘。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>EGARCH</strong></td><td>非对称GARCH</td><td style="font-size:0.85em">允许好消息和坏消息对波动率有不同影响。A股跌时波动往往比涨时更大→EGARCH捕捉此不对称。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>HMM</strong></td><td>隐马尔可夫模型</td><td style="font-size:0.85em">从可观测变量推断隐藏状态的概率模型。用于周期识别——让模型自己从PMI/利差数据中发现经济阶段。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>Transition Matrix</strong></td><td>转移矩阵</td><td style="font-size:0.85em">P(Sₜ=j|Sₜ₋₁=i)——状态间转换的概率。判断「复苏→过热概率」=拐点先行指标。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>Emission Matrix</strong></td><td>发射矩阵</td><td style="font-size:0.85em">P(Oₜ|Sₜ)——给定隐藏状态下观测到某变量的概率。在衰退期PMI<48的概率是多少？</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>Cointegration</strong></td><td>协整</td><td style="font-size:0.85em">两个非平稳序列的线性组合是平稳的→长期均衡关系。配对交易理论基础——价差偏离均值会回归。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>Spread Trading</strong></td><td>价差交易/配对交易</td><td style="font-size:0.85em">找到协整的两只股票→价差>2σ时做空贵的做多便宜的→回归均值平仓。市场中性策略。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>ECM</strong></td><td>误差修正模型</td><td style="font-size:0.85em">短期偏离被长期均衡拉回——偏离越大回归越快。配对交易中价差偏离均值1σ比3σ回归更快。</td><td><span style="background:rgba(108,92,231,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+</table>
+</div>
+<div style="text-align:center;padding:12px;color:var(--sub);font-size:0.82em">17 条术语</div><\/script>
+`
+      }
+    ]
+  }
+];
+
+// ===== QUIZ DATA =====
+const quizData = {
+  'why-timeseries': [{ correct:1, explain:'正确。金融收益率同时违反了独立同分布三个子假设：存在自相关（动量/反转打破独立）、波动率聚集（异方差打破同方差）、肥尾（打破正态）。这就是为什么我们需要专门的时间序列工具箱。' }],
+  'arima-basics': [{ correct:1, explain:'正确。d=1意味着原始序列不平稳（如股价），需要差分一次后变为平稳（如对数收益率）。这是金融时间序列最常见的操作——价格通常I(1)，收益率I(0)。' }],
+  'garch-model': [{ correct:1, explain:'正确。α+β接近1意味着波动率冲击衰减极慢——今天的高波动预示着未来很长一段时间的高波动。在股票市场中，α+β通常高达0.95-0.99。这解释了为什么「恐慌不会一夜消失」——波动率像粘稠的液体。' }],
+  'hmm-model': [{ correct:1, explain:'正确。HMM三优势：①输出概率分布（复苏73%·过热22%）而非二元判断——头寸可以分档匹配；②自动从历史数据学习转移模式；③可融合PMI、利差、库存等多维度信息。美林时钟的「四个象限」本质上是一个简单化的HMM。' }],
+  'cointegration': [{ correct:1, explain:'正确。高相关性=短期同涨同跌。协整=长期不会越走越远。0.95相关的两只股可能3年后价格差50%——没有均值回归的锚。配对交易必须建立在协整之上，相关性只是第一层筛选。' }],
+  'acf-pacf': [{ correct:1, explain:'正确。PACF截尾在p阶、ACF拖尾=AR(p)的典型指纹。反过来ACF截尾在q阶、PACF拖尾=MA(q)。两个都拖尾=ARMA。这是时间序列分析的「看X光片」基本功。' }],
+  'arima-practice': [{ correct:1, explain:'正确。ARIMA参数估计的标准方法是MLE——找到使观测数据似然最大化的参数。Python中statsmodels的ARIMA.fit()默认用MLE。前两课讲的MLE在这里直接派上用场。' }],
+  'why-volatility': [{ correct:1, explain:'正确。ARIMA是均值模型（预测方向），GARCH是方差模型（预测风险）。2008年10月股市日波动率是2017年的7倍——用ARIMA的历史平均方差做风控，要么太松（危机时爆仓），要么太紧（平静时浪费机会）。' }],
+  'egarch': [{ correct:1, explain:'正确。γ<0是EGARCH的标志——下跌对波动率的冲击大于同等幅度的上涨。A股这个特征特别明显：2015年股灾期间跌停日的波动率冲击远大于涨停日。用GARCH建模A股会系统性低估下跌风险。' }],
+  'baum-welch': [{ correct:1, explain:'正确。Baum-Welch是EM算法在HMM上的特例——不需要人工标注历史数据中每天的周期标签，模型自动从PMI、利差等数据中学习状态的统计特征。这克服了美林时钟最大的缺陷：人为主观划分。' }],
+};
+
+const finalExam = [
+  { q:'金融收益率数据最显著违反OLS回归的哪个假设？', opts:['线性假设','独立同分布——自相关+异方差+肥尾','无共线性','大样本'], correct:1 },
+  { q:'ARIMA(p,d,q)中参数d代表什么？', opts:['自回归阶数','差分次数——使序列平稳需要差分的次数','移动平均阶数','数据的维度'], correct:1 },
+  { q:'GARCH(1,1)中 α+β 接近1的量化含义是什么？', opts:['模型过拟合','波动率冲击衰减极慢——高波动将持续很长时间','模型需要重新估计','数据不足'], correct:1 },
+  { q:'HMM相比美林时钟的核心优势？', opts:['更简单的模型','概率输出+自动学习+多维融合——让数据而非人为主观判断说话','需要更少数据','计算更快'], correct:1 },
+  { q:'高相关性（ρ=0.95）的两只股票一定能做配对交易吗？', opts:['能——相关性够高','不能——高相关≠协整，如果价差不平稳，它们可能越走越远','能——只需增加仓位','能——相关性说明一切'], correct:1 },
+  { q:'配对交易的核心数学基础是什么？', opts:['相关性分析','协整——两只股票各自非平稳但价差平稳，存在长期均值回归','技术分析','基本面分析'], correct:1 },
+  { q:'GARCH模型最核心的金融洞察是什么？', opts:['股市可预测','波动率聚集——大波动后跟着大波动，不是随机独立事件','收益服从正态分布','市场总是有效的'], correct:1 },
+  { q:'平稳性为什么是时序建模的前提？', opts:['数学上的形式要求','非平稳数据的均值和方差随时间漂移→基于历史的任何统计推断都不可靠','模型会更简单','计算结果更精确'], correct:1 },
+];
+
+// ===== STATE =====
+let completedLessons = new Set(JSON.parse(localStorage.getItem('ts_course_done') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem('ts_course_quiz') || '{}');
+let finalDone = false;
+let currentSection = 'why-timeseries';
+
+function save() {
+  localStorage.setItem('ts_course_done', JSON.stringify([...completedLessons]));
+  localStorage.setItem('ts_course_quiz', JSON.stringify(quizResults));
+}
+
+function updateUI() {
+  const totalLessons = modules.reduce((s,m)=>s+m.lessons.length,0);
+  const done = completedLessons.size;
+  const pct = Math.round(done/totalLessons*100);
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('progressBar').style.width = pct+'%';
+  let navHTML = '';
+  modules.forEach((m,mi) => {
+    navHTML += '<div class="nav-module"><div class="nav-module-title">'+m.title+'</div>';
+    m.lessons.forEach((l) => {
+      const isActive = l.id === currentSection;
+      const isDone = completedLessons.has(l.id);
+      navHTML += '<div class="nav-item'+(isActive?' active':'')+(isDone?' done':'')+'" onclick="navigateTo(\''+l.id+'\')">';
+      navHTML += '<span class="check">'+(isDone?'✅':'○')+'</span>';
+      navHTML += '<span>'+l.emoji+' '+l.title+'</span></div>';
+    });
+    navHTML += '</div>';
+  });
+  navHTML += '<div class="nav-module"><div class="nav-module-title">🏆 考核</div>';
+  navHTML += '<div class="nav-item'+(currentSection==='final'?' active':'')+'" onclick="navigateTo(\'final\')"><span class="check">'+(finalDone?'✅':'○')+'</span><span>终极测验</span></div></div>';
+  document.getElementById('navContainer').innerHTML = navHTML;
+}
+
+function navigateTo(id) {
+  currentSection = id;
+  completedLessons.add(id);
+  if (id !== 'final') save();
+  updateUI();
+  if (id === 'final') renderFinalExam();
+  else renderContent(id);
+  window.scrollTo(0,0);
+}
+
+function renderContent(id) {
+  let lesson = null;
+  for (const m of modules) { const found = m.lessons.find(l => l.id === id); if (found) { lesson = found; break; } }
+  if (!lesson) return;
+  let allLessons = []; modules.forEach(m => allLessons.push(...m.lessons));
+  const idx = allLessons.findIndex(l => l.id === id);
+  const prev = idx > 0 ? allLessons[idx-1] : null;
+  const next = idx < allLessons.length-1 ? allLessons[idx+1] : null;
+  let html = '<div class="lesson-card"><h2><span class="emoji">'+lesson.emoji+'</span>'+lesson.title+'</h2>';
+  html += '<div class="meta">📈 时间序列与动态建模 · 第二课</div>';
+  html += lesson.content;
+  const qd = quizData[id];
+  if (qd) {
+    const script = '\n<script>\n(function(){\n  const answers = '+JSON.stringify(qd)+';\n  const userAnswers = quizResults[\''+id+'\'] || [];\n  answers.forEach((a,qi) => {\n    if (userAnswers[qi] !== undefined) {\n      const card = document.querySelectorAll(\'.quiz-card\')[qi];\n      if (!card) return;\n      const btns = card.querySelectorAll(\'.quiz-option\');\n      const result = card.querySelector(\'.quiz-result\');\n      btns.forEach((b,oi) => {\n        b.disabled = true;\n        if (oi === a.correct) b.classList.add(\'correct\');\n        if (oi === userAnswers[qi] && oi !== a.correct) b.classList.add(\'wrong\');\n      });\n      if (result) {\n        result.innerHTML = \'<span class=\"ans\">✅ 正确！</span> \' + a.explain;\n        result.classList.add(\'show\', userAnswers[qi]===a.correct ? \'pass\' : \'fail\');\n      }\n    }\n  });\n})();\n<\\/script>\n';
+    html += script;
+  }
+  html += '<div class="nav-btns">';
+  if (prev) html += '<button class="btn btn-secondary" onclick="navigateTo(\''+prev.id+'\')">⬅ '+prev.title+'</button>';
+  else html += '<span></span>';
+  if (next) html += '<button class="btn btn-primary" onclick="navigateTo(\''+next.id+'\')">'+next.title+' ➡</button>';
+  else html += '<button class="btn btn-primary" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>';
+  html += '</div></div>';
+  document.getElementById('mainContent').innerHTML = html;
+  if (typeof simAR1 === 'function') simAR1();
+  if (typeof simGARCH === 'function') simGARCH();
+}
+
+function answerQuiz(lessonId, qi, oi) {
+  if (!quizResults[lessonId]) quizResults[lessonId] = [];
+  quizResults[lessonId][qi] = oi;
+  save(); renderContent(lessonId);
+}
+
+// ===== SIMULATORS =====
+function simAR1() {
+  const phi = parseFloat(document.getElementById('ar1-phi')?.value||0.7);
+  const n = parseInt(document.getElementById('ar1-n')?.value||50);
+  const el = document.getElementById('ar1Val');
+  if (!el) return;
+  let y = 0, vals = [];
+  for (let t = 0; t < n; t++) { y = phi*y + (Math.random()-0.5)*2; vals.push(y); }
+  const min = Math.min(...vals), max = Math.max(...vals), range = max-min || 1;
+  const lines = [];
+  for (let i = 0; i < Math.min(10, n); i++) {
+    const pct = Math.round((vals[i]-min)/range*100);
+    lines.push('█'.repeat(Math.max(1,Math.round(pct/5))));
+  }
+  el.textContent = 'φ₁='+phi+' | '+(phi>0?'动量延续':phi<0?'反转回归':'白噪声')+'\n前10期: '+vals.slice(0,10).map(v=>v.toFixed(1)).join(' ');
+}
+
+function simGARCH() {
+  const alpha = parseFloat(document.getElementById('garch-alpha')?.value||0.1);
+  const beta = parseFloat(document.getElementById('garch-beta')?.value||0.85);
+  const el = document.getElementById('garchVal');
+  const sumEl = document.getElementById('garchSum');
+  if (!el) return;
+  if (sumEl) sumEl.textContent = (alpha+beta).toFixed(2);
+  let sigma2 = 1;
+  const sigmas = [];
+  for (let t = 0; t < 40; t++) {
+    const eps = (Math.random()-0.5)*2;
+    sigma2 = 0.05 + alpha*eps*eps + beta*sigma2;
+    sigmas.push(Math.sqrt(sigma2));
+  }
+  const lines = sigmas.map((s,i) => {
+    const bar = '█'.repeat(Math.round(s*10));
+    return bar + ' ' + s.toFixed(2);
+  });
+  el.textContent = 'α+β='+(alpha+beta).toFixed(2)+' | '+(alpha+beta>0.97?'高持续（恐慌持久）':alpha+beta>0.9?'中等持续':'低持续（快速衰减）')+'\n' + lines.join('\n');
+}
+
+// ===== FINAL EXAM =====
+function startFinalExam() { navigateTo('final'); }
+function renderFinalExam() {
+  let html = '<div class="lesson-card"><h2>🏆 终极测验</h2><div class="meta">8道题 · 覆盖本课全部模块 · 70%及格</div>';
+  let allAnswered = true;
+  finalExam.forEach((q,qi) => {
+    const ua = quizResults['final_'+qi];
+    if (ua === undefined) allAnswered = false;
+    html += '<div class="quiz-card"><h3>📝 第'+(qi+1)+'题</h3><div class="quiz-question">'+q.q+'</div>';
+    q.opts.forEach((opt,oi) => {
+      let cls = 'quiz-option';
+      if (ua !== undefined && oi === q.correct) cls += ' correct';
+      if (ua !== undefined && oi === ua && oi !== q.correct) cls += ' wrong';
+      html += '<button class="'+cls+'" onclick="answerFinal('+qi+','+oi+')" '+(ua!==undefined?'disabled':'')+'>'+['A','B','C','D'][oi]+'. '+opt+'</button>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  if (allAnswered) {
+    const score = finalExam.filter((q,i) => quizResults['final_'+i] === q.correct).length;
+    const pct = Math.round(score/8*100);
+    const passed = pct >= 70;
+    html += '<div class="certificate show"><div style="font-size:3em">'+(passed?'🎉':'💪')+'</div>';
+    html += '<h2>'+(passed?'恭喜毕业！':'还需要再练练')+'</h2>';
+    html += '<div class="grade">'+score+' / 8 （'+pct+'%）</div>';
+    html += '<p style="color:var(--sub)">'+(passed?'你已掌握时间序列分析的核心工具。下一步：随机过程与连续金融——学习股价的随机运动规律。':'再看看薄弱环节——GARCH和HMM是量化周期策略的核心。')+'</p>';
+    html += '<div class="btn-group" style="justify-content:center"><button class="btn btn-secondary" onclick="resetFinal()">🔄 重新测验</button></div></div>';
+  }
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function answerFinal(qi, oi) {
+  quizResults['final_'+qi] = oi;
+  save();
+  finalDone = finalExam.every((_,i) => quizResults['final_'+i] !== undefined);
+  if (finalDone) completedLessons.add('final');
+  updateUI(); renderFinalExam();
+}
+
+function resetFinal() {
+  finalExam.forEach((_,i) => delete quizResults['final_'+i]);
+  completedLessons.delete('final'); finalDone = false;
+  save(); updateUI(); renderFinalExam();
+}
+
+function resetAll() {
+  localStorage.removeItem('ts_course_done');
+  localStorage.removeItem('ts_course_quiz');
+  completedLessons = new Set(); quizResults = {}; finalDone = false;
+  currentSection = 'why-timeseries';
+  save(); updateUI(); renderContent('why-timeseries'); window.scrollTo(0,0);
+}
+window.resetAll = resetAll;
+
+// ===== INIT =====
+(function() {
+  currentSection = 'why-timeseries';
+  updateUI();
+  renderContent('why-timeseries');
+})();
+</script>
+</body>
+</html>

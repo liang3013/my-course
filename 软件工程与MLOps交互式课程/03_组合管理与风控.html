@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛡️ 组合管理与风控系统 · 软件工程与MLOps</title>
+<style>
+:root {
+  --bg: #0d1117; --card: #161b22; --card-hover: #1c2333; --border: #30363d;
+  --text: #e6edf3; --sub: #8b949e; --accent: #e86040; --accent2: #f07a60;
+  --green: #3fb950; --red: #f85149; --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(232,96,64,0.35); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+body {
+  font-family: -apple-system, 'SF Pro Display', 'PingFang SC', sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #1a0e0a 0%, var(--bg) 70%);
+  color: var(--text); line-height: 1.75; min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width: 280px; background: var(--card); border-right: 1px solid var(--border);
+  padding: 24px 16px; position: sticky; top:0; height:100vh;
+  overflow-y: auto; flex-shrink: 0;
+}
+.main { flex:1; padding: 32px 48px; max-width: 920px; }
+.logo { font-size: 1.2em; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.logo .icon { font-size: 1.4em; }
+.subtitle { color: var(--sub); font-size: 0.82em; margin-bottom: 20px; opacity: 0.8; }
+.progress-bar-wrap { background: var(--border); border-radius: 8px; height: 6px; margin-bottom: 22px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 8px; transition: width 0.6s; box-shadow: 0 0 12px rgba(232,96,64,0.25); }
+.progress-text { font-size: 0.78em; color: var(--sub); margin-bottom: 4px; }
+.nav-module { margin-bottom: 18px; }
+.nav-module-title { font-size: 0.72em; text-transform: uppercase; color: var(--sub); letter-spacing: 1.5px; margin-bottom: 8px; padding: 0 8px; opacity: 0.7; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.88em; color: var(--sub); border-left: 3px solid transparent; margin-bottom: 2px; }
+.nav-item:hover { background: var(--card-hover); color: var(--text); border-left-color: rgba(232,96,64,0.3); }
+.nav-item.active { background: rgba(232,96,64,0.12); color: var(--accent2); font-weight: 600; border-left-color: var(--accent2); }
+.nav-item.done { color: var(--green); }
+.nav-item .check { width: 20px; text-align: center; font-size: 0.8em; }
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.lesson-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 34px; margin-bottom: 24px; transition: border-color 0.25s; }
+.lesson-card:hover { border-color: rgba(232,96,64,0.2); box-shadow: 0 2px 20px rgba(232,96,64,0.06); }
+.lesson-card h2 { font-size: 1.5em; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.lesson-card .meta { color: var(--sub); font-size: 0.85em; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.lesson-card h3 { font-size: 1.1em; margin: 28px 0 14px; color: var(--accent2); position: relative; padding-left: 14px; }
+.lesson-card h3::before { content: ''; position: absolute; left: 0; top: 3px; bottom: 3px; width: 3px; border-radius: 2px; background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+.lesson-card p { margin-bottom: 14px; }
+.lesson-card ul, .lesson-card ol { padding-left: 24px; margin-bottom: 14px; }
+.lesson-card li { margin-bottom: 8px; }
+.lesson-card .hl { color: var(--accent2); font-weight: 600; }
+.lesson-card table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
+.lesson-card th { background: var(--border); padding: 10px 14px; text-align: left; font-size: 0.85em; color: var(--sub); }
+.lesson-card td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.lesson-card code { background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 4px; font-size: 0.9em; color: var(--accent2); font-family: 'SF Mono', 'JetBrains Mono', monospace; }
+.lesson-card pre { background: var(--card-hover); padding: 16px 20px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; margin: 16px 0; border: 1px solid var(--border); }
+.lesson-card pre code { background: none; padding: 0; }
+.analogy, .deep, .tip, .warn, .intuition, .formula {
+  padding: 18px 20px; border-radius: 10px; margin: 18px 0; border-left: 4px solid;
+}
+.analogy { background: rgba(232,96,64,0.08); border-color: var(--accent); }
+.deep { background: rgba(168,128,224,0.06); border-color: #a880e0; }
+.tip { background: rgba(63,185,80,0.06); border-color: var(--green); }
+.warn { background: rgba(248,81,73,0.06); border-color: var(--red); }
+.intuition { background: rgba(255,193,7,0.06); border-color: #ffc107; }
+.formula { background: rgba(99,179,237,0.06); border-color: #63b3ed; }
+.analogy .label, .deep .label, .tip .label, .warn .label, .intuition .label, .formula .label {
+  font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+}
+.analogy .label { color: var(--accent); }
+.deep .label { color: #a880e0; }
+.tip .label { color: var(--green); }
+.warn .label { color: var(--red); }
+.intuition .label { color: #ffc107; }
+.formula .label { color: #63b3ed; }
+
+.quiz-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
+.quiz-question { font-weight: 600; margin-bottom: 14px; font-size: 1em; }
+.quiz-option {
+  display: block; width: 100%; text-align: left; padding: 11px 16px; margin-bottom: 8px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); cursor: pointer; transition: 0.2s; font-size: 0.92em;
+}
+.quiz-option:hover { border-color: var(--accent); background: rgba(232,96,64,0.06); }
+.quiz-option.correct { background: rgba(63,185,80,0.12); border-color: var(--green); color: var(--green); }
+.quiz-option.wrong { background: rgba(248,81,73,0.08); border-color: var(--red); color: var(--red); }
+.quiz-result { margin-top: 10px; padding: 12px 16px; background: rgba(232,96,64,0.04); border-radius: 8px; font-size: 0.9em; display: none; }
+.quiz-result.show { display: block; }
+.quiz-result.pass { border-left: 3px solid var(--green); }
+.quiz-result.fail { border-left: 3px solid var(--red); }
+.quiz-result strong { display: block; margin-bottom: 4px; }
+
+.btn { padding: 10px 22px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; font-size: 0.9em; transition: 0.2s; background: var(--card); color: var(--text); }
+.btn:hover { border-color: var(--accent); background: var(--card-hover); }
+.btn-primary { background: rgba(232,96,64,0.12); border-color: var(--accent); color: var(--accent2); }
+.btn-success { background: rgba(63,185,80,0.12); border-color: var(--green); color: var(--green); }
+.btn-secondary { background: var(--card); }
+.nav-btns { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+
+@media(max-width:768px) {
+  .app { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: relative; }
+  .main { padding: 24px 18px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">🛡️</span> 组合管理与风控</div>
+  <div class="subtitle">管住你的钱 · 管住你的手 — 从零开始学会组合管理</div>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <a href="课程首页_软件工程与MLOps.html" style="display:block;margin-bottom:12px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:0.82em;color:var(--sub);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--sub)'">🏠 回到课程总览</a>
+  <div id="navContainer"></div>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="resetAll()">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ===== DATA =====
+const finalExam = {
+  questions: [
+    { q:'均值-方差优化在实战中最大的坑是什么？', options:['算得太慢','你输入的历史平均收益如果偏了3%，输出的权重可能偏了30%——优化器是一个误差放大器','不需要数学','只适用于大盘股'], correct:1 },
+    { q:'风险平价策略比等权策略更好的本质原因是什么？', options:['收益更高','避免了"看起来资金各一半、实际风险几乎全在某类资产"的问题——按风险贡献分配才能真分散','更简单','不需要数据'], correct:1 },
+    { q:'Black-Litterman模型的核心思想是什么？', options:['更复杂的数学公式','把你的主观判断以量化的方式融入组合——不是纯主观瞎调，也不是纯数学冷血','不需要市场数据','替代均值方差'], correct:1 },
+    { q:'风控Agent最核心的设计原则是什么？', options:['和交易Agent跑得一样快','独立运行、一票否决权——不受交易Agent影响，回撤超阈值直接否决。像工地安全员一样独立于施工队','共享同一套代码','不需要监控数据'], correct:1 },
+    { q:'TWAP和VWAP最本质的区别是什么？', options:['没有区别','TWAP按时间等分订单；VWAP按历史成交量分布分配——让大单在成交活跃时多下、清淡时少下','TWAP更快','VWAP只用于A股'], correct:1 },
+    { q:'交易成本的四层结构中，哪一层最容易被新手忽略？', options:['佣金','市场冲击——你的订单本身推高了买入价、压低了卖出价，这笔隐性成本常常比佣金+印花税加起来还大','印花税','所有都一样'], correct:1 }
+  ]
+};
+
+const modules = [
+{
+  title: '🌱 零基础热身',
+  lessons: [
+    {
+      id: 'warmup',
+      title: '先热个身：过年红包怎么分？',
+      emoji: '🧧',
+      content: `
+<div class="analogy">
+  <div class="label">🧧 世界观锚点</div>
+  <p><strong>假设你有10万块，买了5只股票。怎么分配？每只2万平均分？还是根据你对每只的信心调整？而且——如果某只突然暴跌30%，你是加仓还是割肉？这些问题的答案，就是"组合管理与风险控制"。说人话：管住你的钱，也管住你的手。</strong></p>
+</div>
+
+<h3>从红包说起——每个人都是天生的组合管理者</h3>
+
+<div class="deep">
+  <div class="label">🧧 你已经在做组合管理了，只是没意识到</div>
+  <p>过年你收到了5个红包，一共10000块。现在你要决定：</p>
+  <table>
+    <tr><th>去向</th><th>怎么想</th><th>类比股票投资</th></tr>
+    <tr><td><strong>存银行定期</strong></td><td>绝对安全，但利息只有2%，跑不过通胀</td><td>买国债/货币基金——低风险低收益</td></tr>
+    <tr><td><strong>放余额宝</strong></td><td>随时能取、有点利息、比现金强</td><td>现金管理——流动性好</td></tr>
+    <tr><td><strong>买基金</strong></td><td>可能赚10%，也可能亏10%</td><td>投资组合——中等风险中等收益</td></tr>
+    <tr><td><strong>买一只你看好的股票</strong></td><td>做了功课，觉得这家公司未来三年能翻倍</td><td>集中持仓——高风险高回报</td></tr>
+    <tr><td><strong>请朋友吃顿好的</strong></td><td>立即享受，维护关系</td><td>消费/分红——满足当下需求</td></tr>
+  </table>
+  <p>这五个决定的本质，就是<strong>组合管理</strong>：怎么把钱分配到不同"去处"，让总收益和总风险达到你满意的平衡。</p>
+</div>
+
+<h3>三个"灵魂拷问"——组合管理要回答的核心问题</h3>
+
+<div class="tip">
+  <div class="label">💡 你每次做投资决策，潜意识都在回答这三个问题</div>
+  <p><strong>问题一：钱怎么分？</strong> 全存银行？全买股票？还是各放一部分？这就是"资产配置"——组合管理的第一步。</p>
+  <p><strong>问题二：跌了怎么办？</strong> 股票跌了30%，你选择加仓（越跌越买）还是割肉（止损）？还是什么都不做？这就是"风控"——决定什么情况下必须卖。</p>
+  <p><strong>问题三：什么时候调整？</strong> 一年看一次？一个月调一次？还是每天看盘？这就是"再平衡"——多长时间重新分配一次钱。</p>
+  <p><span class="hl">这三个问题，就是你管理10万块和基金经理管理100亿要面对的根本相同的问题。工具不一样，但逻辑一样。</span></p>
+</div>
+
+<h3>这节课学什么？一张地图</h3>
+
+<div class="deep">
+  <div class="label">🧧 三模块全景图</div>
+  <p><strong>模块一：怎么分钱？（组合构建）</strong><br>
+  学三种分钱方法：数学公式算的、按风险分、把你的判断加进去。</p>
+  <p><strong>模块二：怎么保护钱？（风控体系）</strong><br>
+  学怎么看仪表盘、设止损线、模拟灾难、让独立"安全员"盯着你。</p>
+  <p><strong>模块三：怎么执行？（交易成本）</strong><br>
+  学怎么偷偷买卖不让市场发现、算清楚"隐形成本"、控制换手频率。</p>
+  <p><span class="hl">不需要数学背景。每个概念都先讲生活中的例子，再讲金融里的应用。数学公式放在"想深入"的框里——你可以跳过，不影响理解。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">小红把10000块全买了股票。从组合管理的角度，问题在哪？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 股票一定亏</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 把鸡蛋放在一个篮子里——没有分散。全买股票意味着全部资金暴露于股票市场的波动，万一暴跌没有缓冲</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 钱太少</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 应该全存银行</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 组合管理的第一个原则就是"别全押一个地方"。分散不是胆小——是理性。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">你买了5只股票，每只2万块（等权配置）。这算"分散"吗？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 算，5只不少了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 不一定——如果5只都是互联网公司，行业集中度100%，一次行业回调就全军覆没。分散≠数量多，分散=风险来源不重叠</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 5只肯定够了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 应该买50只</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 10只互联网股票的风险 < 3只不同行业股票的风险。真正的分散看的是"同涨同跌"的程度，不是数量。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '📐 模块一：组合构建——从信号到持仓',
+    lessons: [
+      {
+        id: 'mv-optimization',
+        title: '均值-方差优化：数学帮你分钱，但别全信它',
+        emoji: '📐',
+        content: `
+<h3>如果你有10万块装修，怎么分配给不同房间？</h3>
+
+<div class="analogy">
+  <div class="label">📐 装修预算分配 = 组合权重分配</div>
+  <p>你要装修一套房，总预算10万。客厅、卧室、厨房、卫生间——每个房间花多少？</p>
+  <p>客厅花4万（客人来就看这个）、卧室花2万（自己住舒服就行）、厨房花3万（天天做饭得用好东西）、卫生间花1万（基本功能就行）。</p>
+  <p><strong>为什么不是每间各2.5万？</strong> 因为你知道：有些地方的投入"回报"（好看/好用）比别的地方高。组合管理同理——不是每只股票配一样多，而是按"每一块钱能带来的收益vs风险"来分配。</p>
+  <p><strong>均值-方差优化（简称MVO）就是把这个直觉做了数学计算：</strong>给定每只股票的预期收益、风险（波动幅度）、以及它们之间"同涨同跌"的程度，算出一个最优的分配方案。</p>
+</div>
+
+<h3>如果数学让你头疼——先用直觉理解</h3>
+
+<div class="intuition">
+  <div class="label">💛 三句话版均值-方差</div>
+  <p>① 你想多赚钱，但也不想亏太多——这是鱼和熊掌</p>
+  <p>② 有些股票一起涨一起跌（比如茅台和五粮液），买一堆这种的等于没分散</p>
+  <p>③ 有些股票各走各的（比如电力股涨的时候科技股可能在跌），搭配起来能让总波动变小</p>
+  <p><strong>MVO做的事就是：在①的约束下，利用②和③的规律，给你一个"赚最多同时风险最小"的分配比例。</strong></p>
+</div>
+
+<h3>如果你想深入——公式长这样（看看就行）</h3>
+
+<div class="formula">
+  <div class="label">🔢 马科维茨1952年的数学表达</div>
+  <p>目标：最大化 <code>组合收益 - λ × 组合风险</code></p>
+  <p>其中：组合收益 = Σ(每只股票的权重 × 预期收益)<br>
+  组合风险 = ΣΣ(权重ᵢ × 权重ⱼ × 两只股票的协方差)</p>
+  <p>λ 是你"怕亏钱"的程度——λ越大，越保守。最终输出：一组权重 [0.15, 0.08, 0.22, ...]。</p>
+  <p>看不懂没关系。记住一句话：<strong>MVO是一个计算器，你告诉它"每只股票大概能赚多少、风险多大、和其他股票的关系"，它告诉你"每只该买多少"。</strong></p>
+</div>
+
+<h3>但是！为什么数学算出来的经常不靠谱？</h3>
+
+<div class="warn">
+  <div class="label">⚠️ MVO的三大坑——这是马科维茨没告诉你的</div>
+  <p>① <strong>输入垃圾，输出也是垃圾：</strong>你告诉MVO"茅台预期涨15%"，但万一你的估计偏了3%呢？MVO会把3%的偏差放大到权重的30%偏差。它像一个没有独立判断的会计——你给数字它就信。</p>
+  <p>② <strong>不加约束它会疯：</strong>如果放任MVO自由计算，它经常给出"全仓一只股票"的答案——因为数学上那就是最优的。就像一个装修AI告诉你"全花在客厅，其他房间别管了"。你必须在旁边加规则："每只最多10%、每个行业最多30%"。</p>
+  <p>③ <strong>它以为历史会重演：</strong>MVO用过去的数据算未来——但股市明天可能和昨天完全不一样。用60个月数据算出来的"关系"，下个月可能全部失效。</p>
+</div>
+
+<h3>怎么正确用它？——当方向盘，别当自动驾驶</h3>
+
+<div class="tip">
+  <div class="label">💡 五个实战口诀</div>
+  <p>① <strong>别用历史平均收益当预期收益：</strong>那是后视镜开车。用你的研究判断，或者用市场隐含的预期</p>
+  <p>② <strong>必须加约束：</strong>每只最多10%、每个行业最多30%、每次调整幅度不超过20%。约束不是限制，是保护</p>
+  <p>③ <strong>扰动一下看结果：</strong>把输入数字上下调10%，看输出权重变多少。变超50%→这个结果不可靠</p>
+  <p>④ <strong>不能做空、不能杠杆：</strong>普通人不要碰——加了杠杆，MVO一个小误差就会放大到爆仓</p>
+  <p>⑤ <strong>MVO给方向，你给判断：</strong>它算出的权重是参考，不是圣旨。你觉得哪只配太多了→手动调</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">MVO为什么有时候给出"全仓一只"这种荒谬答案？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 程序写错了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 不加约束时，MVO是个数据放大器——输入数字的微小偏差会被放大成极端权重。约束条件不是"附加要求"，是生存底线</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 电脑坏了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. MVO只适合美股</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 不加约束的MVO就像让你去自助餐"随便吃"——它不会告诉你每样吃多少健康。约束条件是你给自己定的饮食规则。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">你和朋友各推荐了一只股票，都用了MVO。为什么算出来的权重可能完全不同？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 软件版本不同</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. MVO的输出完全取决于输入——你们对"预期收益"的估计哪怕只差1%，最终权重可能差30%。就像两个厨师用同一份菜谱，但各自对"少许盐"的理解不同</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 一个人算错了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不可能不同</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这就是MVO最大弱点——输入敏感。所以实际用的时候要"扰动测试"：把输入变一变，看输出稳不稳。</div>
+</div>
+        `
+      },
+      {
+        id: 'risk-parity',
+        title: '风险平价：不是每样放一样多，是让风险一样大',
+        emoji: '⚖️',
+        content: `
+<h3>菜篮子里的荤素搭配——这个直觉价值千金</h3>
+
+<div class="analogy">
+  <div class="label">⚖️ 为什么一半荤一半素不是"均衡饮食"？</div>
+  <p>你中午带了两个饭盒——一盒红烧肉、一盒清炒西兰花。按"份数"来说荤素各半，很均衡？</p>
+  <p>错了。红烧肉的热量（假如500大卡）是西兰花（50大卡）的10倍。所以你这顿饭的热量<strong>90%来自肉，10%来自菜</strong>——表面均衡，实际严重偏科。</p>
+  <p><span class="hl">股票组合一样：假设你有50万元买债券（波动5%）和50万元买科技股（波动30%）。钱各一半，但组合90%的风险来自科技股。你不是在"对半开"，你是在赌科技股。</span></p>
+  <p><strong>风险平价做的事：不是让钱对半分，而是让"每类东西带来的晃动"对半分。</strong>债券波动小→多配点钱；科技股波动大→少配点钱。</p>
+</div>
+
+<h3>如果数学让你头疼——直觉版风险平价</h3>
+
+<div class="intuition">
+  <div class="label">💛 用直觉就能理解</div>
+  <p>回到荤素搭配的例子：</p>
+  <p><strong>等权配置（按份数平分）：</strong>各一盒 → 热量严重偏荤</p>
+  <p><strong>风险平价（按热量贡献平分）：</strong>一盒红烧肉 + 十盒西兰花 → 热量荤素各半</p>
+  <p>把"份数"换成"资金"，把"热量"换成"风险（波动率）"，就得到了风险平价。</p>
+  <p><span class="hl">核心逻辑：波动大的东西少买，波动小的东西多买，让每个东西对整体晃动的贡献一样。</span></p>
+</div>
+
+<h3>如果你想深入——风险贡献怎么算</h3>
+
+<div class="formula">
+  <div class="label">🔢 风险贡献 = 权重 × 边际风险</div>
+  <p>简化理解：一只股票对组合风险的贡献 ≈ <code>它的权重 × 它的波动率 × 它和其他持仓的平均相关性</code></p>
+  <p>风险平价的目标：让每只股票的这个乘积相等。</p>
+  <p>实际操作中是一个优化问题——数学上解一组方程。但直觉已经够了：<strong>波动大的少买，和别人同步涨跌的少买，波动小且独立的多买。</strong></p>
+</div>
+
+<h3>风险预算：风险平价的灵活版</h3>
+
+<div class="tip">
+  <div class="label">💡 从"等风险贡献"升级到"按你的意愿分风险"</div>
+  <p>风险平价说：每只股票贡献相同的风险。<br>
+  <strong>风险预算</strong>说：你决定每只股票贡献多少风险。</p>
+  <p>比如你对腾讯研究很深、非常有信心：<br>
+  • 腾讯：分配50%的风险预算（你愿意让它"晃"最多）<br>
+  • 茅台：30%<br>
+  • 长电：10%<br>
+  • 恒瑞医药：5%<br>
+  • 港灯：5%</p>
+  <p>然后优化器反推资金权重。<span class="hl">风险预算让你同时拥有"分散的安全性"和"主观判断的灵活性"。</span></p>
+</div>
+
+<h3>A股实战：等权配vs风险平价配——同样六只股，结果完全不同</h3>
+
+<div class="deep">
+  <div class="label">⚖️ 一个真实的A股例子</div>
+  <table>
+    <tr><th>股票</th><th>年波动率</th><th>等权风险占比</th><th>风险平价后权重</th><th>调整方向</th></tr>
+    <tr><td>贵州茅台</td><td>28%</td><td>35%</td><td>14%</td><td>↓ 少配</td></tr>
+    <tr><td>长江电力</td><td>15%</td><td>19%</td><td>27%</td><td>↑ 多配</td></tr>
+    <tr><td>腾讯控股</td><td>35%</td><td>44%</td><td>11%</td><td>↓↓ 大减</td></tr>
+    <tr><td>招商银行</td><td>22%</td><td>27%</td><td>18%</td><td>↓ 减</td></tr>
+    <tr><td>中国船舶</td><td>40%</td><td>50%</td><td>8%</td><td>↓↓↓ 猛减</td></tr>
+    <tr><td>港灯-SS</td><td>12%</td><td>15%</td><td>33%</td><td>↑↑ 大加</td></tr>
+  </table>
+  <p><span class="hl">等权配置下，腾讯和中国船舶两个"猛票"贡献了几乎全部风险。风险平价下，港灯和长电这种"慢票"反而成了组合的基石。不是让你买更多防御股——是数学告诉你：高波动资产必须少配才能真分散。</span></p>
+</div>
+
+<h3>风险平价的局限性——别以为它是万能药</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 短板在哪</div>
+  <p>① <strong>不管收益：</strong>纯风险平价只管理风险——如果所有资产都跌（系统性危机），它也照样亏钱</p>
+  <p>② <strong>忽略你判断：</strong>你对某只股票研究了三个月觉得它能涨50%，但风险平价不管这个——它只按波动率分配</p>
+  <p>③ <strong>危机时会失效：</strong>危机时所有资产一起跌、相关性飙升→"分散"突然不存在了</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">一份"荤素各半"的饭，为什么可能不均衡？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 饭太多</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 按份数各半≠按热量各半。同样道理，按资金各半≠按风险各半。50%的钱买高波动科技股 + 50%买低波动债券——表面各半，实际90%风险在科技股上</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 应该只吃素</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 荤素没区别</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这就是风险平价的基础洞察：等权配置在风险维度上往往是极度集中的。波动率差异越大，这个问题越严重。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">风险平价比等权配置更好的根本原因是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 收益更高</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 按风险贡献而非资金量分配——避免了高波动资产在组合中"喧宾夺主"，实现真正的分散</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 更简单</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不需要看报表</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 等权只是"看起来分散"，风险平价是"实际上分散"。前者看钱数，后者看晃动的程度。</div>
+</div>
+        `
+      },
+      {
+        id: 'black-litterman',
+        title: 'Black-Litterman模型：把你的研究判断变成仓位',
+        emoji: '🔮',
+        content: `
+<h3>大众点评评分 + 你信得过的朋友推荐 = 最优选择</h3>
+
+<div class="analogy">
+  <div class="label">🔮 怎么选餐厅？你在无意识地使用B-L逻辑</div>
+  <p>周末选餐厅，你先打开大众点评：评分4.5，3000条评论——"这家应该不错"（<strong>这是市场共识</strong>）。</p>
+  <p>然后你的美食家朋友说："这家我上周刚去过，招牌菜绝了，绝对值得。"（<strong>这是你的主观观点</strong>）</p>
+  <p>你怎么决定？</p>
+  <p>• 如果这个朋友是米其林评委→你100%信他→直接去</p>
+  <p>• 如果这个朋友口味和你不太一样→50%信他→大众评分50%+他推荐50%</p>
+  <p>• 如果这个朋友上次推荐的很难吃→0%信他→只看大众评分</p>
+  <p><span class="hl">Black-Litterman模型就是这个逻辑的数学版：市场共识 + 你的观点 × 你的信心。信心越高，你的观点越主导最终选择。</span></p>
+</div>
+
+<h3>均值-方差缺什么？缺你的判断</h3>
+
+<div class="deep">
+  <div class="label">🔮 你花了三个月研究腾讯，MVO完全不知道</div>
+  <p>MVO只看历史数据，它不知道：</p>
+  <p>• 你花了三个月研究了腾讯的广告业务、游戏管线、微信生态，认为明年利润增速会超预期</p>
+  <p>• 你因为行业经验，觉得新能源龙头被低估了</p>
+  <p>• 你对某只股票有非常强的信念——它应该跑赢所在行业5%</p>
+  <p><strong>这些判断全都没有进入MVO。</strong> B-L模型就是来解决这个问题的：把你的观点变成数学能处理的形式，融合进组合权重。</p>
+</div>
+
+<h3>如果数学让你头疼——B-L的直觉版</h3>
+
+<div class="intuition">
+  <div class="label">💛 三句话说明白</div>
+  <p>① 先别急着想买哪只——先看市场现在给每只股票"隐含着"什么预期（从市值权重反推）</p>
+  <p>② 然后告诉模型你的观点："我认为腾讯会跑赢科技板块3%"（<strong>观点</strong>）——"我研究了三个月，很有把握"（<strong>信心</strong>）</p>
+  <p>③ 模型自动融合：把你的观点"揉"进市场共识里，信心高的观点揉得重，信心低的揉得轻</p>
+  <p><strong>输出是一组新的预期收益→塞进MVO→得到最终买多少。</strong></p>
+</div>
+
+<h3>如果你想深入——B-L的三个输入参数</h3>
+
+<div class="formula">
+  <div class="label">🔢 B-L需要你告诉它的三样东西</div>
+  <table>
+    <tr><th>输入</th><th>什么意思</th><th>举例</th></tr>
+    <tr><td><strong>你的观点 Q</strong></td><td>你认为哪只/哪些股票比市场预期更强/更弱</td><td>"茅台跑赢消费指数3%"、"腾讯和阿里的平均超额=5%"</td></tr>
+    <tr><td><strong>你的信心 Ω</strong></td><td>对这些观点有多大把握</td><td>研究了三个月→高信心；只是看了篇新闻→低信心</td></tr>
+    <tr><td><strong>市场均衡 Π</strong></td><td>如果没有你的观点，市场自身暗示的"公平预期"</td><td>从市值权重反推——当前市价隐含的预期收益</td></tr>
+  </table>
+  <p>模型核心公式：<strong>新预期 = 均衡预期 + 修正量</strong>，修正量由你的观点和信心决定。</p>
+  <p>实际计算涉及矩阵运算（贝叶斯更新），但作为使用者，你只需要提供上面的三样东西。</p>
+</div>
+
+<h3>为什么不直接手动调权重？</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 因为你手动调的时候，不自觉地打破了其他约束</div>
+  <p>你看好腾讯，想加仓20%。你手动去加了。但你有没有想过：</p>
+  <p>• 腾讯占你组合的风险是不是已经太高了？加仓后集中度爆炸？</p>
+  <p>• 加仓腾讯意味着卖掉什么？卖掉的是不是你也觉得好的？</p>
+  <p>• 腾讯和你其他持仓的相关性——是不是买了太多同涨同跌的？</p>
+  <p><strong>B-L帮你自动处理这些：</strong>你只需要说"腾讯跑赢板块3%"，模型在全局框架中算出：为了融入这个观点，应该同时调整多少只相关股票——避免你的单个观点产生意外的集中风险。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">B-L模型相比"手动调权重"的核心优势是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 更简单</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 你的观点被自动融合进全局风险框架——加仓腾讯的同时自动调其他仓位，防止单个观点导致意外集中风险。你只需表达想法，模型处理协调</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 不需要市场数据</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 跑得更快</button>
+  <div class="quiz-result"><strong>答案：B。</strong> B-L不是"更高级的MVO"——它是"帮MVO听懂人话的翻译器"。你输出观点，它输出全局协调后的结果。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">如果你对一只股票的观点信心极低（基本是瞎猜），B-L会怎么处理？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 全部按你的观点来</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 几乎不采纳你的观点——最终权重接近市场均衡。信心越低，模型越倾向"市场可能比你对"</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 报错</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 自动提高信心</button>
+  <div class="quiz-result"><strong>答案：B。</strong> B-L的美妙之处：信心参数自然地控制了你观点的影响力。信心低=模型安全地回到市场共识，不会因为瞎猜毁了组合。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '🧪 模块一综合测验',
+    lessons: [
+      {
+        id: 'quiz-m1',
+        title: '模块一综合测验：组合构建',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '均值-方差优化（MVO）在实战中最大的坑是什么？',
+              options: ['计算太慢', '它是误差放大器——预期收益偏3%可能导致权重偏30%。输入不可靠→输出更不可靠', '不需要数学', '只适用于美股'],
+              correct: 1,
+              explain: 'MVO本身理论很完美。问题在于输入——预期收益无法准确估计，而优化器天生放大输入误差。这就是为什么不能把MVO输出当圣旨。'
+            },
+            {
+              q: '风险平价比等权配置更好的本质原因是什么？',
+              options: ['收益更高', '按风险贡献分配——避免了高波动资产在等权组合中"喧宾夺主"，实现真正的风险分散', '更简单', '不需要看数据'],
+              correct: 1,
+              explain: '50%钱买股票+50%买债券≠50%风险各半。风险平价修正了资金等权在风险维度上的"假分散"。'
+            },
+            {
+              q: 'Black-Litterman模型的"市场均衡"从哪来？',
+              options: ['随便猜', '从市值权重反推出的隐含预期——代表当前市价所暗示的市场共识', '用户直觉', '历史平均'],
+              correct: 1,
+              explain: 'B-L的核心智慧：先假设市场定价大致合理（均衡），然后用你的观点去修正它。不是全信市场，也不是全信自己——是二者的融合。'
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    title: '🛡️ 模块二：风控体系——活下来比赚得多更重要',
+    lessons: [
+      {
+        id: 'risk-monitoring',
+        title: '实时监控：你的组合需要六块仪表',
+        emoji: '📊',
+        content: `
+<h3>你开车一定看仪表盘——管组合也得看</h3>
+
+<div class="analogy">
+  <div class="label">📊 汽车仪表盘 vs 风控仪表盘</div>
+  <p>开车时你扫一眼仪表盘：车速、油量、水温、发动机故障灯。<strong>你不需要每分钟盯，但红灯亮了必须停车。</strong></p>
+  <p>管组合同理：你可以一周看一次，但你的"仪表盘"必须时刻亮着。六个指标：波动率、VaR（最坏可能亏多少）、最大回撤、行业集中度、流动性。</p>
+  <p><strong>一块黄灯提醒你注意，三块黄灯同时亮=必须行动。一块红灯=立刻采取措施。</strong></p>
+</div>
+
+<h3>六块仪表——每块看什么、警报线在哪</h3>
+
+<div class="deep">
+  <div class="label">📊 你的风控仪表盘</div>
+  <table>
+    <tr><th>仪表</th><th>通俗解释</th><th>黄灯</th><th>红灯</th></tr>
+    <tr><td><strong>组合波动率</strong></td><td>整个组合上蹿下跳的程度——像车速表</td><td>超正常水平的1.5倍</td><td>超2倍</td></tr>
+    <tr><td><strong>VaR (95%)</strong></td><td>明天有95%概率，最多亏不超过这个数</td><td>超过市值的3%</td><td>超过市值的5%</td></tr>
+    <tr><td><strong>CVaR</strong></td><td>如果那5%的坏事发生了，平均亏多少</td><td>超过市值的5%</td><td>超过市值的8%</td></tr>
+    <tr><td><strong>最大回撤</strong></td><td>从最近高点跌了多少——最关键的生存指标</td><td>超过15%</td><td>超过20%→触发熔断</td></tr>
+    <tr><td><strong>行业集中度</strong></td><td>你的钱是不是太集中在某个行业</td><td>单行业超30%</td><td>超40%</td></tr>
+    <tr><td><strong>流动性</strong></td><td>你要卖的时候，能卖出去吗</td><td>日成交<你持仓的5%</td><td>日成交<你持仓的1%</td></tr>
+  </table>
+</div>
+
+<h3>VaR和CVaR的区别——看门 vs 看门后面的深渊</h3>
+
+<div class="intuition">
+  <div class="label">💛 用一个例子彻底理解</div>
+  <p>你的组合市值100万。95% VaR = 3万。<br>
+  意思是：明天有<strong>95%的概率</strong>，你最多亏3万。</p>
+  <p>那另外<strong>5%呢？</strong>——可能亏5万，也可能亏50万。<strong>VaR不告诉你。</strong></p>
+  <p><strong>CVaR回答的就是这个：</strong>如果那5%的倒霉事发生了，<strong>平均</strong>亏多少。</p>
+  <p>比如CVaR=15万。意味着：平时最多亏3万（无事），但一旦出事，平均亏15万。</p>
+  <p><span class="hl">只看VaR就像你只检查了车的最高时速，却没检查刹车距离。平时没事——但需要刹车的时候，刹不住就完了。</span></p>
+</div>
+
+<h3>真实A股数据：三个不同年份的同样组合</h3>
+
+<div class="deep">
+  <div class="label">📊 茅台+腾讯+沪深300ETF的组合，不同年份的仪表盘读数</div>
+  <table>
+    <tr><th>年份</th><th>波动率</th><th>95%VaR/天</th><th>CVaR/天</th><th>最大回撤</th></tr>
+    <tr><td>2020（牛市）</td><td>18%</td><td>-1.8%</td><td>-3.2%</td><td>-12%</td></tr>
+    <tr><td>2022（熊市）</td><td>28%</td><td>-2.8%</td><td>-5.5%</td><td>-32%</td></tr>
+    <tr><td>2024（修复）</td><td>22%</td><td>-2.2%</td><td>-4.0%</td><td>-18%</td></tr>
+  </table>
+  <p><span class="hl">注意2022年：CVaR是VaR的将近2倍。说明"正常"风险指标看起来还好，但一旦出事就远比预想的严重。2022年只看VaR的管理者，都被CVaR教育了。</span></p>
+</div>
+
+<h3>最隐蔽的杀手——行业集中度</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 10只股票≠分散</div>
+  <p>你买了10只股票，感觉"分得挺开"。但如果这10只全是消费股——你的"分散"是假的。一次消费板块回调，10只一起跌。</p>
+  <p><strong>分散不看数量，看的是"同涨同跌"的程度。</strong>3只不同行业的股票，可能比10只同行业的更安全。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么只看VaR不够，还要看CVaR？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. CVaR更好算</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. VaR说"95%的情况下最多亏3万"——但另外5%可能让你亏50万。CVaR补上这个盲区：告诉你真正出事的时候平均亏多少</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 监管要求</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 两者一样</button>
+  <div class="quiz-result"><strong>答案：B。</strong> VaR是门槛，CVaR是门槛后面的深渊。金融史上几乎所有大爆仓的共同特征：VaR看起来没问题，但CVaR巨大。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">买了10只不同名字的股票，为什么可能风险根本没分散？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 10只太少</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 如果10只都是同一行业（比如全买白酒股），它们几乎同涨同跌——行业集中度100%。分散不靠数量，靠不重叠的风险来源</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 应该买100只</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 股票不能分散</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 行业集中度是最容易忽视的风险。你以为买了10只很分散——但它们可能共享同一个风险源。检查你的持仓：是不是全是同一类？</div>
+</div>
+        `
+      },
+      {
+        id: 'circuit-breaker',
+        title: '熔断机制：市场发疯时，机器替你刹车',
+        emoji: '🚨',
+        content: `
+<h3>消防喷淋系统——不需要你犹豫，它自己就喷了</h3>
+
+<div class="analogy">
+  <div class="label">🚨 熔断 = 你的组合的自动消防喷淋</div>
+  <p>商场着火了。你会等到经理开会讨论"要不要开喷淋？喷多少？现在喷还是等等？"吗？不会——<strong>喷淋感应到浓烟就自动喷水，不管谁在想什么。</strong></p>
+  <p><strong>熔断机制同理——当你的组合触发预定阈值（比如亏了20%），系统自动执行预案：减仓、停仓、甚至全平。不需要你的判断，不需要你犹豫，不需要"再等等看"。</strong></p>
+  <p>因为大量的心理学研究反复证明：<span class="hl">人亏钱时的决策能力趋近于零。</span>你会想"再等等就反弹了"、"这次不一样"、"卖了就真的亏了"——这些全部是认知偏差。自动熔断用"提前定好的规则"替代"当时的情绪"。你不是不信任自己，是尊重人性。</p>
+</div>
+
+<h3>如果数学让你头疼——四级熔断直觉版</h3>
+
+<div class="intuition">
+  <div class="label">💛 就像四级风暴预警</div>
+  <p><strong>🟡 一级（注意）：</strong> 台风蓝色预警——不新开仓，通知你注意<br>
+  <strong>🟠 二级（减仓）：</strong> 台风黄色预警——自动减仓30%，关掉所有杠杆<br>
+  <strong>🔴 三级（停战）：</strong> 台风橙色预警——再减50%，只留最稳的<br>
+  <strong>⛔ 四级（熔断）：</strong> 台风红色预警——全平仓，现金为王，禁止交易，等你冷静后人工解锁</p>
+</div>
+
+<h3>四级熔断的实操清单</h3>
+
+<div class="deep">
+  <div class="label">🚨 从预警到一键清仓——具体触发条件和动作</div>
+  <table>
+    <tr><th>级别</th><th>触发条件</th><th>自动动作</th><th>恢复条件</th></tr>
+    <tr><td><strong>🟡 一级预警</strong></td><td>回撤>10% 或 波动翻倍</td><td>提醒你、停止新开仓</td><td>风险回到安全区</td></tr>
+    <tr><td><strong>🟠 二级减仓</strong></td><td>回撤>15% 或 连续大跌</td><td>自动减仓30%、关杠杆</td><td>回撤<10%</td></tr>
+    <tr><td><strong>🔴 三级停战</strong></td><td>回撤>20% 或 VaR超标</td><td>再减50%、只留核心仓</td><td>回撤<10%+3天冷静期</td></tr>
+    <tr><td><strong>⛔ 四级熔断</strong></td><td>回撤>30% 或 连续暴跌</td><td>全部平仓→持有现金→禁止交易</td><td>人工检查+手动恢复</td></tr>
+  </table>
+</div>
+
+<h3>为什么回撤熔断是风控第一铁律？——亏损修复的不对称</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 亏钱容易，回本难——这个表值得刻在脑子里</div>
+  <table>
+    <tr><th>你亏了多少</th><th>需要赚多少才能回本</th><th>难不难</th></tr>
+    <tr><td>跌10%</td><td>涨11.1%</td><td>还行</td></tr>
+    <tr><td>跌20%</td><td>涨<span class="hl">25%</span></td><td>开始吃力</td></tr>
+    <tr><td>跌30%</td><td>涨<span class="hl">42.9%</span></td><td>很难</td></tr>
+    <tr><td>跌50%</td><td>涨<span class="hl">100%</span>——翻倍</td><td>几乎不可能短期实现</td></tr>
+  </table>
+  <p>跌50%需要翻倍才能回本。你可能要等5年、10年，甚至永远等不到。<br>
+  <span class="hl">熔断不是为了"少亏一点"，是为了"保住翻身的本钱"。亏20%后你还有80%本金，翻25%就能回来。亏50%后你只有一半本钱了——你需要奇迹。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么熔断必须"自动执行"而不是"提醒你、等你决定"？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 技术更先进</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 行为金融学反复证明：人在浮亏时会出现损失厌恶、希望思维、"再等等就反弹"——自动执行用预定规则替代当时的情绪判断。不是你不够理性，是那时候没人能理性</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 速度更快</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 法律规定</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 熔断机制的全部存在理由就是"人不可靠"——尤其是亏钱的时候。消防喷淋不等你开会讨论，熔断不等你犹豫。这不是不信任你，是尊重人性。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">跌50%后需要涨多少才能回本？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 涨50%</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 涨100%——翻倍。从50块涨到100块需要涨100%，这就是为什么跌50%几乎是灾难性的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 涨25%</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 涨200%</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 亏损修复是严重不对称的。1万亏50%变5000，5000要涨100%才能变1万。这就是为什么熔断必须保住本金——本金少一半，回本难度翻倍。</div>
+</div>
+        `
+      },
+      {
+        id: 'stress-testing',
+        title: '压力测试：为"从没想过"的场景做准备',
+        emoji: '💥',
+        content: `
+<h3>飞机厂商不测试"正常飞行"——只测"从未发生过的故障"</h3>
+
+<div class="analogy">
+  <div class="label">💥 波音的安全测试 = 你的组合压力测试</div>
+  <p>飞机出厂前，制造商会模拟：发动机空中停车、雷劈、鸟撞驾驶舱、液压全失效……这些场景<strong>绝大多数飞行员一辈子都遇不到</strong>——但必须测。</p>
+  <p>因为"从来没遇到过"的故障才最危险——你没有应对经验。</p>
+  <p><strong>组合压力测试同理：你不需要测试"明天继续涨"。你需要测试：如果发生一个你从没见过、市场历史上也没完全出现过的事件——你的组合会怎样？</strong></p>
+</div>
+
+<h3>两大类压力测试——回头看历史 + 往前推假设</h3>
+
+<div class="deep">
+  <div class="label">💥 历史重演 + 假设灾难</div>
+  <h3>第一类：历史极端场景——"这件事真的发生过"</h3>
+  <table>
+    <tr><th>场景</th><th>时间</th><th>发生了什么</th><th>测你的什么</th></tr>
+    <tr><td><strong>全球金融危机</strong></td><td>2008年</td><td>全球股市腰斩、信贷冻结</td><td>金融股集中度、杠杆</td></tr>
+    <tr><td><strong>A股股灾</strong></td><td>2015年</td><td>两个月跌45%、千股跌停</td><td>卖不卖得出去</td></tr>
+    <tr><td><strong>新冠崩盘</strong></td><td>2020年3月</td><td>全球恐慌、原油负价</td><td>尾部风险、相关性飙升</td></tr>
+    <tr><td><strong>中美贸易战</strong></td><td>2018年</td><td>科技制裁、关税升级</td><td>出口依赖、科技暴露</td></tr>
+  </table>
+  <h3>第二类：假设灾难——"历史没发生过，但完全可能发生"</h3>
+  <p>① <strong>台海冲突升级：</strong>半导体断供、台股暴跌→科技股联动崩盘→你的腾讯/阿里/恒瑞什么命运？</p>
+  <p>② <strong>中美完全脱钩：</strong>关税到60%、技术封锁→出口企业利润归零→美的、安踏这类公司怎么走？</p>
+  <p>③ <strong>人民币一天贬5%：</strong>汇率剧烈波动→港股通持仓的汇率冲击——你账面涨5%但汇率亏5%=白干</p>
+  <p>④ <strong>房地产深度着陆：</strong>一线再跌30%→银行坏账率飙到5%→招行PB跌到0.3→你的金融股暴露？</p>
+</div>
+
+<h3>用生活类比理解"概率极低但必须准备"</h3>
+
+<div class="intuition">
+  <div class="label">💛 你每天都在做压力测试</div>
+  <p>你出门带伞——尽管天气预报说"降水概率10%"。为什么？因为一旦那10%发生了，你就要淋雨。淋雨的影响远大于带伞的麻烦。</p>
+  <p>你买保险——尽管火灾概率极低。为什么？因为一旦发生，没有保险你倾家荡产。</p>
+  <p><span class="hl">压力测试就是投资组合的"带伞"和"买保险"——概率很低，但一旦发生后果严重。不准备才是真正的不理性。</span></p>
+</div>
+
+<h3>压力测试后必须回答的三个问题</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 不能只是"算一算"，必须据此行动</div>
+  <p><strong>Q1：最坏情况下亏多少？</strong> 如果有场景让你亏超30%→调整仓位</p>
+  <p><strong>Q2：亏的时候卖得掉吗？</strong> 不是账面亏损的问题——是跌停时你想卖卖不掉。A股跌停±10%、港股无限制——市场冲击时流动性会枯竭</p>
+  <p><strong>Q3：概率很低但一旦发生你会爆仓吗？</strong> 2008年金融危机发生前，概率也被认为"极低"</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么压力测试既要测历史场景（如2008金融危机）又要测假设场景（如台海冲突）？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 凑数</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 历史场景告诉你"最坏能坏到什么程度"；假设场景提醒你"还有哪些新坏法可能发生"——塔勒布说过"历史没发生过≠不会发生"。2008年金融危机发生前，也从没发生过</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 两种都必须测</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 测一种就够了</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 历史告诉你已知的坏，假设提醒你未知的坏。两者互补——2020年新冠大崩盘之前也从没发生过，但它来了。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么天气预报说10%降雨概率，你还是带了伞？这和压力测试有什么关系？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 习惯</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 因为淋雨的后果（全身湿透）远大于带伞的成本。压力测试同理——场景发生概率可能很低，但一旦发生的后果可能是灾难性的。低概率≠不用准备</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 伞好看</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 没事干</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这是压力测试最根本的哲学：不是"这件事会不会发生"，而是"如果发生了我能不能承受"。带伞花不了多少成本，淋雨代价很大——仓位调整也是。</div>
+</div>
+        `
+      },
+      {
+        id: 'risk-agent',
+        title: '风控Agent：工地上的安全员，有一票否决权',
+        emoji: '🤖',
+        content: `
+<h3>工地上的安全员——只管安全，不管进度。不合格就停工</h3>
+
+<div class="analogy">
+  <div class="label">🤖 工地安全员 = 风控Agent</div>
+  <p>一个工地上有两种关键角色：</p>
+  <p><strong>施工队长（交易Agent）：</strong>负责工程进度——"这层楼今天必须浇完！大家加把劲！"目标是最快最省地完成任务。</p>
+  <p><strong>安全员（风控Agent）：</strong>负责安全——"脚手架还没验收？停工。安全网没装？停工。工人没戴安全帽？停工。"</p>
+  <p><strong>安全员不管"工期有多赶"、不管"成本增加了多少"。</strong>他只有一项权力：如果安全条件不满足，<span class="hl">一票否决，全工地停工。</span></p>
+  <p>如果安全员的工资由施工队长发、或者安全员和施工队长是同一个人——你觉得他能独立地喊"停工"吗？</p>
+  <p><strong>风控Agent同理：必须独立于交易Agent，不受"赚更多"的诱惑，只盯着"会不会出事"。一票否决权是它的唯一武器。</strong></p>
+</div>
+
+<h3>为什么风控Agent必须独立于交易Agent？</h3>
+
+<div class="deep">
+  <div class="label">🤖 如果安全员和施工队长是同一套系统</div>
+  <p><strong>问题一：利益冲突。</strong> 交易Agent的目标是"最大化Alpha"→天然倾向冒险。如果风控内嵌其中→安全检查会被"优化掉"——为了多赚一点，风险约束悄悄放松。</p>
+  <p><strong>问题二：没有刹车。</strong> 两个系统共享同一套代码→同一个bug同时影响交易和风控→信号出错+风控失效同时发生，你毫无防备。</p>
+  <p><strong>问题三：出事后没法回溯。</strong> 出问题时你无法查"风控当时看到了什么、为什么没阻止"——因为风控逻辑是交易系统的一部分，日志混在一起。</p>
+  <p><span class="hl">风控Agent的独立性不是技术偏好——是系统安全的底线。管钱的人和管风险的人，永远不能是同一个人。</span></p>
+</div>
+
+<h3>风控Agent的工作流程——它每天都在干什么</h3>
+
+<div class="tip">
+  <div class="label">💡 风控Agent的每日检查清单</div>
+  <p>交易Agent生成了一批"想做的交易"——传给风控Agent审批。风控Agent按以下步骤逐一检查：</p>
+  <p><strong>第一步：查全局熔断</strong>——回撤>20%？→全部拒绝，一条不放行</p>
+  <p><strong>第二步：查集中度</strong>——这笔交易会让某行业占比超40%？→拒绝</p>
+  <p><strong>第三步：查单票上限</strong>——这笔交易会让某只股票占比超10%？→砍到上限或拒绝</p>
+  <p><strong>第四步：查流动性</strong>——你要买的量超过日均成交5%？→冲击太大，拒绝</p>
+  <p><strong>第五步：查异常状态</strong>——这只股票停牌了？ST了？→拒绝</p>
+  <p><strong>只有全部通过的单子，才放行执行。有一条不通过——直接毙掉。</strong></p>
+</div>
+
+<h3>风控Agent的一票否决权清单</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 下面任意一条触发——立刻否决，没有"再看看"</div>
+  <p>0️⃣ <strong>全局熔断已触发</strong> → 一切禁止</p>
+  <p>1️⃣ <strong>单票超限</strong> → 砍到上限或直接否决</p>
+  <p>2️⃣ <strong>行业集中度>40%</strong> → 该行业不再开新仓</p>
+  <p>3️⃣ <strong>组合VaR超阈值</strong> → 只能卖出，不能买入</p>
+  <p>4️⃣ <strong>流动性不足</strong>（订单>日均成交5%）→ 否决：你买得进去会把自己价格推起来</p>
+  <p>5️⃣ <strong>停牌/ST/退市风险</strong> → 拒绝：卖不掉的东西不能碰</p>
+  <p><span class="hl">记牢：风控Agent不优化——它只审批。优化的幻觉留给交易Agent，安全底线留给风控Agent。这是多Agent系统最核心的架构原则。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么风控Agent必须独立于交易Agent，不能内嵌在同一个系统？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 技术更先进</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 交易Agent的目标是"多赚钱"→天然倾向冒险。风控Agent的目标是"不出事"→必须不被"赚更多"诱惑。独立性是架构安全——就像工地上的安全员不能同时兼任施工队长</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 速度更快</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 省成本</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这是多Agent系统最核心的原则：管钱的人（交易Agent）和管风险的人（风控Agent）不能是同一个人——人和AI都一样。风控Agent是你组合的独立安全员。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">风控Agent在审查一笔交易时，如果发现"这笔可能大赚"但行业集中度超了40%，它应该怎么做？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 放行——反正能赚钱</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 一票否决——不管能赚多少。安全员不管工程进度，只管安全条件。行业集中度超40%是红线，没有例外</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 请示你</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 偷偷放行</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这就是"一票否决"的含义——规则面前没有例外，不管诱惑多大。风控Agent不看"能赚多少"，只看"安不安全"。如果它能被赚钱的诱惑动心，它就不是风控了。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '🧪 模块二综合测验',
+    lessons: [
+      {
+        id: 'quiz-m2',
+        title: '模块二综合测验：风控体系',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '以下哪个场景最能说明"只看VaR不够，必须看CVaR"？',
+              options: ['日常波动', '95%VaR=3万，但CVaR=15万——意味着平时最多亏3万，但黑天鹅时平均亏15万。只看VaR等于只检查了车速表，没检查刹车距离', 'VaR就够了', '都不需要'],
+              correct: 1,
+              explain: 'VaR是"门槛"，CVaR是"门槛后面的深渊"。金融史上几乎所有爆仓案例的共同特征：VaR看起来没问题，CVaR是炸弹。'
+            },
+            {
+              q: '熔断机制为什么必须"自动触发执行"而不能"通知你后等待确认"？',
+              options: ['技术不行', '行为金融学反复验证：人亏钱时的决策质量极低。损失厌恶+希望思维会让你"再等等"→错过最佳止损时机。自动执行=用预定规则替代当时的情绪', '更快', '省钱'],
+              correct: 1,
+              explain: '熔断的全部存在理由就是"人在极端情绪中不理性"。预定规则→自动执行→不需要当时的你来做判断。'
+            },
+            {
+              q: '压力测试中的"假设场景"（如台海冲突），发生概率极低——为什么还必须测？',
+              options: ['为了好看', '纳西姆·塔勒布："历史没发生过≠不会发生。"2008年金融危机发生前概率也被认为"极低"。低概率×高损失=最需要测试的场景', '合规要求', '没用'],
+              correct: 1,
+              explain: '压力测试就是为"小概率大影响"事件准备的。概率低但一旦发生就致命的场景，恰恰是风控最需要关注的。'
+            },
+            {
+              q: '风控Agent和交易Agent的核心分工是什么？',
+              options: ['都一样', '交易Agent管"多赚钱"→追求Alpha最大化；风控Agent管"不死"→独立审批、一票否决。风控Agent就是工地上的安全员——不管工期进度，不合格就停工', '风控Agent管赚钱', '交易Agent更安全'],
+              correct: 1,
+              explain: '安全员和施工队长不能是同一个人。风控Agent必须独立——这是多Agent系统的架构底线。'
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    title: '⚡ 模块三：交易执行——把纸上利润变成真实收益',
+    lessons: [
+      {
+        id: 'algo-trading',
+        title: '算法交易：偷偷买，别惊动市场',
+        emoji: '🤫',
+        content: `
+<h3>你买1斤排骨没人注意——你买1000斤，整个菜市场都知道</h3>
+
+<div class="analogy">
+  <div class="label">🤫 菜市场扫货 = 大单冲击股价</div>
+  <p>你去菜市场买1斤排骨——摊主正常报价，周围没人注意你。</p>
+  <p>但如果你要买<strong>1000斤</strong>排骨——第一个摊主卖完了你还继续买，第二个摊主发现"有人在扫货"，马上涨价。消息传开，第三个摊主直接涨价30%。</p>
+  <p><strong>你买的过程本身，推高了价格。</strong></p>
+  <p>股市同理：你买100股茅台——没人在意。你买10万股茅台——<span class="hl">你的买单本身就是推高价格的力量。</span>你买到后来会发现：越买越贵，平均成本远高于你的预期。</p>
+  <p><strong>算法交易要做的事：把大单拆成很多小单，分散在不同时间，伪装成"正常交易"，不引起市场注意。</strong></p>
+</div>
+
+<h3>如果数学让你头疼——两种拆分法的直觉理解</h3>
+
+<div class="intuition">
+  <div class="label">💛 TWAP和VWAP的区别——就像分蛋糕</div>
+  <p><strong>TWAP（等时间分）：</strong>你要买10000股，交易时间上午2小时→每分钟买83股。简单粗暴，但有个问题——上午开盘交易量大，你只买了83股，占比很小；中午缩量，你还在买83股，突然占比变大了→被人发现。</p>
+  <p><strong>VWAP（按成交量分）：</strong>先看这只股票"什么时候成交量最大"——比如开盘前30分钟占全天25%成交→你的25%订单也放在这时。量大时你多买、量小时你少买→<span class="hl">你的订单占总成交的比例始终恒定</span>→没人发现异常。</p>
+  <p><strong>简单说：TWAP是"每分钟买一样多"；VWAP是"人多时多买、人少时少买"。</strong>VWAP更隐蔽。</p>
+</div>
+
+<h3>如果你想深入——TWAP和VWAP的微弱数学</h3>
+
+<div class="formula">
+  <div class="label">🔢 两个公式（看看就好）</div>
+  <p><strong>TWAP公式：</strong>每时段成交量 = 总订单量 ÷ 时段数。第i时段的订单 = <code>Q / N</code></p>
+  <p><strong>VWAP公式：</strong>第i时段的订单 = 总订单量 × (历史第i时段的成交量 / 历史全天成交量)</p>
+  <p>VWAP需要历史成交量分布曲线——一般用过去20日的平均日内分布。</p>
+</div>
+
+<h3>冰山订单——最隐蔽的大单执行方式</h3>
+
+<div class="deep">
+  <div class="label">🤫 你看到的只是冰山一角</div>
+  <p>想象你要悄悄买10000股。每次只在买卖盘上挂100股（<strong>冰山尖</strong>）。100股成交了→系统自动刷新再挂100股→重复100次→全部成交。</p>
+  <p>市场看到的是："有个人一直在买，但每次只买100股——可能是散户在慢慢建仓。"</p>
+  <p><span class="hl">但实际上：一个大买家正在用冰山订单悄悄建仓。没人发现，直到你买完。</span></p>
+  <p>A股部分券商支持冰山订单（需在算法交易席位开通）。普通账户一般用TWAP/VWAP手动拆分。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">TWAP和VWAP最核心的区别是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 名字不同</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. TWAP按时间等分订单（不管成交量）；VWAP按历史成交量分布分配——量大时多买、量少时少买，让订单占比恒定以最小化市场冲击</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. VWAP更快</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 完全一样</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 一句话：TWAP是"时间平分"；VWAP是"人流平分"。VWAP更智能——它知道什么时候人多、什么时候人少。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么大单不能一把买入，必须拆分？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 券商限制</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 大盘股流动性好，一把买入没问题</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 你的大买单本身会推高成交价——你买的量越大、占比越高，价格被推得越厉害。拆分是为了最小化"自己抬自己价"的损失</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 法律规定</button>
+  <div class="quiz-result"><strong>答案：C。</strong> 这和你在菜市场扫货一样——买得越多，越暴露意图，价格越高。算法交易就是为了让你"偷偷买"，不惊动别人。</div>
+</div>
+        `
+      },
+      {
+        id: 'transaction-cost',
+        title: '交易成本建模：你以为只付了佣金？',
+        emoji: '💰',
+        content: `
+<h3>买车花了30万——你付的不止30万</h3>
+
+<div class="analogy">
+  <div class="label">💰 买车的隐性成本 = 买股票的隐性成本</div>
+  <p>你看到一辆车标价30万。你以为就付30万？</p>
+  <p>还得付：购置税（≈2.5万）、保险费（≈8千）、4S店"服务费"（≈3千）、上牌费……实际到手可能要33万+。</p>
+  <p><strong>股票交易同理：</strong>你以为只付了佣金？你实际付了四层费用——只有前两层你能在账单上看到，后两层是隐形的，但往往更贵。</p>
+</div>
+
+<h3>四层费用拆解——从看得到的到看不到的</h3>
+
+<div class="deep">
+  <div class="label">💰 每一笔交易，四层成本同时发生</div>
+  <table>
+    <tr><th>层级</th><th>是什么</th><th>A股大概费率</th><th>你能控制吗</th></tr>
+    <tr><td><strong>L1 佣金</strong></td><td>券商收的手续费</td><td>约0.025%（万2.5）</td><td>可以谈，大资金越低</td></tr>
+    <tr><td><strong>L2 印花税</strong></td><td>卖出时国家收的税</td><td>0.05%（万5）——只有卖出</td><td>不能，固定的</td></tr>
+    <tr><td><strong>L3 滑点</strong></td><td>你下单到成交之间的价差</td><td>约0.01%-0.1%</td><td>快网速、好券商能减少</td></tr>
+    <tr><td><strong>L4 市场冲击</strong></td><td>你的大单推高了成交价</td><td>0.1%-1%+——看订单大小<hr>最关键！</td><td><span class="hl">拆分订单、控制下单速度</span></td></tr>
+  </table>
+</div>
+
+<h3>市场冲击——隐形成本之王，最容易忽略</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 冲击成本有个经验公式：≈ 波动率 × √(你的订单/日成交量)</div>
+  <p>不用深究公式。用例子感受：</p>
+  <p><strong>买茅台5000万：</strong>日均成交30亿 → 你只占1.7% → 冲击≈0.26%</p>
+  <p><strong>买小盘股5000万：</strong>日均成交1亿 → 你占了50% → 冲击≈1.4%</p>
+  <p>如果你策略的收益预期只有2%，买小盘股的冲击就吃掉了70%的利润。<br>
+  如果收益预期只有0.5%——冲击比你的策略收益还大 → <span class="hl">直接亏损。</span></p>
+  <p>这就是为什么小盘股的高频策略几乎不可能盈利——市场冲击成本是致命的。</p>
+</div>
+
+<h3>四层费用叠加的真实账单——A股实战数据</h3>
+
+<div class="tip">
+  <div class="label">💡 完成一次"买入→卖出"的总摩擦</div>
+  <table>
+    <tr><th>股票类型</th><th>买入成本</th><th>卖出成本</th><th>总摩擦</th></tr>
+    <tr><td>大蓝筹（茅台/腾讯）</td><td>0.025%佣金+0.05%冲击</td><td>0.025%佣金+0.05%印花+0.05%冲击</td><td><strong>≈0.20%</strong></td></tr>
+    <tr><td>中盘股（海天味业）</td><td>0.025%佣金+0.2%冲击</td><td>0.025%佣金+0.05%印花+0.2%冲击</td><td><strong>≈0.50%</strong></td></tr>
+    <tr><td>小盘股</td><td>0.025%佣金+0.5%冲击</td><td>0.025%佣金+0.05%印花+0.5%冲击</td><td><strong>≈1.10%</strong></td></tr>
+  </table>
+  <p><span class="hl">小盘股每次买卖摩擦超1%。如果你一年换手10次→10%的收益被成本吃掉。你的策略必须跑赢10%才真赚钱——这几乎不可能。</span></p>
+</div>
+
+<h3>A股、港股的特殊成本差异</h3>
+
+<div class="deep">
+  <div class="label">💰 不同市场费用差很多——必须知道</div>
+  <table>
+    <tr><th>费用</th><th>沪市</th><th>深市</th><th>港股通</th></tr>
+    <tr><td>佣金</td><td>万2.5起</td><td>万2.5起</td><td>万3起</td></tr>
+    <tr><td>印花税</td><td>卖出万5</td><td>卖出万5</td><td><span class="hl">买卖各千1！双向！</span></td></tr>
+    <tr><td>其他杂费</td><td>↓极低</td><td>↓极低</td><td>↑↑ 交易征费+结算费等≈0.02%</td></tr>
+  </table>
+  <p><span class="hl">港股通双向印花税合计0.2%！远高于A股的卖出0.05%。一次完整买卖港股的总摩擦约0.35%+冲击——大致是A股的2倍。港股策略必须有更高的收益预期才能覆盖。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">四层交易成本中，哪一层最容易忽略且影响最大？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 佣金</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 印花税</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 市场冲击（L4）——你的订单本身改变了价格。对小盘股，这项可能超过1%，远大于佣金+印花税之和。回测看不到它，交易软件不显示它</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 都一样</button>
+  <div class="quiz-result"><strong>答案：C。</strong> 市场冲击是隐形的——回测不算它、交易软件不标它，但它常常是最大的成本。尤其是中小盘股和高频策略。永远用净收益（扣完所有成本后）来衡量策略。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">港股通的印花税和A股有什么关键区别？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 完全一样</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. A股只在卖出时收万分之五；港股通买卖双向各收千分之一——一次买卖总印花税0.2%，是A股的4倍</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 港股不收税</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. A股更贵</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 港股通双向印花税是很多人忽略的坑。交易港股前，先算清楚成本——不要被"港股估值低"吸引而忽略了高交易成本。</div>
+</div>
+        `
+      },
+      {
+        id: 'turnover-control',
+        title: '换手率控制：频繁交易正在吃掉你的收益',
+        emoji: '🔄',
+        content: `
+<h3>天天打车 vs 买一辆车——5年后哪个贵？</h3>
+
+<div class="analogy">
+  <div class="label">🔄 换手率 = 你的组合的"打车频率"</div>
+  <p>买一辆私家车：一次性付20万，开10年。每年保养加油费1万。10年总成本=30万。（<strong>低频持仓</strong>）</p>
+  <p>每天打出租车：一次30元，一天4次→120元/天→一年43800元→10年≈44万。（<strong>高频换手</strong>）</p>
+  <p>打车看似"轻松"——不用养车、不用停车费。但10年下来，比买车贵了14万。</p>
+  <p><strong>交易同理：</strong>换手不是免费的。每换一次手，前面讲的四层成本一起收。换手越高，成本滚雪球越快。<span class="hl">高频交易的真正成本不在佣金，在复利累积的摩擦。</span></p>
+</div>
+
+<h3>换手率如何吃掉你的真实收益？三个策略的残酷对比</h3>
+
+<div class="deep">
+  <div class="label">🔄 毛收益高≠实际收益高——扣完成本再说</div>
+  <table>
+    <tr><th>策略</th><th>毛收益（回测）</th><th>年换手率</th><th>摩擦成本</th><th>净收益</th></tr>
+    <tr><td>低频价值（月调）</td><td>+8%</td><td>200%</td><td>≈0.6%</td><td><strong>+7.4%</strong></td></tr>
+    <tr><td>中频因子（周调）</td><td>+12%</td><td>700%</td><td>≈3.5%</td><td><strong>+8.5%</strong></td></tr>
+    <tr><td>高频信号（日调）</td><td>+20%</td><td>5000%</td><td>≈10%</td><td><strong>+10%</strong></td></tr>
+  </table>
+  <p>注意：<span class="hl">毛收益20%看起来很诱人，但扣完成本只剩10%——只比周频策略多了1.5%。</span>高频换手率换来的额外收益，大部分被成本吃掉了。</p>
+</div>
+
+<h3>如果数学让你头疼——换手率预算的直觉理解</h3>
+
+<div class="intuition">
+  <div class="label">💛 把换手当成有限资源——每月配额</div>
+  <p>你有一个核心约束：<strong>交易次数上限 = 你的预期总收益 ÷ 每次交易的成本</strong></p>
+  <p>比如你预计一年能赚12%，每次买卖成本约0.3%（大盘股）：<br>
+  → 最多交易次数 = 12% ÷ 0.3% = 40次 → 大约每周换一次</p>
+  <p>如果你预计一年只赚6%，每次成本0.5%：<br>
+  → 最多交易次数 = 6% ÷ 0.5% = 12次 → 每个月只能换一次</p>
+  <p><strong>超过这个频率——你交易赚的钱不够付交易路费。越交易越亏。</strong></p>
+  <p><span class="hl">这就是为什么说：信号的质量比交易频率重要100倍。好的信号让你用低频率赚高收益。</span></p>
+</div>
+
+<h3>如果你想深入——在优化器中加入"换手税"</h3>
+
+<div class="formula">
+  <div class="label">🔢 给MVO加上换手成本——防止它天天给你换权重</div>
+  <p>MVO每天给你全新权重——但现实中每天换仓太贵了。</p>
+  <p><strong>解决方案：</strong>在目标函数中加惩罚项：<code>惩罚 = λ × Σ|新权重 - 旧权重|</code></p>
+  <p>其中λ是你预估的换手成本。</p>
+  <p>这样优化器会自己权衡："新权重确实更好"vs"但换手太贵了"——自动找到最优平衡。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">一个策略回测年收益20%，但年换手率5000%，真实拿到手的收益大概多少？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 还是20%</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 大约10%——交易成本（佣金+印花+冲击+滑点）在高换手下复利累积，吞噬了一半的纸面收益</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 25%</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 5%</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 回测不包含交易成本。毛收益是纸上富贵——高换手策略的成本累积会把大部分利润吃掉。永远看净收益。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">"换手率预算"公式的核心思想是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 多交易就多赚</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 交易有成本——换手必须受约束。最大换手次数 = 预期收益 ÷ 单次成本。超过这个次数，你赚的不够付路费</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 尽量不交易</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 随便交易</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这个公式把"少交易"的直觉变成了具体的硬约束。每个人的收益预期和成本结构不同——你的最大换手率也不同。它不是不让你交易，是不让你亏本交易。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '📖 附录',
+    lessons: [
+      {
+        id: 'quiz-module3',
+        title: '🧪 模块三综合测验',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: 'TWAP和VWAP最关键的区别是什么？',
+              options: ['名字不同', 'TWAP按时间等分订单；VWAP按成交量分布分配——成交易活跃时多买、清淡时少买，让订单占比保持恒定以最小化冲击', 'VWAP更快', 'TWAP只用于期货'],
+              correct: 1,
+              explain: 'VWAP的核心优势：利用历史成交量分布，让你的订单始终保持"不引人注目"的占比。'
+            },
+            {
+              q: '为什么小盘股的高换手策略几乎不可能长期盈利？',
+              options: ['小盘股涨得少', '单次交易摩擦>1% + 高换手 → 年度成本可能超10% → 几乎没有策略能稳定覆盖这个成本', '小盘股不收税', '没有原因'],
+              correct: 1,
+              explain: '小盘股的市场冲击成本是致命的——你的订单占比越大，价格被推得越高。高频换小盘股 = 自己给自己抬价。'
+            },
+            {
+              q: '"最大换手率 = 预期收益÷单次成本"这个公式告诉我们什么？',
+              options: ['尽量多交易', '交易不是免费的——换手受到成本的硬约束。超过预算的换手=亏钱。这个公式把"少交易"的直觉变成了可执行的上限', '换手越多越好', '不用管成本'],
+              correct: 1,
+              explain: '很多人低估交易成本，因为回测不包含它。这个公式强迫你在开始策略前算清楚：能赚的钱够不够付路费。'
+            }
+          ]
+        }
+      },
+      {
+        id: 'glossary',
+        title: '中英文术语表',
+        emoji: '📖',
+        content: `<h3>本课程核心术语速查</h3>
+
+<div class="deep"><div class="label">📖 组合管理与风控——人话词典</div>
+<table><tr><th>中文</th><th>英文</th><th>说人话</th></tr>
+<tr><td><strong>均值-方差优化</strong></td><td><code>Mean-Variance Optimization (MVO)</code></td><td>用数学方法算"每只股票该买多少"——但输入不准时输出也不准</td></tr>
+<tr><td><strong>有效前沿</strong></td><td><code>Efficient Frontier</code></td><td>"给定风险下收益最高"的所有可能组合——最优解只在这一条线上</td></tr>
+<tr><td><strong>夏普比率</strong></td><td><code>Sharpe Ratio</code></td><td>每承担1%的波动，多赚了多少——衡量"性价比"</td></tr>
+<tr><td><strong>风险平价</strong></td><td><code>Risk Parity</code></td><td>不是按钱平分，是按"风险贡献"平分——让波动大的少配、波动小的多配</td></tr>
+<tr><td><strong>风险预算</strong></td><td><code>Risk Budgeting</code></td><td>风险平价的升级版——你决定每只股票承担多少风险，优化器反推资金</td></tr>
+<tr><td><strong>Black-Litterman</strong></td><td><code>Black-Litterman Model</code></td><td>把你的主观判断量化后"融合"进组合——大众点评评分+你信得过的朋友推荐</td></tr>
+<tr><td><strong>VaR</strong></td><td><code>Value at Risk</code></td><td>"明天95%的概率最多亏多少"——看门槛</td></tr>
+<tr><td><strong>CVaR</strong></td><td><code>Conditional VaR / Expected Shortfall</code></td><td>"如果那5%的坏事发生了平均亏多少"——看门槛后面的深渊</td></tr>
+<tr><td><strong>最大回撤</strong></td><td><code>Maximum Drawdown (MDD)</code></td><td>从最高点跌到最低点的幅度——风控第一指标，触发熔断的依据</td></tr>
+<tr><td><strong>熔断机制</strong></td><td><code>Circuit Breaker</code></td><td>提前定好："亏到X%自动减仓Y%"——消防喷淋，不需要你犹豫</td></tr>
+<tr><td><strong>压力测试</strong></td><td><code>Stress Testing</code></td><td>用"最坏的可能"冲击你的组合——为没想过的事情做准备</td></tr>
+<tr><td><strong>风控Agent</strong></td><td><code>Risk Control Agent</code></td><td>工地上的安全员——独立于交易Agent，只管安全不管收益，一票否决权</td></tr>
+<tr><td><strong>TWAP</strong></td><td><code>Time-Weighted Average Price</code></td><td>按时间等分大单——"每分钟买一样多"</td></tr>
+<tr><td><strong>VWAP</strong></td><td><code>Volume-Weighted Average Price</code></td><td>按成交量分布分大单——"人多时多买、人少时少买"</td></tr>
+<tr><td><strong>冰山订单</strong></td><td><code>Iceberg Order</code></td><td>只露出少量单在盘口，成交后自动刷新——最隐蔽的大单方式</td></tr>
+<tr><td><strong>市场冲击</strong></td><td><code>Market Impact</code></td><td>你的买单本身推高了价格——最容易忽略的成本，比佣金+印花税还大</td></tr>
+<tr><td><strong>滑点</strong></td><td><code>Slippage</code></td><td>下单价格和实际成交价之间的差——网慢或流动性差时会变大</td></tr>
+<tr><td><strong>换手率</strong></td><td><code>Turnover</code></td><td>一段时间内买卖金额占组合的比例——换手越高，成本滚雪球越快</td></tr>
+<tr><td><strong>换手税</strong></td><td><code>Turnover Penalty</code></td><td>在优化器中加入换手惩罚→防止它天天让你调仓</td></tr>
+</table></div>`
+      }
+    ]
+  }
+];
+
+// ===== APP STATE (prefix: se_mlops_) =====
+let completedLessons = new Set(JSON.parse(localStorage.getItem('se_mlops_course_completed') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem('se_mlops_course_quiz_results') || '{}');
+let currentSection = null;
+let finalExamDone = finalExam.questions.every((_,i) => quizResults['final_' + i] !== undefined);
+
+function save() {
+  localStorage.setItem('se_mlops_course_completed', JSON.stringify([...completedLessons]));
+  localStorage.setItem('se_mlops_course_quiz_results', JSON.stringify(quizResults));
+}
+
+function quickQuiz(btn, correctChoice) {
+  const card = btn.closest('.quiz-card');
+  if (card.dataset.answered) return;
+  card.dataset.answered = 'true';
+  const options = card.querySelectorAll('.quiz-option');
+  options.forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    if (i === correctChoice) o.classList.add('correct');
+    else o.classList.add('wrong');
+  });
+  const result = card.querySelector('.quiz-result');
+  if (result) { result.classList.add('show'); }
+}
+
+function calcProgress() {
+  let total = 0;
+  modules.forEach(m => { total += m.lessons.length; });
+  total += finalExam.questions.length;
+  let done = completedLessons.size;
+  for (let i = 0; i < finalExam.questions.length; i++) {
+    if (quizResults['final_' + i] !== undefined) done++;
+  }
+  return Math.round((done / total) * 100);
+}
+
+function updateUI() {
+  const pct = calcProgress();
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+  const nav = document.getElementById('navContainer');
+  let html = '';
+  modules.forEach((mod) => {
+    html += '<div class="nav-module">';
+    html += '<div class="nav-module-title">' + mod.title + '</div>';
+    mod.lessons.forEach((lesson) => {
+      const id = lesson.id;
+      const done = completedLessons.has(id);
+      const active = currentSection === id;
+      html += '<div class="nav-item' + (active ? ' active' : '') + (done ? ' done' : '') + '" onclick="navigateTo(\'' + id + '\')">';
+      html += '<span class="check">' + (done ? '✅' : lesson.emoji || '📖') + '</span>';
+      html += lesson.title + '</div>';
+    });
+    html += '</div>';
+  });
+  html += '<div class="nav-item' + (currentSection === 'final' ? ' active' : '') + (finalExamDone ? ' done' : '') + '" onclick="navigateTo(\'final\')">';
+  html += '<span class="check">' + (finalExamDone ? '✅' : '🏆') + '</span> 终极测验</div>';
+  nav.innerHTML = html;
+}
+
+function navigateTo(id) {
+  currentSection = id;
+  updateUI();
+  renderContent(id);
+  window.scrollTo(0, 0);
+}
+
+function renderContent(id) {
+  const main = document.getElementById('mainContent');
+  if (id === 'final') { renderFinalExam(main); return; }
+  let lesson = null, modIndex = -1, lesIndex = -1;
+  for (let mi = 0; mi < modules.length; mi++) {
+    for (let li = 0; li < modules[mi].lessons.length; li++) {
+      if (modules[mi].lessons[li].id === id) {
+        lesson = modules[mi].lessons[li]; modIndex = mi; lesIndex = li; break;
+      }
+    }
+    if (lesson) break;
+  }
+  if (!lesson) { main.innerHTML = '<p>课程未找到</p>'; return; }
+  let html = '';
+  if (lesson.quiz) {
+    const savedAnswers = quizResults[id] || [];
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">共' + lesson.quiz.questions.length + '题</div>';
+    lesson.quiz.questions.forEach((q, qi) => {
+      const ua = savedAnswers[qi];
+      const answered = ua !== undefined;
+      const isCorrect = answered && ua === q.correct;
+      html += '<div class="quiz-card"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+      html += '<div class="quiz-question">' + q.q + '</div>';
+      q.options.forEach((opt, oi) => {
+        let cls = 'quiz-option';
+        if (answered && oi === q.correct) cls += ' correct';
+        if (answered && oi === ua && oi !== q.correct) cls += ' wrong';
+        html += '<button class="' + cls + '" onclick="answerQuiz(\'' + id + '\', ' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+      });
+      if (answered) {
+        html += '<div class="quiz-result show ' + (isCorrect ? 'pass' : 'fail') + '">';
+        html += '<strong>' + (isCorrect ? '✅ 正确！' : '❌ 不太对') + '</strong><p>' + (q.explain || '') + '</p></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">' + modules[modIndex].title.replace(/^[^\s]+\s/, '') + '</div>';
+    html += lesson.content;
+    html += '</div>';
+    markComplete(id);
+  }
+  html += '<div class="nav-btns">';
+  let prevId = null;
+  if (lesIndex > 0) prevId = modules[modIndex].lessons[lesIndex - 1].id;
+  else if (modIndex > 0) { const pm = modules[modIndex - 1]; prevId = pm.lessons[pm.lessons.length - 1].id; }
+  if (prevId) html += '<button class="btn btn-secondary" onclick="navigateTo(\'' + prevId + '\')">⬅ 上一节</button>';
+  else html += '<div></div>';
+  let nextId = null;
+  if (lesIndex < modules[modIndex].lessons.length - 1) nextId = modules[modIndex].lessons[lesIndex + 1].id;
+  else if (modIndex < modules.length - 1) nextId = modules[modIndex + 1].lessons[0].id;
+  if (nextId) html += '<button class="btn btn-primary" onclick="navigateTo(\'' + nextId + '\')">下一节 ➡</button>';
+  else html += '<button class="btn btn-success" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>';
+  html += '</div>';
+  main.innerHTML = html;
+}
+
+function answerQuiz(lessonId, qi, choice) {
+  if (!quizResults[lessonId]) quizResults[lessonId] = [];
+  quizResults[lessonId][qi] = choice;
+  save();
+  const lesson = modules.flatMap(m => m.lessons).find(l => l.id === lessonId);
+  if (lesson && lesson.quiz && quizResults[lessonId].length === lesson.quiz.questions.length) {
+    const allAnswered = quizResults[lessonId].every(v => v !== undefined);
+    if (allAnswered) markComplete(lessonId);
+  }
+  renderContent(lessonId);
+}
+
+function markComplete(id) {
+  if (!completedLessons.has(id)) {
+    completedLessons.add(id);
+    save();
+    updateUI();
+  }
+}
+
+function renderFinalExam(main) {
+  let html = '<div class="lesson-card"><h2>🏆 终极测验</h2><div class="meta">共' + finalExam.questions.length + '题 — 检验你对组合管理与风控的全面掌握</div>';
+  finalExam.questions.forEach((q, qi) => {
+    const ua = quizResults['final_' + qi];
+    const answered = ua !== undefined;
+    const isCorrect = answered && ua === q.correct;
+    html += '<div class="quiz-card"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+    html += '<div class="quiz-question">' + q.q + '</div>';
+    q.options.forEach((opt, oi) => {
+      let cls = 'quiz-option';
+      if (answered && oi === q.correct) cls += ' correct';
+      if (answered && oi === ua && oi !== q.correct) cls += ' wrong';
+      html += '<button class="' + cls + '" onclick="answerFinalExam(' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+    });
+    if (answered) {
+      html += '<div class="quiz-result show ' + (isCorrect ? 'pass' : 'fail') + '">';
+      html += '<strong>' + (isCorrect ? '✅ 正确！' : '❌ 不太对') + '</strong><p>' + (q.explain || '') + '</p></div>';
+    }
+    html += '</div>';
+  });
+  if (finalExamDone) {
+    const score = finalExam.questions.filter((q, i) => quizResults['final_' + i] === q.correct).length;
+    const total = finalExam.questions.length;
+    const passed = score / total >= 0.6;
+    html += '<div class="lesson-card" style="text-align:center"><h2>' + (passed ? '🎉 恭喜通关！' : '📚 还需要再练练') + '</h2>';
+    html += '<p style="font-size:2em;margin:20px 0">' + score + ' / ' + total + '</p>';
+    html += '<p>' + (passed ? '你撑握了组合管理的核心原则——管住钱、管住手、活下来比赚得多更重要。这个框架适用于任何资金规模的投资。' : '建议回到薄弱的地方再看看。风控不是一次学会的——是反复提醒自己的。') + '</p>';
+    if (!passed) {
+      const wrong = finalExam.questions.map((q, i) => ({ q, i })).filter(x => quizResults['final_' + x.i] !== x.q.correct);
+      html += '<div style="margin-top: 16px; text-align: left;"><p style="color: var(--accent);">需要再看看的题：</p>';
+      wrong.forEach(w => { html += '<p style="color:var(--sub);font-size:0.9em">• ' + w.q.q.substring(0, 60) + '…</p>'; });
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  main.innerHTML = html;
+}
+
+function answerFinalExam(qi, choice) {
+  quizResults['final_' + qi] = choice;
+  if (finalExam.questions.every((_, i) => quizResults['final_' + i] !== undefined)) finalExamDone = true;
+  save();
+  renderFinalExam(document.getElementById('mainContent'));
+  updateUI();
+}
+
+function resetAll() {
+  localStorage.removeItem('se_mlops_course_completed');
+  localStorage.removeItem('se_mlops_course_quiz_results');
+  location.reload();
+}
+
+// ===== INIT =====
+(function init() {
+  currentSection = 'warmup';
+  updateUI();
+  renderContent('warmup');
+})();
+</script>
+</body>
+</html>

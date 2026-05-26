@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>价值投资量化系列课程</title>
+<style>
+:root {
+  --bg: #06080d; --card: #0e131f; --card2: #151c2b; --border: #253049;
+  --text: #e4eaf2; --sub: #7c8aa2;
+  --g1: #00b894; --g2: #00cec9; --g3: #e28413; --g4: #e86040; --g5: #6c5ce7;
+  --b1: #6c5ce7; --b2: #40a8e0; --b3: #a880e0; --b4: #40c880; --b5: #f0a050;
+  --radius: 18px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system,'SF Pro Display','PingFang SC',sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.7;
+  min-height:100vh; overflow-x:hidden;
+}
+
+/* Hero */
+.hero {
+  text-align:center; padding:72px 24px 56px;
+  background:linear-gradient(180deg, rgba(108,92,231,0.08) 0%, rgba(0,184,148,0.05) 50%, var(--bg) 100%);
+}
+.hero .badges { margin-bottom:16px; }
+.hero .badge { display:inline-block; padding:5px 16px; border-radius:20px; font-size:0.8em; margin:0 6px;
+  background:rgba(108,92,231,0.15); color:#a8a0e8; border:1px solid rgba(108,92,231,0.25);
+}
+.hero h1 { font-size:3em; font-weight:800; letter-spacing:-0.5px; margin-bottom:12px; }
+.hero h1 span.g1 { background:linear-gradient(135deg,#00b894,#00cec9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero h1 span.g2 { background:linear-gradient(135deg,#e28413,#fdcb6e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero h1 span.g3 { background:linear-gradient(135deg,#6c5ce7,#e86040); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero .subtitle { font-size:1.15em; color:var(--sub); max-width:700px; margin:0 auto 28px; }
+.hero .stats { display:flex; justify-content:center; gap:40px; margin-top:8px; flex-wrap:wrap; }
+.hero .stat .n { font-size:1.6em; font-weight:800; }
+.hero .stat .l { font-size:0.82em; color:var(--sub); }
+
+/* Courses Grid */
+.courses { display:grid; grid-template-columns:repeat(5,1fr); gap:18px; max-width:1400px; margin:0 auto; padding:0 28px 48px; }
+.course-card {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:28px 22px; cursor:pointer; transition:.25s; position:relative; overflow:hidden;
+  display:flex; flex-direction:column; text-decoration:none; color:inherit;
+}
+.course-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,0.4); }
+.course-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+}
+.course-card:nth-child(1)::before { background:linear-gradient(90deg,#00b894,#00cec9); }
+.course-card:nth-child(2)::before { background:linear-gradient(90deg,#6c5ce7,#a880e0); }
+.course-card:nth-child(3)::before { background:linear-gradient(90deg,#e28413,#fdcb6e); }
+.course-card:nth-child(4)::before { background:linear-gradient(90deg,#e86040,#40a8e0); }
+.course-card:nth-child(5)::before { background:linear-gradient(90deg,#40c880,#00b894); }
+
+.course-card .level {
+  display:inline-block; padding:3px 12px; border-radius:12px; font-size:0.7em;
+  font-weight:700; margin-bottom:14px; letter-spacing:0.5px; width:fit-content;
+}
+.course-card:nth-child(1) .level { background:rgba(0,184,148,0.12); color:var(--g1); }
+.course-card:nth-child(2) .level { background:rgba(108,92,231,0.12); color:var(--b1); }
+.course-card:nth-child(3) .level { background:rgba(226,132,19,0.12); color:var(--g3); }
+.course-card:nth-child(4) .level { background:rgba(232,96,64,0.12); color:var(--g4); }
+.course-card:nth-child(5) .level { background:rgba(64,200,128,0.12); color:var(--b4); }
+
+.course-card.pending { opacity:0.55; cursor:default; }
+.course-card.pending:hover { transform:none; box-shadow:none; }
+
+.course-card .icon { font-size:2.4em; margin-bottom:10px; }
+.course-card h3 { font-size:1.15em; margin-bottom:6px; }
+.course-card .tagline { font-size:0.82em; color:var(--sub); margin-bottom:14px; line-height:1.5; flex:1; }
+.course-card .meta { font-size:0.76em; color:var(--sub); margin-top:auto; padding-top:12px; border-top:1px solid var(--border); }
+.course-card .meta .coming { color:var(--g3); font-weight:600; }
+
+.course-card:nth-child(1):hover { border-color:var(--g1); }
+.course-card:nth-child(2):hover { border-color:var(--b1); }
+.course-card:nth-child(3):hover { border-color:var(--g3); }
+.course-card:nth-child(4):hover { border-color:var(--g4); }
+.course-card:nth-child(5):hover { border-color:var(--b4); }
+.course-card.pending:hover { border-color:var(--border); }
+
+/* Journey map */
+.journey { max-width:1000px; margin:0 auto 64px; padding:0 24px; }
+.journey h2 { text-align:center; font-size:1.5em; margin-bottom:12px; }
+.journey .journey-sub { text-align:center; color:var(--sub); font-size:0.88em; margin-bottom:36px; }
+.timeline { position:relative; padding-left:28px; }
+.timeline::before { content:''; position:absolute; left:12px; top:0; bottom:0; width:2px; background:linear-gradient(180deg,var(--g1),var(--b1),var(--g3),var(--g4)); }
+.tl-item { position:relative; margin-bottom:28px; padding-left:28px; }
+.tl-item::before { content:''; position:absolute; left:-20px; top:6px; width:18px; height:18px; border-radius:50%; border:3px solid; background:var(--bg); }
+.tl-item:nth-child(1)::before { border-color:var(--g1); }
+.tl-item:nth-child(2)::before { border-color:var(--b1); }
+.tl-item:nth-child(3)::before { border-color:var(--g3); }
+.tl-item:nth-child(4)::before { border-color:var(--g4); }
+.tl-item h4 { font-size:1em; margin-bottom:4px; }
+.tl-item p { font-size:0.84em; color:var(--sub); }
+.tl-item .tl-tag { display:inline-block; padding:2px 10px; border-radius:10px; font-size:0.72em; font-weight:600; margin-left:8px; }
+.tl-item .tl-tag.built { background:rgba(0,184,148,0.12); color:var(--g1); }
+.tl-item .tl-tag.wip { background:rgba(226,132,19,0.12); color:var(--g3); }
+
+/* Overview table */
+.overview { max-width:1200px; margin:0 auto 56px; padding:0 28px; }
+.overview h2 { text-align:center; font-size:1.5em; margin-bottom:28px; }
+.ov-table { width:100%; border-collapse:collapse; font-size:0.9em; }
+.ov-table th { background:var(--border); padding:14px 16px; text-align:left; font-weight:600; font-size:0.85em; text-transform:uppercase; letter-spacing:1px; color:var(--sub); }
+.ov-table td { padding:14px 16px; border-bottom:1px solid var(--border); }
+.ov-table tr:hover td { background:rgba(255,255,255,0.02); }
+.ov-table .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; }
+.ov-table .dot.d1 { background:var(--g1); }
+.ov-table .dot.d2 { background:var(--b1); }
+.ov-table .dot.d3 { background:var(--g3); }
+.ov-table .dot.d4 { background:var(--g4); }
+.ov-table .dot.d5 { background:var(--b4); }
+.ov-table .tag { display:inline-block; padding:2px 10px; border-radius:10px; font-size:0.78em; font-weight:600; }
+.ov-table .tag.built { background:rgba(0,184,148,0.12); color:var(--g1); }
+.ov-table .tag.wip { background:rgba(226,132,19,0.12); color:var(--g3); }
+
+/* Roadmap section */
+.roadmap { max-width:1000px; margin:0 auto 56px; padding:0 28px; }
+.roadmap h2 { text-align:center; font-size:1.5em; margin-bottom:8px; }
+.roadmap .roadmap-sub { text-align:center; color:var(--sub); font-size:0.84em; margin-bottom:28px; }
+.roadmap-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:18px; }
+.rm-card {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:22px 24px; transition:.2s;
+}
+.rm-card:hover { border-color:var(--text); }
+.rm-card h4 { font-size:0.95em; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.rm-card .rm-icon { font-size:1.2em; }
+.rm-card p { font-size:0.82em; color:var(--sub); line-height:1.6; }
+
+/* Principles */
+.principles { max-width:1000px; margin:0 auto 56px; padding:0 28px; }
+.principles h2 { text-align:center; font-size:1.5em; margin-bottom:28px; }
+.p-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.p-card {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:24px; text-align:center;
+}
+.p-card .p-num { font-size:2em; font-weight:800; margin-bottom:6px; }
+.p-card:nth-child(1) .p-num { color:var(--g1); }
+.p-card:nth-child(2) .p-num { color:var(--b1); }
+.p-card:nth-child(3) .p-num { color:var(--g4); }
+.p-card h4 { font-size:0.95em; margin-bottom:6px; }
+.p-card p { font-size:0.8em; color:var(--sub); line-height:1.5; }
+
+/* Footer */
+.footer { text-align:center; padding:40px 24px; color:var(--sub); font-size:0.82em; border-top:1px solid var(--border); }
+.footer strong { color:var(--text); }
+
+@media(max-width:1200px) {
+  .courses { grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:768px) {
+  .hero h1 { font-size:2em; }
+  .hero .stats { gap:24px; }
+  .courses { grid-template-columns:1fr; }
+  .roadmap-grid, .p-grid { grid-template-columns:1fr; }
+  .ov-table { font-size:0.78em; }
+  .ov-table th,.ov-table td { padding:10px 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="badges">
+    <span class="badge">📊 价值投资量化</span>
+    <span class="badge">🤖 AI Agent</span>
+    <span class="badge">💰 价值投资</span>
+    <span class="badge">📚 五系列课程</span>
+  </div>
+  <h1>
+    <span class="g1">价值投资量化</span><br>
+    <span class="g3">系列课程</span>
+  </h1>
+  <p class="subtitle">
+    从价值投资内核到数学工具，从 AI Agent 到 MLOps。<br>
+    融合价值投资理念与量化技术——<br>
+    让自己成为能设计「智能投研团队」的人。
+  </p>
+  <div class="stats">
+    <div class="stat"><div class="n">6</div><div class="l">课程系列</div></div>
+    <div class="stat"><div class="n">6</div><div class="l">已建成</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">待建设</div></div>
+    <div class="stat"><div class="n">120+</div><div class="l">课程小节</div></div>
+    <div class="stat"><div class="n">5</div><div class="l">课程框架</div></div>
+  </div>
+</div>
+
+<!-- 五个课程入口 -->
+<div class="courses">
+  <a class="course-card" href="金融基础交互式课程/课程首页_金融基础.html" target="_blank">
+    <div class="level">🟢 已建成</div>
+    <div class="icon">🏦</div>
+    <h3>金融基础</h3>
+    <p class="tagline">巴菲特读财报 · 周期宏观+行业轮动 · 行为金融 · 跨学科思维栅格 · 秃鹫+非对称投资 · 逆向决策</p>
+    <div class="meta">6节课 · 7大模块 · 价值投资内核</div>
+  </a>
+  <a class="course-card" href="数学与统计学交互式课程/课程首页_数学与统计学.html" target="_blank">
+    <div class="level">🟢 已建成</div>
+    <div class="icon">📐</div>
+    <h3>数学与统计</h3>
+    <p class="tagline">概率论 · 时间序列 · 随机过程 · 最优化 · 计量经济 · 贝叶斯 · ML数学基础</p>
+    <div class="meta">7节课 · 7大模块 · 量化工具链</div>
+  </a>
+  <a class="course-card" href="计算机科学与AI交互式课程/课程首页_计算机科学与AI.html" target="_blank">
+    <div class="level">🟢 已建成</div>
+    <div class="icon">💻</div>
+    <h3>计算机与AI</h3>
+    <p class="tagline">机器学习入门 · 金融NLP · 知识图谱 · Agent量化接口 · 强化学习择时</p>
+    <div class="meta">5节课 · 5大模块 · 核心引擎</div>
+  </a>
+  <a class="course-card" href="软件工程与MLOps交互式课程/课程首页_软件工程与MLOps.html" target="_blank">
+    <div class="level">🟢 已建成</div>
+    <div class="icon">⚙️</div>
+    <h3>软件工程与MLOps</h3>
+    <p class="tagline">数据工程 · 回测系统 · 组合风控 · MLOps · 系统架构</p>
+    <div class="meta">5节课 · 5大模块 · 30+小节</div>
+  </a>
+  <a class="course-card" href="AI Agent工作流架构师课程/课程首页_人人都是Agent架构师.html" target="_blank">
+    <div class="level">🟢 已建成</div>
+    <div class="icon">🤖</div>
+    <h3>AI Agent 架构师</h3>
+    <p class="tagline">初级→专家四级递进 · 量化投研Agent实战 · 董事会架构 · 多空辩论</p>
+    <div class="meta">5级 · 97节 · 50+互动测验</div>
+  </a>
+  <a class="course-card" href="量化实战综合案例/01_量化实战全链路.html" target="_blank">
+    <div class="level">⭐ 结业课</div>
+    <div class="icon">🎓</div>
+    <h3>综合实战</h3>
+    <p class="tagline">腾讯控股全链路实战 · 数据采集→因子计算→IC分析→回测→Agent融合</p>
+    <div class="meta">1课 · 8节 · 综合案例</div>
+  </a>
+</div>
+
+<!-- 学习路径时间线 -->
+<div class="journey">
+  <h2>🎯 学习路径</h2>
+  <p class="journey-sub">螺旋上升 · 每阶段都建立在前一阶段之上</p>
+  <div class="timeline">
+    <div class="tl-item">
+      <h4>🟢 第一阶段：地基 — 金融理论与数学工具 <span class="tl-tag built">已建成</span></h4>
+      <p>掌握价值投资内核（巴菲特读财报、周期宏观、行为金融），同时搭建数学工具链（概率论、时间序列、随机过程）。两大支柱并行，打好量化底盘。</p>
+    </div>
+    <div class="tl-item">
+      <h4>🟡 第二阶段：引擎 — 计算机科学与MLOps <span class="tl-tag built">已建成</span></h4>
+      <p>机器学习基础、NLP、知识图谱构建因子挖掘能力。数据管道、回测系统、风控、MLOps闭环——把策略从「能跑」变成「可靠赚钱」。</p>
+    </div>
+    <div class="tl-item">
+      <h4>🟠 第三阶段：Agent — AI 介入决策 <span class="tl-tag built">已建成</span></h4>
+      <p>四级递进学会 Agent 架构：从理解工作流到设计多智能体协作系统。Agent 读本地研报 > 调外部 API——差异在分析整合，不在数据抓取。</p>
+    </div>
+    <div class="tl-item">
+      <h4>🔴 第四阶段：大成 — 端到端量化系统</h4>
+      <p>五大支柱融合：周期状态 → 个股估值 → 多Agent辩论 → RL轮动 → 风控一票否决。每日自动「晨会」，调仓指令自动执行。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 课程总览表 -->
+<div class="overview">
+  <h2>📋 课程体系一览</h2>
+  <table class="ov-table">
+    <tr>
+      <th>系列</th>
+      <th>课程</th>
+      <th>核心内容</th>
+      <th>定位</th>
+      <th>状态</th>
+    </tr>
+    <tr>
+      <td><span class="dot d1"></span>金融</td>
+      <td>金融基础交互式课程</td>
+      <td>巴菲特读财报 · 周期宏观+行业轮动 · 行为金融 · 思维栅格 · 秃鹫+逆向投资 · 决策纪律</td>
+      <td>价值投资内核</td>
+      <td><span class="tag built">🟢 已建成 · 6课</span></td>
+    </tr>
+    <tr>
+      <td><span class="dot d2"></span>数学</td>
+      <td>数学与统计学交互式课程</td>
+      <td>概率论 · 时间序列 · 随机过程 · 最优化 · 计量经济 · 贝叶斯 · ML数学</td>
+      <td>量化工具链</td>
+      <td><span class="tag built">🟢 已建成 · 7课</span></td>
+    </tr>
+    <tr>
+      <td><span class="dot d3"></span>计算机</td>
+      <td>计算机科学与AI</td>
+      <td>Python入门 · ML基础 · NLP知识图谱 · 强化学习 · Agent量化接口</td>
+      <td>核心引擎</td>
+      <td><span class="tag built">🟢 已建成 · 6课</span></td>
+    </tr>
+    <tr>
+      <td><span class="dot d4"></span>工程</td>
+      <td>软件工程与MLOps</td>
+      <td>数据工程 · 回测系统 · 组合风控 · MLOps · 系统架构</td>
+      <td>交付管线</td>
+      <td><span class="tag built">🟢 已建成 · 5课</span></td>
+    </tr>
+    <tr>
+      <td><span class="dot d5"></span>Agent</td>
+      <td>AI Agent 工作流架构师</td>
+      <td>初级→专家五级 · Agent量化投研 · 董事会架构 · 多空辩论 · 信号融合</td>
+      <td>决策大脑</td>
+      <td><span class="tag built">🟢 已建成 · 5课</span></td>
+    </tr>
+    <tr>
+      <td><span class="tag">🎓</span>实战</td>
+      <td>量化实战综合案例</td>
+      <td>腾讯全链路实战 · 八步工作流 · Agent增强 · 回测检查清单</td>
+      <td>结业演练</td>
+      <td><span class="tag built">🟢 已建成 · 1课</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- 三大原则 -->
+<div class="principles">
+  <h2>🔺 三个不妥协</h2>
+  <div class="p-grid">
+    <div class="p-card">
+      <div class="p-num">1</div>
+      <h4>回测不准 = 结论全错</h4>
+      <p>公告日对齐是底线。不对齐公告日 = 偷看未来财报 = 回测是假的。</p>
+    </div>
+    <div class="p-card">
+      <div class="p-num">2</div>
+      <h4>不对不同标的用同一因子</h4>
+      <p>价值股 ≠ 周期股 ≠ 成长股。周期股基本面IC < 0.05，必须换量价因子。</p>
+    </div>
+    <div class="p-card">
+      <div class="p-num">3</div>
+      <h4>Agent 读本地 > 调外部 API</h4>
+      <p>差异化在分析整合 + 观点生成，不在数据抓取。每个 Agent 背后站着一位大师。</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p><strong>价值投资量化系列课程</strong> · 纯前端 · 交互式 · 暗色主题</p>
+  <p style="margin-top:6px">基于「量化专家能力地图与项目路线」构建 · 创建于 2026-05-23</p>
+</div>
+
+</body>
+</html>

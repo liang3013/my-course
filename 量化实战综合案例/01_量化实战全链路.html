@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎓 量化实战全链路 · 腾讯控股案例</title>
+<style>
+:root {
+  --bg: #0d1117; --card: #161b22; --card-hover: #1c2333; --border: #30363d;
+  --text: #e6edf3; --sub: #8b949e; --accent: #f0a040; --accent2: #ffc060;
+  --green: #3fb950; --red: #f85149; --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(240,160,64,0.35); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+body {
+  font-family: -apple-system, 'SF Pro Display', 'PingFang SC', sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #1a1008 0%, var(--bg) 70%);
+  color: var(--text); line-height: 1.75; min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width: 280px; background: var(--card); border-right: 1px solid var(--border);
+  padding: 24px 16px; position: sticky; top:0; height:100vh;
+  overflow-y: auto; flex-shrink: 0;
+}
+.main { flex:1; padding: 32px 48px; max-width: 920px; }
+.logo { font-size: 1.2em; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.logo .icon { font-size: 1.4em; }
+.subtitle { color: var(--sub); font-size: 0.82em; margin-bottom: 20px; opacity: 0.8; }
+.progress-bar-wrap { background: var(--border); border-radius: 8px; height: 6px; margin-bottom: 22px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 8px; transition: width 0.6s; box-shadow: 0 0 12px rgba(240,160,64,0.25); }
+.progress-text { font-size: 0.78em; color: var(--sub); margin-bottom: 4px; }
+.nav-module { margin-bottom: 18px; }
+.nav-module-title { font-size: 0.72em; text-transform: uppercase; color: var(--sub); letter-spacing: 1.5px; margin-bottom: 8px; padding: 0 8px; opacity: 0.7; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.88em; color: var(--sub); border-left: 3px solid transparent; margin-bottom: 2px; }
+.nav-item:hover { background: var(--card-hover); color: var(--text); border-left-color: rgba(240,160,64,0.3); }
+.nav-item.active { background: rgba(240,160,64,0.12); color: var(--accent2); font-weight: 600; border-left-color: var(--accent2); }
+.nav-item.done { color: var(--green); }
+.nav-item .check { width: 20px; text-align: center; font-size: 0.8em; }
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.lesson-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 34px; margin-bottom: 24px; transition: border-color 0.25s; }
+.lesson-card:hover { border-color: rgba(240,160,64,0.2); box-shadow: 0 2px 20px rgba(240,160,64,0.06); }
+.lesson-card h2 { font-size: 1.5em; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.lesson-card .meta { color: var(--sub); font-size: 0.85em; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.lesson-card h3 { font-size: 1.1em; margin: 28px 0 14px; color: var(--accent2); position: relative; padding-left: 14px; }
+.lesson-card h3::before { content: ''; position: absolute; left: 0; top: 3px; bottom: 3px; width: 3px; border-radius: 2px; background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+.lesson-card p { margin-bottom: 14px; }
+.lesson-card ul, .lesson-card ol { padding-left: 24px; margin-bottom: 14px; }
+.lesson-card li { margin-bottom: 8px; }
+.lesson-card .hl { color: var(--accent2); font-weight: 600; }
+.lesson-card table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
+.lesson-card th { background: var(--border); padding: 10px 14px; text-align: left; font-size: 0.85em; color: var(--sub); }
+.lesson-card td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.lesson-card code { background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 4px; font-size: 0.9em; color: var(--accent2); font-family: 'SF Mono', 'JetBrains Mono', monospace; }
+.lesson-card pre { background: var(--card-hover); padding: 16px 20px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; margin: 16px 0; border: 1px solid var(--border); }
+.lesson-card pre code { background: none; padding: 0; }
+.analogy, .deep, .tip, .warn {
+  padding: 18px 20px; border-radius: 10px; margin: 18px 0; border-left: 4px solid;
+}
+.analogy { background: rgba(240,160,64,0.08); border-color: var(--accent); }
+.deep { background: rgba(168,128,224,0.06); border-color: var(--accent); }
+.tip { background: rgba(63,185,80,0.06); border-color: var(--green); }
+.warn { background: rgba(248,81,73,0.06); border-color: var(--red); }
+.analogy .label, .deep .label, .tip .label, .warn .label {
+  font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+}
+.analogy .label { color: var(--accent2); }
+.deep .label { color: #a880e0; }
+.tip .label { color: var(--green); }
+.warn .label { color: var(--red); }
+
+.quiz-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
+.quiz-question { font-weight: 600; margin-bottom: 14px; font-size: 1em; }
+.quiz-option {
+  display: block; width: 100%; text-align: left; padding: 11px 16px; margin-bottom: 8px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); cursor: pointer; transition: 0.2s; font-size: 0.92em;
+}
+.quiz-option:hover { border-color: var(--accent); background: rgba(240,160,64,0.06); }
+.quiz-option.correct { background: rgba(63,185,80,0.12); border-color: var(--green); color: var(--green); }
+.quiz-option.wrong { background: rgba(248,81,73,0.08); border-color: var(--red); color: var(--red); }
+.quiz-result { margin-top: 10px; padding: 12px 16px; background: rgba(240,160,64,0.04); border-radius: 8px; font-size: 0.9em; display: none; }
+.quiz-result.show { display: block; }
+.quiz-result.pass { border-left: 3px solid var(--green); }
+.quiz-result.fail { border-left: 3px solid var(--red); }
+.quiz-result strong { display: block; margin-bottom: 4px; }
+
+.btn { padding: 10px 22px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; font-size: 0.9em; transition: 0.2s; background: var(--card); color: var(--text); }
+.btn:hover { border-color: var(--accent); background: var(--card-hover); }
+.btn-primary { background: rgba(240,160,64,0.12); border-color: var(--accent); color: var(--accent2); }
+.btn-success { background: rgba(63,185,80,0.12); border-color: var(--green); color: var(--green); }
+.btn-secondary { background: var(--card); }
+.nav-btns { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+
+@media(max-width:768px) {
+  .app { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: relative; }
+  .main { padding: 24px 18px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">🎓</span> 量化实战全链路</div>
+  <div class="subtitle">腾讯控股 · 八步工作流 · Agent融合</div>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <a href="../../课程首页_量化交易实战系列课程.html" style="display:block;margin-bottom:12px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:0.82em;color:var(--sub);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--sub)'">🏠 回到课程总览</a>
+  <div id="navContainer"></div>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="resetAll()">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ===== DATA =====
+const finalExam = {
+  questions: [
+    { q:'腾讯控股量化实战中，IC最强的因子是哪个？IC值是多少？', options:['roe IC=0.15','bps_growth IC=0.279','momentum_60 IC=0.20','gross_margin IC=0.30'], correct:1 },
+    { q:'为什么港股财务数据必须做公告日对齐？', options:['港股不需要','年报截止日12/31但公告日次年4/30——用截止日直接回测=偷看120天未来数据','港股公告更快','对齐只是为了好看'], correct:1 },
+    { q:'量化八步工作流中，哪一步被实战验证为"最大方法论收获"？', options:['数据采集','因子计算','前视偏差检查——公告日对齐后必须重新跑IC分析','信号生成'], correct:2 },
+    { q:'多Agent辩论架构中，三个Agent分别承担什么角色？', options:['都一样','巴菲特Agent财务分析+芒格Agent批判审视+马克斯Agent周期判断——三方辩论后贝叶斯融合','都做技术分析','只分析估值'], correct:1 },
+    { q:'回测信任度7项检查中，最致命的问题是？', options:['样本不够','前视偏差——模型偷看了未来数据——一旦存在，所有回测指标都是假的','手续费太高','换手率太低'], correct:1 },
+    { q:'从回测到实盘的最后一步应该做什么？', options:['直接满仓','先小资金跑3个月——验证信号执行/交易成本/滑点/策略衰减都在预期范围内','加大杠杆','不需要验证'] ,correct:1 }
+  ]
+};
+
+const modules = [
+{
+  title: '🎓 量化实战综合案例',
+  lessons: [
+    {
+      id: 'overview',
+      title: '🎯 第1节：项目概览',
+      emoji: '🎯',
+      content: `
+<h3>我们要做什么？</h3>
+
+<div class="analogy">
+  <div class="label">🎯 一句话说清楚</div>
+  <p>用<span class="hl">腾讯控股（00700.HK）</span>作为真实案例，走完整条量化投研全链路：<br>
+  <strong>数据采集 → 因子计算 → IC分析 → 信号生成 → 回测验证 → 归因分析 → Agent信号融合 → 决策生成</strong></p>
+  <p>这是27门系列课程中的<strong>结业课</strong>。前面的26门课教了你每一个零件怎么造——这节课教你<strong>怎么把所有零件装成一台能跑的引擎</strong>。</p>
+</div>
+
+<h3>为什么选腾讯？</h3>
+
+<div class="deep">
+  <div class="label">🎯 五个理由——腾讯是最完美的教学案例</div>
+  <table>
+    <tr><th>维度</th><th>腾讯的优势</th><th>教学价值</th></tr>
+    <tr><td><strong>数据丰富</strong></td><td>2004年上市至今20年+完整K线/财务/研报数据</td><td>样本量足够大，统计结论可靠</td></tr>
+    <tr><td><strong>因子表现多样</strong></td><td>bps_growth IC=0.279 (强正) · net_margin ICIR=-0.74 (强反) · debt_ratio ICIR=0.09 (噪音)</td><td>同一个标的上，能观察到有效因子与无效因子的巨大差异</td></tr>
+    <tr><td><strong>港股特殊性</strong></td><td>字段名不同·无NOTICE_DATE·年报公告滞后120天</td><td>港股适配是量化实战中绕不开的坑——学完就能迁移到阿里/美团/快手</td></tr>
+    <tr><td><strong>成长股特性</strong></td><td>基本面因子有效（vs 周期股如中国船舶基本因子全失效）</td><td>对比不同标的类型，理解「不同公司用不同因子体系」</td></tr>
+    <tr><td><strong>多重护城河</strong></td><td>微信14.18亿用户×社交网络效应×平台包络×转换成本</td><td>将量化信号与定性研究结合——这是人机协同的终极形态</td></tr>
+  </table>
+</div>
+
+<h3>八步工作流全景</h3>
+
+<div class="tip">
+  <div class="label">🎯 每一步都是实战验证过的</div>
+  <table>
+    <tr><th>步骤</th><th>名称</th><th>核心产出</th><th>腾讯上的关键发现</th></tr>
+    <tr><td>Step 1</td><td>📊 数据采集</td><td>6层架构·8源技术栈</td><td>港股字段映射（ROE_YEARLY→roe）</td></tr>
+    <tr><td>Step 2</td><td>🧮 因子计算</td><td>12因子体系·日/周频</td><td>先算全量，不预判哪些有效</td></tr>
+    <tr><td>Step 3</td><td>📈 IC分析</td><td>Spearman Rank IC矩阵</td><td>bps_growth IC=0.279最强·debt_ratio=噪音</td></tr>
+    <tr><td>Step 4</td><td>🔬 因子筛选</td><td>剔除|ICIR|<0.15的因子</td><td>10个因子中再踢3个→保留6个</td></tr>
+    <tr><td>Step 5</td><td>🎯 信号生成</td><td>IC加权·75/25阈值·周频</td><td>信号密度15%（甜点区间）</td></tr>
+    <tr><td>Step 6</td><td>⚡ 回测验证</td><td>事件驱动引擎·扣费率</td><td>港股万二+千1.3印花税</td></tr>
+    <tr><td>Step 7</td><td>🛡️ 前视检查</td><td>公告日对齐·IC重校</td><td>对齐前超额+40%→对齐后-66%（旧收益来自偷看）</td></tr>
+    <tr><td>Step 8</td><td>🤖 Agent融合</td><td>多Agent辩论·贝叶斯融合</td><td>Agent增强后胜率提升</td></tr>
+  </table>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 最重要的课前警告</div>
+  <p>腾讯案例中最惊人的发现不是哪个因子有多强——而是<span class="hl">公告日对齐前后回测结果天差地别</span>。对齐前超额+40%，对齐后超额-66%。超过一倍的回测水分来自「偷看未来财报」。这个教训的价值，超过了所有因子的IC之和。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么选择腾讯控股作为量化实战综合案例？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 腾讯股价最贵</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 数据丰富+因子表现多样+港股特殊性+成长股特性——教学价值最高。能在一个标的上展示从数据采集到Agent融合的全链路</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 只能选腾讯</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 随便选的</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 腾讯是「最完美的教学案例」——数据够长、因子够丰富、港股特殊性够典型。学通腾讯，阿里/美团/快手的量化适配就自然掌握了。</div>
+</div>
+      `
+    },
+    {
+      id: 'data-collection',
+      title: '📊 第2节：数据采集',
+      emoji: '📊',
+      content: `
+<h3>6层架构·8源技术栈</h3>
+
+<div class="deep">
+  <div class="label">📊 量化投研的数据基础设施</div>
+  <table>
+    <tr><th>层级</th><th>数据源</th><th>覆盖内容</th><th>腾讯采集中遇到的挑战</th></tr>
+    <tr><td>第1层</td><td>官网 IR</td><td>2004-2025年报（44份，133MB）</td><td>港股年报格式不统一，需人工校验字段位置</td></tr>
+    <tr><td>第2层</td><td>东方财富</td><td>港股通数据·实时行情</td><td>东财对海外IP频繁封堵，需切换国内源</td></tr>
+    <tr><td>第3层</td><td>AkShare</td><td>实时行情·财务指标</td><td>港股代码需加.hk后缀（0700→0700.hk）</td></tr>
+    <tr><td>第4层</td><td>Baostock</td><td>备份数据源·A股为主</td><td>港股覆盖不完整，仅作交叉验证</td></tr>
+    <tr><td>第5层</td><td>雪球</td><td>讨论区监测·市场情绪</td><td>需登录态，字段命名与东财不同</td></tr>
+    <tr><td>第6层</td><td>研报/舆情</td><td>研报5份+社交情绪分析</td><td>信息噪音大，需人工过滤</td></tr>
+  </table>
+</div>
+
+<h3>腾讯核心数据文件清单</h3>
+
+<div class="analogy">
+  <div class="label">📊 一个完整标的至少需要这些数据</div>
+  <table>
+    <tr><th>文件</th><th>内容</th><th>大小</th><th>用途</th></tr>
+    <tr><td><code>01_K线_全量日K线_前复权.json</code></td><td>上市至今全部日K线OHLCV</td><td>~2MB</td><td>因子计算·回测跑分</td></tr>
+    <tr><td><code>02_财务_全量财务指标.json</code></td><td>年报/中报/季报全量财务数据</td><td>~500KB</td><td>基本面因子·ROE/毛利率/增速</td></tr>
+    <tr><td><code>03_估值_全量估值数据.json</code></td><td>PE/PB/PS分位数序列</td><td>~200KB</td><td>估值因子·分位判断</td></tr>
+    <tr><td><code>04_分红_全量.json</code></td><td>历年分红·回购记录</td><td>~100KB</td><td>市赚率修正·回购影响</td></tr>
+    <tr><td><code>05_研报_摘要集.json</code></td><td>主流券商研报摘要</td><td>~300KB</td><td>市场叙事检测</td></tr>
+  </table>
+</div>
+
+<h3>港股数据加载的正确姿势</h3>
+
+<pre><code>import json
+import pandas as pd
+
+# 港股K线加载（注意字段名差异）
+def load_hk_kline(path):
+    with open(path) as f:
+        data = json.load(f)
+    df = pd.DataFrame(data)
+    # 港股字段映射
+    df['date'] = pd.to_datetime(df['trade_date'])  # A股用trade_date
+    df.rename(columns={
+        'open': 'open', 'close': 'close',
+        'high': 'high', 'low': 'low', 'vol': 'volume'
+    }, inplace=True)
+    return df.set_index('date').sort_index()
+
+# 港股财务数据加载（关键：is_hk=True）
+def load_finance(path, is_hk=True):
+    with open(path) as f:
+        fin = json.load(f)
+    if is_hk:
+        # 港股字段映射
+        # ROE_YEARLY → roe
+        # HOLDER_PROFIT_YOY → profit_growth
+        # 港股无 NOTICE_DATE——用规则推定
+        print('⚠️ 港股模式：需公告日对齐（规则推定）')
+    return fin</code></pre>
+
+<h3>数据质量检查清单</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 这是最容易被跳过、但最致命的步骤</div>
+  <table>
+    <tr><th>检查项</th><th>标准</th><th>腾讯数据检查结果</th></tr>
+    <tr><td>K线长度</td><td>≥5年（>1200个交易日）</td><td>✅ 2004年上市，超5000个交易日</td></tr>
+    <tr><td>前复权起点</td><td>起始价 > 1元（否则失真）</td><td>✅ 前复权起始价合理</td></tr>
+    <tr><td>财务字段完整性</td><td>ROE/毛利率/营收增速 缺失率<30%</td><td>✅ 缺失率<5%</td></tr>
+    <tr><td>时间连续性</td><td>无超过1个月的数据断档</td><td>✅ 除停牌期外连续</td></tr>
+    <tr><td>分红数据</td><td>有分红记录</td><td>✅ 腾讯2004年起有完整分红记录</td></tr>
+  </table>
+</div>
+
+<div class="tip">
+  <div class="label">💡 三层数据源互补原则</div>
+  <p><strong>mootdx (TCP底层)</strong> → 最快·最底层·用于实时行情<br>
+  <strong>akshare (HTTP广度)</strong> → 最全·最适合批量采集<br>
+  <strong>各源直连 (深度)</strong> → 官网IR/港交所披露易→最权威·用于交叉验证</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">港股财务数据加载最关键的一步是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 用更大的内存</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 设置 is_hk=True 进行字段映射——港股字段名与A股不同（如ROE_YEARLY→roe），且无NOTICE_DATE需用规则推定公告日</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 下载更多数据</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不需要特殊处理</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 港股数据有两个关键陷阱：①字段名与A股不同（ROE_YEARLY vs roe）②无NOTICE_DATE需要规则推定公告日。处理不当=回测数据全错。</div>
+</div>
+      `
+    },
+    {
+      id: 'factor-calculation',
+      title: '🧮 第3节：因子计算',
+      emoji: '🧮',
+      content: `
+<h3>12因子体系介绍</h3>
+
+<div class="deep">
+  <div class="label">🧮 三类因子·各有战场</div>
+  <table>
+    <tr><th>类别</th><th>因子</th><th>计算方式</th><th>数据来源</th><th>腾讯IC(20d)</th></tr>
+    <tr><td rowspan="5"><strong>基本面因子</strong></td><td>roe</td><td>ROE = 净利润/净资产</td><td>财务数据</td><td>-0.029（弱）</td></tr>
+    <tr><td>gross_margin</td><td>毛利率 = (收入-成本)/收入</td><td>财务数据</td><td><span class="hl">+0.229（强正）</span></td></tr>
+    <tr><td>net_margin</td><td>净利率 = 净利润/收入</td><td>财务数据</td><td>-0.14（强反）</td></tr>
+    <tr><td>rev_growth</td><td>营收增速 = (本期-上期)/上期</td><td>财务数据</td><td><span class="hl">+0.210（强正）</span></td></tr>
+    <tr><td>bps_growth</td><td>每股净资产增速</td><td>财务数据</td><td>🔴 <span class="hl">+0.279（最强）</span></td></tr>
+    <tr><td rowspan="4"><strong>量价因子</strong></td><td>momentum_20</td><td>过去20日累计收益</td><td>K线数据</td><td>-0.04（反）</td></tr>
+    <tr><td>momentum_60</td><td>过去60日累计收益</td><td>K线数据</td><td>-0.09（强反）</td></tr>
+    <tr><td>volatility_60</td><td>60日滚动波动率</td><td>K线数据</td><td>+0.08（正）</td></tr>
+    <tr><td>换手率</td><td>日均成交量/流通股数</td><td>K线数据</td><td>—</td></tr>
+    <tr><td rowspan="3"><strong>估值因子</strong></td><td>pe_percentile</td><td>PE在历史中的分位数</td><td>估值数据</td><td>—</td></tr>
+    <tr><td>pb_percentile</td><td>PB在历史中的分位数</td><td>估值数据</td><td>—</td></tr>
+    <tr><td>debt_ratio</td><td>资产负债率</td><td>财务数据</td><td>+0.02（噪音❌）</td></tr>
+  </table>
+</div>
+
+<h3>腾讯因子代码示例</h3>
+
+<pre><code>from backtest.strategies.multi_factor_v5 import compute_factors_v5
+
+# 计算全量因子（日频）
+factors = compute_factors_v5(kline, finance_raw, dividend_raw)
+# 输出: momentum_20, momentum_60, volatility_60,
+#       roe, gross_margin, net_margin, rev_growth,
+#       profit_growth, bps_growth, debt_ratio,
+#       pr1_factor（市赚率）, pr2_factor, composite
+
+# 🔑 关键原则：先算全量因子，不要预判哪些有效
+# IC分析会告诉你答案——在第4节</code></pre>
+
+<h3>因子预处理三步走</h3>
+
+<div class="analogy">
+  <div class="label">🧮 每一步都不能跳过</div>
+  <p><strong>Step 1 — 去极值（Winsorize）：</strong><br>
+  单只股票PE可能是-500（亏损）——会毁掉所有统计。<br>
+  <code>factor_clipped = np.clip(factor, p1, p99)</code></p>
+  <p><strong>Step 2 — 标准化（Z-score）：</strong><br>
+  不同因子的量纲完全不同——PE=15和市值=4万亿不能直接比。<br>
+  <code>factor_z = (factor - mean) / std</code></p>
+  <p><strong>Step 3 — 中性化（可选）：</strong><br>
+  剥离行业/市值暴露——如果策略想纯Alpha而非押注大盘。<br>
+  腾讯作为单标的分析，中性化在横截面选股时才更必要。</p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 腾讯 vs 中国船舶：因子体系完全不同</div>
+  <p><strong>腾讯（成长股）：</strong>12个因子中6个有效——基本面因子占主导（bps_growth IC=0.279最强）<br>
+  <strong>中国船舶（周期股）：</strong>10个因子中9个是噪音——只有volatility_60 ICIR=-0.83有效<br>
+  <span class="hl">同一个因子体系，在不同类型的标的上表现天差地别。这是量化新手最容易犯的错误——一套因子打天下。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">腾讯控股上IC最强的因子是什么？数值是多少？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. roe IC=0.30</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. bps_growth（每股净资产增速）IC=0.279——净资产增长越快，后续股价表现越好。这是腾讯上最可靠的预测因子</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. debt_ratio IC=0.25</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. momentum_60 IC=0.25</button>
+  <div class="quiz-result"><strong>答案：B。</strong> bps_growth IC=0.279是腾讯所有因子中最强的。这说明每股净资产的增速是预测腾讯后续表现最可靠的指标。</div>
+</div>
+      `
+    },
+    {
+      id: 'ic-analysis',
+      title: '📈 第4节：IC分析',
+      emoji: '📈',
+      content: `
+<h3>Spearman Rank IC 解释</h3>
+
+<div class="analogy">
+  <div class="label">📈 IC = 因子对未来的「预言能力」</div>
+  <p><strong>IC (Information Coefficient)</strong> = 因子值 与 未来收益 之间的 Spearman 秩相关系数。</p>
+  <p><strong>类比：</strong>如果一个人每次说「明天会涨/跌」——他说对了多少次、说错了多少次？<br>
+  IC就是你统计他所有预测的准确度。IC=0.3意味着他在10次预测中，正确排序了约7次（粗略估算）。</p>
+  <p><strong>Spearman vs Pearson：</strong>Spearman用排位而非绝对值——不关心「涨3%」和「涨30%」的区别，只关心「涨多的排前面，涨少的排后面」是否和因子排名一致。</p>
+</div>
+
+<h3>腾讯各因子IC结果展示</h3>
+
+<div class="deep">
+  <div class="label">📈 实际IC分析结果——这是真金白银跑出来的数据</div>
+  <table>
+    <tr><th>因子</th><th>IC均值(20d)</th><th>ICIR</th><th>命中率</th><th>方向</th><th>评估</th><th>决策</th></tr>
+    <tr><td><strong>bps_growth</strong></td><td><span class="hl" style="color:#ffc060;font-size:1.1em">+0.279</span></td><td>+0.33</td><td>59.7%</td><td>正</td><td>✅ 最强</td><td>高权重</td></tr>
+    <tr><td><strong>gross_margin</strong></td><td><span class="hl">+0.229</span></td><td>+0.23</td><td>55.7%</td><td>正</td><td>✅ 强</td><td>中等权重</td></tr>
+    <tr><td><strong>rev_growth</strong></td><td><span class="hl">+0.210</span></td><td>+0.46</td><td>67.1%</td><td>正</td><td>✅ 强·最稳定</td><td>中等权重</td></tr>
+    <tr><td>volatility_60</td><td>+0.08</td><td>+0.38</td><td>65.1%</td><td>正</td><td>✅ 有效</td><td>低权重</td></tr>
+    <tr><td>net_margin</td><td>-0.14</td><td>-0.74</td><td>19.5%</td><td>反</td><td>✅ 强反</td><td>低权重·负向</td></tr>
+    <tr><td>momentum_60</td><td>-0.09</td><td>-0.63</td><td>23.5%</td><td>反</td><td>✅ 强反</td><td>低权重·负向</td></tr>
+    <tr><td>roe</td><td>-0.05</td><td>-0.24</td><td>40.9%</td><td>弱反</td><td>⚠️ 弱</td><td>踢出</td></tr>
+    <tr><td>profit_growth</td><td>-0.06</td><td>-0.28</td><td>36.2%</td><td>弱反</td><td>⚠️ 弱</td><td>踢出</td></tr>
+    <tr><td>momentum_20</td><td>-0.04</td><td>-0.41</td><td>26.8%</td><td>弱反</td><td>⚠️ 弱</td><td>踢出</td></tr>
+    <tr><td><strong>debt_ratio</strong></td><td><span style="color:var(--sub)">+0.02</span></td><td><span style="color:var(--sub)">+0.09</span></td><td>44.3%</td><td>—</td><td>❌ 噪音</td><td>直接踢出</td></tr>
+  </table>
+</div>
+
+<h3>IC显著性检验</h3>
+
+<pre><code>import numpy as np
+from scipy.stats import spearmanr
+
+# 计算IC
+fwd_20d = kline['close'].shift(-20) / kline['close'] - 1
+for col in factor_cols:
+    valid = factors[col].notna() & fwd_20d.notna()
+    ic, p_value = spearmanr(factors.loc[valid, col], fwd_20d.loc[valid])
+    is_sig = '✅ 显著' if p_value < 0.05 else '❌ 不显著'
+    print(f'{col}: IC={ic:.3f}  p={p_value:.4f}  {is_sig}')
+
+# 判别标准
+# |IC| > 0.15 → 强预测力 → 高权重
+# 0.05 < |IC| < 0.15 → 有效 → 低权重
+# |IC| < 0.05 → 噪音 → 踢出</code></pre>
+
+<div class="tip">
+  <div class="label">💡 ICIR 比 IC 均值更重要</div>
+  <p><strong>ICIR = IC均值 / IC标准差</strong></p>
+  <p>假设两个因子：<br>
+  因子A: IC均值=0.15, 但标准差=0.30 → ICIR=0.5（不稳定，有时预测对有时错）<br>
+  因子B: IC均值=0.08, 但标准差=0.08 → ICIR=1.0（每次预测几乎都对）<br>
+  <span class="hl">实际交易中，B比A好得多——因为一致性强。</span></p>
+  <p>腾讯上rev_growth的ICIR=0.46，虽然IC均值不是最高，但稳定性在三强因子中最好——命中率高达67.1%。</p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ IC分析不能做的事</div>
+  <p>• <strong>不能自动优化单标的策略</strong> — 单标的IC是时间序列相关，噪音大<br>
+  • <strong>不能替代方向判断</strong> — 负IC不意味着翻转方向就能赚钱<br>
+  • <strong>需要结合经济逻辑</strong> — net_margin的负IC可能来自均值回归（高利润率→竞争加剧→利润率回落）</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么ICIR比IC均值更重要？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. ICIR更好看</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. ICIR = IC均值/IC标准差——衡量预测稳定性。一个IC均值高但波动大的因子，实际交易中大概率失效；而ICIR高的因子每次预测结果一致，可依赖</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. ICIR更简单</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 没有区别</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 稳定性 > 平均强度。腾讯上rev_growth的ICIR=0.46最高（虽然IC=0.210不是最高），命中率67.1%——这是最可靠的预测因子。</div>
+</div>
+      `
+    },
+    {
+      id: 'signal-generation',
+      title: '🎯 第5节：信号生成',
+      emoji: '🎯',
+      content: `
+<h3>IC加权 → 综合评分 → 周频信号</h3>
+
+<div class="analogy">
+  <div class="label">🎯 从因子到信号的四步转化</div>
+  <p><strong>Step 1 — IC加权：</strong><br>
+  保留 |IC|>0.03 的因子，按 IC 绝对值加权。<br>
+  腾讯最终保留6个因子：bps_growth(0.279) + gross_margin(0.229) + rev_growth(0.210) + volatility_60(0.08) + net_margin(-0.14) + momentum_60(-0.09)</p>
+  <p><strong>Step 2 — 归一化：</strong><br>
+  权重归一化后：bps_growth=27%·gross_margin=22%·rev_growth=20%·volatility=8%·net_margin=14%·momentum=9%</p>
+  <p><strong>Step 3 — 综合评分：</strong><br>
+  composite = Σ(因子_zscore × weight) → 每期一个综合分数</p>
+  <p><strong>Step 4 — 阈值信号：</strong><br>
+  综合评分 > 历史75%分位 → 买入信号<br>
+  综合评分 < 历史25%分位 → 卖出信号<br>
+  <span class="hl">信号持续2周才执行（防噪音触发）</span></p>
+</div>
+
+<h3>买入/卖出阈值设定</h3>
+
+<pre><code>from backtest.strategies.multi_factor_v6 import generate_weekly_signals
+
+# 周频信号（匹配因子预测周期）
+signals = generate_weekly_signals(
+    kline, finance_raw,
+    buy_percentile=75,      # 因子超过历史75%分位 → 买入
+    sell_percentile=25,     # 因子低于历史25%分位 → 卖出
+    confirm_weeks=2,        # 信号持续2周才执行
+    use_notice_align=True,  # ⚠️ 公告日对齐（港股必须用！）
+    is_hk=True,             # 港股模式
+)</code></pre>
+
+<h3>腾讯历史信号分布</h3>
+
+<div class="deep">
+  <div class="label">🎯 信号质量检查</div>
+  <table>
+    <tr><th>指标</th><th>健康范围</th><th>腾讯实测值</th><th>判断</th></tr>
+    <tr><td>信号密度</td><td>10-20%</td><td>~15%</td><td>✅ 甜点区间</td></tr>
+    <tr><td>交易次数/年</td><td>0.5-3次</td><td>~2次</td><td>✅ 低频·高质量</td></tr>
+    <tr><td>单边最长持有</td><td>3-18个月</td><td>~14个月</td><td>✅ 合理</td></tr>
+    <tr><td>买入置信度</td><td>>50%</td><td>~65%</td><td>✅ 可靠</td></tr>
+  </table>
+  <p><span class="hl">信号密度15%意味着每个月大约有15%的时间处于「强买入」区域。这个密度是甜点——太高=因子区分度不够，太低=信号死锁。</span></p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 腾讯上因子的「反向」陷阱</div>
+  <p>动量因子（momentum_60 IC=-0.09）在腾讯上是<strong>均值回归信号</strong>——涨多了预示要跌。<br>
+  这解释了为什么简单的双均线追涨策略在腾讯上跑不赢买入持有。<br>
+  <span class="hl">不是所有负IC方向的因子都能直接翻转使用。net_margin的负IC可能是随机游走——翻转后也不一定赚钱。</span></p>
+  <p><strong>判断规则：</strong>只有IC绝对值>0.05且方向一致稳定的因子才可翻转使用。IC<0.05的直接踢出。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">信号密度多少是「甜点区间」？为什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 50%（越多越好）</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 10-20%——太高说明因子没有区分度（什么情况都买），太低说明信号死锁（永远不交易）。腾讯实测密度~15%，恰好在这个甜点区间</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 0%（不交易）</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 100%（全时段交易）</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 信号密度是因子区分度的直接衡量。腾讯信号密度~15%=每个月只有15%的时间在「强买卖」区间，剩余85%时间持仓不变——低频但高置信度，这才是有效的量化信号。</div>
+</div>
+      `
+    },
+    {
+      id: 'backtest',
+      title: '⚡ 第6节：回测验证',
+      emoji: '⚡',
+      content: `
+<h3>公告日对齐——港股回测最致命的前视偏差</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 这是本节课最重要的方法论</div>
+  <p>腾讯2020年报截止日（REPORT_DATE）= 2020-12-31。<br>
+  但公告日（实际对外披露）= 2021-04-XX（<strong>滞后约120天</strong>）。</p>
+  <p>如果你在2021-01-04的因子计算中使用了2020年报中的ROE数据——你就<strong>偷看了未来</strong>。<br>
+  那时候市场根本不知道腾讯2020年的ROE是多少。</p>
+</div>
+
+<h3>港股公告日规则推定</h3>
+
+<div class="deep">
+  <div class="label">⚡ 港股没有NOTICE_DATE——用规则推定</div>
+  <table>
+    <tr><th>报告期</th><th>REPORT_DATE</th><th>公告日（推定）</th><th>滞后天数</th></tr>
+    <tr><td>年报</td><td>12-31</td><td><span class="hl">次年4/30</span></td><td>~120天</td></tr>
+    <tr><td>中报</td><td>06-30</td><td><span class="hl">8/31</span></td><td>~62天</td></tr>
+    <tr><td>Q1</td><td>03-31</td><td><span class="hl">5/15</span></td><td>~45天</td></tr>
+    <tr><td>Q3</td><td>09-30</td><td><span class="hl">11/14</span></td><td>~45天</td></tr>
+  </table>
+  <p>相比之下，A股有NOTICE_DATE字段可以直接用——但港股必须靠规则推定。</p>
+</div>
+
+<h3>公告日对齐前后对比——惊人</h3>
+
+<pre><code># 对比：对齐前 vs 对齐后
+# 抓取2021-01-04的ROE值：
+# 旧版（截止日对齐）：ROE=0.71（已用了2020Q4年报数据）
+# 新版（公告日对齐）：ROE=0.41（仍用2020Q3数据，正确的！）
+# 直到2021-04-30之后，两版数据才一致
+
+# 回测结果对比
+# 对齐前：腾讯超额收益 +40%（看起来很完美）
+# 对齐后：腾讯超额收益 -66%（残酷的真相）
+# → 旧版收益至少一半来自「偷看未来财报」</code></pre>
+
+<h3>回测绩效指标</h3>
+
+<div class="deep">
+  <div class="label">⚡ 关键指标——每一个都要检查</div>
+  <table>
+    <tr><th>指标</th><th>含义</th><th>腾讯对齐后结果</th><th>基准（Buy&Hold）</th></tr>
+    <tr><td>年化收益率</td><td>几何平均年收益</td><td>-8.2%</td><td>+5.4%（同期）</td></tr>
+    <tr><td>夏普比率</td><td>风险调整后收益</td><td>-0.45</td><td>+0.22</td></tr>
+    <tr><td>最大回撤</td><td>峰值到谷底最大亏损</td><td>-52%</td><td>-45%</td></tr>
+    <tr><td>胜率</td><td>盈利交易占比</td><td>42%</td><td>—</td></tr>
+    <tr><td>盈亏比</td><td>均盈/均亏</td><td>0.8</td><td>—</td></tr>
+    <tr><td>换手率(年)</td><td>年化周转次数</td><td>~2x</td><td>0x</td></tr>
+  </table>
+  <p><span class="hl" style="color:var(--red)">残酷的真相：对齐公告日后，纯因子策略在腾讯上跑输买入持有。</span>但这不意味着量化没用——它告诉我们这套因子体系在腾讯单标的周频择时上不work。真正的价值在于：①识别哪些因子有效/无效 ②用于横截面选股（而非单标择时）③与Agent定性判断融合。</p>
+</div>
+
+<h3>港股费率差异</h3>
+
+<pre><code># 港股交易成本（显著高于A股）
+HK_BUY_FEE = 0.0002 + 0.0001   # 佣金万二 + 交收费万1
+HK_SELL_FEE = 0.0002 + 0.0001 + 0.0013  # +印花税千1.3
+# 对比A股：万三佣金 + 千0.5印花税
+# → 港股每笔买卖成本约为A股的2倍</code></pre>
+
+<div class="tip">
+  <div class="label">💡 对齐后必重校IC</div>
+  <p>公告日对齐后，<strong>所有因子IC必须重算</strong>。旧版用截止日算出的IC是「预知IC」——无效。如果对齐后某个因子的IC暴跌，说明旧版IC来自前视偏差——直接踢出。这是实战中最大的方法论收获。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">港股腾讯年报截止日12/31，公告日是什么时候？这意味着什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 12/31当天，没有滞后</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 次年4/30——滞后约120天。这意味着当年1月到4月的因子计算如果用了年报数据，就等于偷看了未来120天的信息。腾讯案例对齐前超额+40%，对齐后超额-66%</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 次年1/1，滞后1天</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 随时都能知道</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这是腾讯案例最大的方法论贡献——公告日对齐是量化回测的底线。不检查这一步，所有回测结论都是假的。对齐前后的差异可以超过100%。</div>
+</div>
+      `
+    },
+    {
+      id: 'agent-fusion',
+      title: '🧠 第7节：Agent信号融合',
+      emoji: '🧠',
+      content: `
+<h3>多Agent辩论架构</h3>
+
+<div class="analogy">
+  <div class="label">🧠 三个AI Agent，三个视角，一场辩论</div>
+  <p>纯因子策略在腾讯上跑输买入持有。但这不是终点——而是Agent融合的起点。量化因子的价值不在「替代人做决策」，而在「为人提供结构化输入」。</p>
+</div>
+
+<h3>三Agent角色分工</h3>
+
+<div class="deep">
+  <div class="label">🧠 每个Agent模拟一位投资大师的思维方式</div>
+  <table>
+    <tr><th>Agent</th><th>模拟人物</th><th>核心能力</th><th>输入数据</th><th>输出</th></tr>
+    <tr><td><strong>巴菲特Agent</strong></td><td>沃伦·巴菲特</td><td>财务分析·护城河评估·管理层评价</td><td>8年财报·ROIC·FCF·现金流/净利·回购</td><td>「长期价值评分」(0-100)</td></tr>
+    <tr><td><strong>芒格Agent</strong></td><td>查理·芒格</td><td>批判思维·多元模型·逆向推理</td><td>竞争格局·监管环境·商业模式风险</td><td>「风险评分」+「最可能失败路径」</td></tr>
+    <tr><td><strong>马克斯Agent</strong></td><td>霍华德·马克斯</td><td>周期判断·市场情绪·估值水位</td><td>PE分位·南向资金·港股情绪·AH溢价</td><td>「周期位置」(1-10) + 「仓位建议」</td></tr>
+  </table>
+</div>
+
+<h3>辩论与投票机制</h3>
+
+<pre><code># 多Agent辩论流程（伪代码）
+class AgentDebateSystem:
+    def debate(self, tencent_data):
+        # Round 1: 各Agent独立分析
+        buffett_score = buffett_agent.analyze(tencent_data.finance)
+        munger_risk = munger_agent.assess(tencent_data.risks)
+        marks_cycle = marks_agent.judge(tencent_data.market)
+        
+        # Round 2: 交叉审读——每个Agent审读其他Agent的结论
+        buffett_critique = buffett_agent.review(munger_risk + marks_cycle)
+        munger_critique = munger_agent.challenge(buffett_score)
+        marks_critique = marks_agent.recalibrate(buffett_score, munger_risk)
+        
+        # Round 3: 最终投票
+        votes = {
+            'bullish': buffett_critique.confidence,  # 0.75
+            'cautious': munger_critique.concern,     # 0.40
+            'neutral': marks_critique.neutral_prob   # 0.25
+        }
+        return self.fuse(votes)</code></pre>
+
+<h3>贝叶斯融合后验概率</h3>
+
+<div class="deep">
+  <div class="label">🧠 先验概率 × 似然 → 后验概率</div>
+  <p><strong>先验概率（纯因子信号）：</strong>买入信号概率 = 0.15（信号密度~15%）</p>
+  <p><strong>似然更新（三个Agent）：</strong></p>
+  <table>
+    <tr><th>Agent</th><th>判断</th><th>似然比</th></tr>
+    <tr><td>巴菲特Agent</td><td>「长期价值评分82/100」→ 看多</td><td>P(看多|好公司) / P(看多|差公司) = 3.5</td></tr>
+    <tr><td>芒格Agent</td><td>「风险评分32/100·主要风险：AI竞争加剧」→ 中性偏谨慎</td><td>P(谨慎|高风险) = 0.6</td></tr>
+    <tr><td>马克斯Agent</td><td>「周期位置6/10·PE分位25%·偏低估」→ 看多</td><td>P(低估|好时机) = 2.8</td></tr>
+  </table>
+  <p><strong>后验概率：</strong>P(买入|因子+三Agent) = 先验 × 3.5 × 0.6 × 2.8 × 归一化 ≈ <span class="hl">0.42</span></p>
+  <p>从纯因子的15%置信度提升到Agent融合后的42%——<span class="hl">边际提升2.8倍</span>。</p>
+</div>
+
+<h3>Agent增强 vs 纯因子对比</h3>
+
+<div class="tip">
+  <div class="label">💡 人机协同是量化投研的终极形态</div>
+  <table>
+    <tr><th>维度</th><th>纯因子策略</th><th>Agent增强策略</th><th>提升</th></tr>
+    <tr><td>信号置信度</td><td>15%</td><td>42%</td><td>+2.8x</td></tr>
+    <tr><td>定性信息纳入</td><td>❌ 无法处理</td><td>✅ 监管/竞争/管理层</td><td>∞</td></tr>
+    <tr><td>极端事件防御</td><td>❌ 依赖历史统计</td><td>✅ 芒格Agent主动推演</td><td>∞</td></tr>
+    <tr><td>可解释性</td><td>IC值+SHAP值</td><td>自然语言辩论记录</td><td>质变</td></tr>
+    <tr><td>适应性</td><td>静态·需人工更新</td><td>动态·滚动更新辩论</td><td>显著</td></tr>
+  </table>
+</div>
+
+<div class="analogy">
+  <div class="label">🧠 Agent不是替代量化——是补全量化</div>
+  <p>量化因子告诉你「根据历史数据，当前信号强度是多少」。但它回答不了：<br>
+  • 「这个信号是因为基本面改善还是市场情绪？」→ 巴菲特Agent回答<br>
+  • 「这个信号有哪些隐性的致命风险？」→ 芒格Agent回答<br>
+  • 「当前处于周期的什么位置？」→ 马克斯Agent回答<br>
+  <span class="hl">三个Agent+量化因子 = 完整的决策框架。这就是人机协同的终极形态。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">贝叶斯融合后，纯因子信号置信度从15%提升到42%——这多出来的27%来自哪里？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 随机波动</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 三个Agent分别从定性角度（财务质量·风险审视·周期位置）提供了独立的信息增量——这些信息是纯因子无法捕捉的。贝叶斯框架将这些独立证据融合，产生显著高于任何单一来源的置信度</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 计算错误</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 数据更多</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 量化因子只能利用结构化数据（价格·财务），而Agent能处理非结构化信息（竞争格局·监管环境·管理层质量）。这三种独立信息源的贝叶斯融合产生了协同效应——1+1+1>3。</div>
+</div>
+      `
+    },
+    {
+      id: 'checklist',
+      title: '📋 第8节：实战检查清单',
+      emoji: '📋',
+      content: `
+<h3>从回测到实盘的最后一公里</h3>
+
+<div class="warn">
+  <div class="label">📋 回测能赚钱≠实盘能赚钱</div>
+  <p>回测和实盘之间有一道「死亡之谷」。以下7项检查+4项体检是跨越这道谷的桥。</p>
+</div>
+
+<h3>回测信任度7项检查</h3>
+
+<div class="deep">
+  <div class="label">📋 每一项打钩之前，策略都不算「可以上线」</div>
+  <table>
+    <tr><th>#</th><th>检查项</th><th>检查方法</th><th>腾讯状态</th></tr>
+    <tr><td>①</td><td><strong>前视偏差</strong></td><td>公告日对齐 vs 截止日对齐对比</td><td>✅ 已对齐（差异-106%）</td></tr>
+    <tr><td>②</td><td><strong>幸存者偏差</strong></td><td>是否只用了当前成分股？已退市是否排除？</td><td>✅ 单标的·不适用</td></tr>
+    <tr><td>③</td><td><strong>交易成本</strong></td><td>是否含佣金+印花税+滑点？</td><td>✅ 含港股万二+千1.3印花税</td></tr>
+    <tr><td>④</td><td><strong>停牌处理</strong></td><td>停牌期间信号是否被跳过？</td><td>✅ 已跳过停牌期</td></tr>
+    <tr><td>⑤</td><td><strong>涨跌停</strong></td><td>无法成交的信号是否被过滤？</td><td>✅ 港股无涨跌停</td></tr>
+    <tr><td>⑥</td><td><strong>参数敏感性</strong></td><td>微调参数→结果剧烈变化？</td><td>⚠️ 需补充测试</td></tr>
+    <tr><td>⑦</td><td><strong>样本外验证</strong></td><td>最后20%数据从未参与任何训练</td><td>⚠️ 需补充验证</td></tr>
+  </table>
+</div>
+
+<h3>策略参数体检表</h3>
+
+<div class="analogy">
+  <div class="label">📋 参数体检——别让「调参」变成「过拟合」</div>
+  <table>
+    <tr><th>参数</th><th>当前值</th><th>敏感性测试</th><th>判断</th></tr>
+    <tr><td>买入阈值</td><td>75分位</td><td>±5分位 → 结果变化</td><td>⚠️ 中等敏感</td></tr>
+    <tr><td>卖出阈值</td><td>25分位</td><td>±5分位 → 结果变化</td><td>⚠️ 中等敏感</td></tr>
+    <tr><td>确认周数</td><td>2周</td><td>1周→信号密度翻倍</td><td>⚠️ 敏感</td></tr>
+    <tr><td>因子保留阈值</td><td>|IC|>0.03</td><td>±0.02 → 保留因子数变化</td><td>✅ 稳健</td></tr>
+    <tr><td>预测周期</td><td>20日（周频）</td><td>60日→IC变弱</td><td>⚠️ 周期敏感</td></tr>
+  </table>
+  <p><span class="hl">参数敏感性测试的核心原则：改动一个参数，结果不应该剧烈翻转。如果阈值从75调到70就导致策略从赚钱变亏钱——这个策略不可靠。</span></p>
+</div>
+
+<h3>从回测到实盘的最后一步</h3>
+
+<div class="tip">
+  <div class="label">💡 六步实盘过渡法</div>
+  <p><strong>① 纸交易期（1-2个月）：</strong>策略跑在纸上——每天记录信号，但不实际下单。验证信号生成逻辑无bug。</p>
+  <p><strong>② 小资金验证期（3-6个月）：</strong>总资金的5-10%跑策略——验证交易成本、滑点、信号衰减在预期范围内。</p>
+  <p><strong>③ 信号衰减监控：</strong>实盘IC < 回测IC × 0.7 → 策略可能已失效，需要重新校准。</p>
+  <p><strong>④ 绩效归因日度化：</strong>每天拆解收益来源——是因子贡献还是运气？</p>
+  <p><strong>⑤ 风控独立运行：</strong>最大回撤超过阈值→自动降仓，不问原因。</p>
+  <p><strong>⑥ 月度复盘：</strong>每月对比实盘 vs 回测预期——偏差超过2σ → 停策略排查。</p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 最后一课：知道什么时候不用量化</div>
+  <p>腾讯单标的纯因子周频择时——跑输买入持有。这个结论本身就是价值。<br>
+  <strong>量化不是万能药。</strong>它告诉你：<br>
+  • 哪些标的适合量化？（成长股>周期股）<br>
+  • 哪些因子有预测力？（bps_growth>debt_ratio）<br>
+  • 什么时候量化不如买入持有？（单标择时<横截面选股）<br>
+  <span class="hl">知道「不做什么」比知道「做什么」更有价值。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">回测信任度7项检查中，为什么参数敏感性测试如此重要？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 学术要求</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 如果阈值从75微调到70就导致策略从赚变亏——说明策略不是有真实的预测力，而是在特定的参数设定上碰巧拟合了历史。这种策略一上实盘大概率失效</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 更精确</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 更好看</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 参数敏感性是过拟合的试金石。稳健的策略不怕参数微调——如果微调让结果剧烈翻转，说明策略本质上是在「刻舟求剑」。</div>
+</div>
+      `
+    }
+  ]
+},
+{
+  title: '📖 中英文术语对照表',
+  lessons: [
+    {
+      id: 'glossary',
+      title: '量化实战全链路 · 双语术语速查',
+      emoji: '📖',
+      content: `
+<h3>学完全链路量化实战，核心术语的中英对照记下来</h3>
+
+<div class="tip">
+  <div class="label">💡 为什么需要中英对照</div>
+  <p>量化投研领域的学术文献、开源框架（Alphalens/Zipline/PyPortfolioOpt）和海外研报几乎全是英文。掌握双语术语 = 直接读论文、改源码、看海外策略。</p>
+</div>
+
+<h3>一、数据与因子</h3>
+<table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>全链路</td><td>Full Pipeline / End-to-End</td><td>E2E</td></tr>
+  <tr><td>数据采集</td><td>Data Collection</td><td>—</td></tr>
+  <tr><td>因子计算</td><td>Factor Calculation</td><td>—</td></tr>
+  <tr><td>因子中性化</td><td>Factor Neutralization</td><td>—</td></tr>
+  <tr><td>标准化</td><td>Z-Score Standardization</td><td>Z-Score</td></tr>
+</table>
+
+<h3>二、IC分析</h3>
+<table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>IC分析</td><td>IC Analysis (Information Coefficient)</td><td>IC</td></tr>
+  <tr><td>Spearman秩相关</td><td>Spearman Rank Correlation</td><td>Spearman</td></tr>
+  <tr><td>ICIR</td><td>IC Information Ratio</td><td>ICIR</td></tr>
+</table>
+
+<h3>三、信号与交易</h3>
+<table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>信号生成</td><td>Signal Generation</td><td>—</td></tr>
+  <tr><td>综合评分</td><td>Composite Score</td><td>—</td></tr>
+  <tr><td>买入阈值</td><td>Buy Threshold</td><td>—</td></tr>
+  <tr><td>公告日对齐</td><td>Announcement Date Alignment</td><td>—</td></tr>
+  <tr><td>前视偏差</td><td>Look-Ahead Bias</td><td>—</td></tr>
+</table>
+
+<h3>四、回测与归因</h3>
+<table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>回测验证</td><td>Backtest Validation</td><td>—</td></tr>
+  <tr><td>归因分析</td><td>Attribution Analysis</td><td>—</td></tr>
+</table>
+
+<h3>五、Agent融合</h3>
+<table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>贝叶斯融合</td><td>Bayesian Fusion</td><td>—</td></tr>
+  <tr><td>Agent信号</td><td>Agent Signal</td><td>—</td></tr>
+  <tr><td>纯因子信号</td><td>Pure Factor Signal</td><td>—</td></tr>
+  <tr><td>增量价值</td><td>Incremental Value</td><td>—</td></tr>
+</table>
+
+<div class="analogy">
+  <div class="label">🧠 记忆技巧</div>
+  <p><strong>IC = Information Coefficient</strong> — 因子预测力，Spearman秩相关是量化最常用的IC衡量<br>
+  <strong>ICIR = IC / std(IC)</strong> — IC的稳定性指标，高ICIR意味着因子不仅有效而且稳定<br>
+  <strong>Look-Ahead Bias</strong> — 回测中最常见的陷阱：
+用「未来才公布」的数据预测过去</p>
+</div>
+`
+    }
+  ]
+}
+];
+
+// ===== APP STATE =====
+let completedLessons = new Set(JSON.parse(localStorage.getItem('quant_case_study_completed') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem('quant_case_study_quiz_results') || '{}');
+let currentSection = null;
+
+function save() {
+  localStorage.setItem('quant_case_study_completed', JSON.stringify([...completedLessons]));
+  localStorage.setItem('quant_case_study_quiz_results', JSON.stringify(quizResults));
+}
+
+function quickQuiz(btn, correctChoice) {
+  const card = btn.closest('.quiz-card');
+  if (card.dataset.answered) return;
+  card.dataset.answered = 'true';
+  const options = card.querySelectorAll('.quiz-option');
+  options.forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    if (i === correctChoice) o.classList.add('correct');
+    else o.classList.add('wrong');
+  });
+  const result = card.querySelector('.quiz-result');
+  if (result) { result.classList.add('show'); }
+}
+
+function calcProgress() {
+  let total = 0;
+  modules.forEach(m => { total += m.lessons.length; });
+  total += finalExam.questions.length;
+  let done = completedLessons.size;
+  for (let i = 0; i < finalExam.questions.length; i++) {
+    if (quizResults['final_' + i] !== undefined) done++;
+  }
+  return Math.round((done / total) * 100);
+}
+
+function updateUI() {
+  const pct = calcProgress();
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+  const nav = document.getElementById('navContainer');
+  let html = '';
+  modules.forEach((mod) => {
+    html += '<div class="nav-module-title">' + mod.title + '</div>';
+    mod.lessons.forEach((lesson) => {
+      const id = lesson.id;
+      const done = completedLessons.has(id);
+      const active = currentSection === id;
+      html += '<div class="nav-item' + (active ? ' active' : '') + (done ? ' done' : '') + '" onclick="navigateTo(\'' + id + '\')">';
+      html += '<span class="check">' + (done ? '✅' : lesson.emoji || '📖') + '</span>';
+      html += lesson.title + '</div>';
+    });
+  });
+  const finalExamDone = finalExam.questions.every((_, i) => quizResults['final_' + i] !== undefined);
+  html += '<div class="nav-item' + (currentSection === 'final' ? ' active' : '') + (finalExamDone ? ' done' : '') + '" onclick="navigateTo(\'final\')">';
+  html += '<span class="check">' + (finalExamDone ? '✅' : '🏆') + '</span> 终极测验</div>';
+  nav.innerHTML = html;
+}
+
+function navigateTo(id) {
+  currentSection = id;
+  updateUI();
+  renderContent(id);
+  window.scrollTo(0, 0);
+}
+
+function renderContent(id) {
+  const main = document.getElementById('mainContent');
+  if (id === 'final') { renderFinalExam(main); return; }
+  let lesson = null, modIndex = -1, lesIndex = -1;
+  for (let mi = 0; mi < modules.length; mi++) {
+    for (let li = 0; li < modules[mi].lessons.length; li++) {
+      if (modules[mi].lessons[li].id === id) {
+        lesson = modules[mi].lessons[li]; modIndex = mi; lesIndex = li; break;
+      }
+    }
+    if (lesson) break;
+  }
+  if (!lesson) { main.innerHTML = '<p>课程未找到</p>'; return; }
+  let html = '';
+  html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+  html += '<div class="meta">量化实战综合案例 · 腾讯控股(00700.HK)</div>';
+  html += lesson.content;
+  html += '</div>';
+  markComplete(id);
+  html += '<div class="nav-btns">';
+  let prevId = null;
+  if (lesIndex > 0) prevId = modules[modIndex].lessons[lesIndex - 1].id;
+  else if (modIndex > 0) { const pm = modules[modIndex - 1]; prevId = pm.lessons[pm.lessons.length - 1].id; }
+  if (prevId) html += '<button class="btn btn-secondary" onclick="navigateTo(\'' + prevId + '\')">⬅ 上一节</button>';
+  else html += '<div></div>';
+  let nextId = null;
+  if (lesIndex < modules[modIndex].lessons.length - 1) nextId = modules[modIndex].lessons[lesIndex + 1].id;
+  else if (modIndex < modules.length - 1) nextId = modules[modIndex + 1].lessons[0].id;
+  if (nextId) html += '<button class="btn btn-primary" onclick="navigateTo(\'' + nextId + '\')">下一节 ➡</button>';
+  else html += '<button class="btn btn-success" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>';
+  html += '</div>';
+  main.innerHTML = html;
+}
+
+function markComplete(id) {
+  if (!completedLessons.has(id)) {
+    completedLessons.add(id);
+    save();
+  }
+}
+
+function renderFinalExam(main) {
+  const finalExamDone = finalExam.questions.every((_, i) => quizResults['final_' + i] !== undefined);
+  let html = '<div class="lesson-card"><h2>🏆 终极测验</h2><div class="meta">共' + finalExam.questions.length + '题 — 检验你对量化实战全链路的掌握</div>';
+  finalExam.questions.forEach((q, qi) => {
+    const ua = quizResults['final_' + qi];
+    const answered = ua !== undefined;
+    const isCorrect = answered && ua === q.correct;
+    html += '<div class="quiz-card"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+    html += '<div class="quiz-question">' + q.q + '</div>';
+    q.options.forEach((opt, oi) => {
+      let cls = 'quiz-option';
+      if (answered && oi === q.correct) cls += ' correct';
+      if (answered && oi === ua && oi !== q.correct) cls += ' wrong';
+      html += '<button class="' + cls + '" onclick="answerFinalExam(' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+    });
+    html += '</div>';
+  });
+  if (finalExamDone) {
+    const score = finalExam.questions.filter((q, i) => quizResults['final_' + i] === q.correct).length;
+    const total = finalExam.questions.length;
+    const passed = score / total >= 0.6;
+    html += '<div class="lesson-card" style="text-align:center"><h2>' + (passed ? '🎉 恭喜完成！' : '📚 还需要再练练') + '</h2>';
+    html += '<p style="font-size:2em;margin:20px 0">' + score + ' / ' + total + '</p>';
+    html += '<p>' + (passed ? '你已经掌握了量化实战全链路的核心概念！从数据采集到Agent融合，从IC分析到回测验证——这套方法论可以直接应用到任何标的的量化研究中。' : '建议复习薄弱环节后再试。') + '</p>';
+    if (!passed) {
+      const wrong = finalExam.questions.map((q, i) => ({ q, i })).filter(x => quizResults['final_' + x.i] !== x.q.correct);
+      html += '<div style="margin-top: 16px; text-align: left;"><p style="color: var(--accent2);">需要复习的题目：</p>';
+      wrong.forEach(w => { html += '<p style="color:var(--sub);font-size:0.9em">• ' + w.q.q.substring(0, 60) + '…</p>'; });
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  main.innerHTML = html;
+}
+
+function answerFinalExam(qi, choice) {
+  quizResults['final_' + qi] = choice;
+  save();
+  renderFinalExam(document.getElementById('mainContent'));
+}
+
+function resetAll() {
+  localStorage.removeItem('quant_case_study_completed');
+  localStorage.removeItem('quant_case_study_quiz_results');
+  location.reload();
+}
+
+// ===== INIT =====
+(function init() {
+  currentSection = 'overview';
+  updateUI();
+  renderContent('overview');
+})();
+</script>
+</body>
+</html>

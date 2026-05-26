@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗄️ 数据工程 · 量化系统的血液</title>
+<style>
+:root {
+  --bg: #0d1117; --card: #161b22; --card-hover: #1c2333; --border: #30363d;
+  --text: #e6edf3; --sub: #8b949e;
+  --accent: #f0a050; --accent2: #f5b870; --accent-glow: rgba(240,160,80,0.25);
+  --green: #3fb950; --red: #f85149; --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(240,160,80,0.35); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+body {
+  font-family: -apple-system, 'SF Pro Display', 'PingFang SC', sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #1a1208 0%, var(--bg) 70%);
+  color: var(--text); line-height: 1.75; min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width: 280px; background: var(--card); border-right: 1px solid var(--border);
+  padding: 24px 16px; position: sticky; top:0; height:100vh;
+  overflow-y: auto; flex-shrink: 0;
+}
+.main { flex:1; padding: 32px 48px; max-width: 920px; }
+.logo { font-size: 1.2em; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.logo .icon { font-size: 1.4em; }
+.subtitle { color: var(--sub); font-size: 0.82em; margin-bottom: 20px; opacity: 0.8; }
+.progress-bar-wrap { background: var(--border); border-radius: 8px; height: 6px; margin-bottom: 22px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 8px; transition: width 0.6s; box-shadow: 0 0 12px var(--accent-glow); }
+.progress-text { font-size: 0.78em; color: var(--sub); margin-bottom: 4px; }
+.nav-module { margin-bottom: 18px; }
+.nav-module-title { font-size: 0.72em; text-transform: uppercase; color: var(--sub); letter-spacing: 1.5px; margin-bottom: 8px; padding: 0 8px; opacity: 0.7; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.88em; color: var(--sub); border-left: 3px solid transparent; margin-bottom: 2px; }
+.nav-item:hover { background: var(--card-hover); color: var(--text); border-left-color: rgba(240,160,80,0.3); }
+.nav-item.active { background: rgba(240,160,80,0.12); color: var(--accent2); font-weight: 600; border-left-color: var(--accent2); }
+.nav-item.done { color: var(--green); }
+.nav-item .check { width: 20px; text-align: center; font-size: 0.8em; }
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.lesson-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 34px; margin-bottom: 24px; transition: border-color 0.25s; }
+.lesson-card:hover { border-color: rgba(240,160,80,0.2); box-shadow: 0 2px 20px rgba(240,160,80,0.06); }
+.lesson-card h2 { font-size: 1.5em; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.lesson-card .meta { color: var(--sub); font-size: 0.85em; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.lesson-card h3 { font-size: 1.1em; margin: 28px 0 14px; color: var(--accent2); position: relative; padding-left: 14px; }
+.lesson-card h3::before { content: ''; position: absolute; left: 0; top: 3px; bottom: 3px; width: 3px; border-radius: 2px; background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+.lesson-card p { margin-bottom: 14px; }
+.lesson-card ul, .lesson-card ol { padding-left: 24px; margin-bottom: 14px; }
+.lesson-card li { margin-bottom: 8px; }
+.lesson-card .hl { color: var(--accent2); font-weight: 600; }
+.lesson-card table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
+.lesson-card th { background: var(--border); padding: 10px 14px; text-align: left; font-size: 0.85em; color: var(--sub); }
+.lesson-card td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.lesson-card code { background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 4px; font-size: 0.9em; color: var(--accent2); font-family: 'SF Mono', 'JetBrains Mono', monospace; }
+.lesson-card pre { background: var(--card-hover); padding: 16px 20px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; margin: 16px 0; border: 1px solid var(--border); }
+.lesson-card pre code { background: none; padding: 0; color: var(--accent2); }
+.analogy, .deep, .tip, .warn { padding: 18px 20px; border-radius: 10px; margin: 18px 0; border-left: 4px solid; }
+.analogy { background: rgba(240,160,80,0.08); border-color: var(--accent); }
+.deep { background: rgba(180,140,100,0.06); border-color: var(--accent); }
+.tip { background: rgba(63,185,80,0.06); border-color: var(--green); }
+.warn { background: rgba(248,81,73,0.06); border-color: var(--red); }
+.analogy .label, .deep .label, .tip .label, .warn .label { font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.analogy .label { color: var(--accent); }
+.deep .label { color: #c09060; }
+.tip .label { color: var(--green); }
+.warn .label { color: var(--red); }
+
+.quiz-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
+.quiz-question { font-weight: 600; margin-bottom: 14px; font-size: 1em; }
+.quiz-option { display: block; width: 100%; text-align: left; padding: 11px 16px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); cursor: pointer; transition: 0.2s; font-size: 0.92em; }
+.quiz-option:hover { border-color: var(--accent); background: rgba(240,160,80,0.06); }
+.quiz-option.correct { background: rgba(63,185,80,0.12); border-color: var(--green); color: var(--green); }
+.quiz-option.wrong { background: rgba(248,81,73,0.08); border-color: var(--red); color: var(--red); }
+.quiz-result { margin-top: 10px; padding: 12px 16px; background: rgba(240,160,80,0.04); border-radius: 8px; font-size: 0.9em; display: none; }
+.quiz-result.show { display: block; }
+.quiz-result.pass { border-left: 3px solid var(--green); }
+.quiz-result.fail { border-left: 3px solid var(--red); }
+.quiz-result strong { display: block; margin-bottom: 4px; }
+
+.btn { padding: 10px 22px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; font-size: 0.9em; transition: 0.2s; background: var(--card); color: var(--text); }
+.btn:hover { border-color: var(--accent); background: var(--card-hover); }
+.btn-primary { background: rgba(240,160,80,0.12); border-color: var(--accent); color: var(--accent2); }
+.btn-success { background: rgba(63,185,80,0.12); border-color: var(--green); color: var(--green); }
+.btn-secondary { background: var(--card); }
+.nav-btns { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+
+@media(max-width:768px) { .app { flex-direction: column; } .sidebar { width: 100%; height: auto; position: relative; } .main { padding: 24px 18px; } }
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">🗄️</span> 数据工程</div>
+  <div class="subtitle">多源采集 · 清洗对齐 · 存储分层 — 量化系统的血液</div>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <a href="课程首页_软件工程与MLOps.html" style="display:block;margin-bottom:12px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:0.82em;color:var(--sub);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--sub)'">🏠 回到课程总览</a>
+  <div id="navContainer"></div>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="resetAll()">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ===== localStorage prefix: se_mlops_ =====
+const P = 'se_mlops_';
+
+// ===== FINAL EXAM =====
+const finalExam = {
+  questions: [
+    { q:'你同时从三个地方获取股票数据（东财、雪球、通达信），它们返回的格式都不一样。最好的做法是什么？', options:['分别写三套处理代码','设计一个统一的"点菜窗口"（抽象层）——每个数据源各自对接这个窗口，上游只用一套代码就能调用所有数据源','只用一个数据源','手动复制粘贴'], correct:1 },
+    { q:'每次更新数据时，是把过去十年数据全部重新拉一遍，还是只拉上次更新之后新增的部分？为什么？', options:['全拉更保险','只拉增量——就像下载电影断网后从80%继续而不是重下全部4GB。全量拉取浪费带宽、容易被限流、耗时巨大','都差不多','看心情决定'], correct:1 },
+    { q:'A股15:00收盘，美股美东时间16:00收盘。如果要把A股和美股同一日的数据对齐，会遇到什么问题？', options:['没问题，都是同一天','时区不同——北京比纽约快约12小时。另外不同数据类型（日线、分钟线、tick数据）的频率也不同，需要统一到同一个时间标尺上','美国股市不开盘','中国数据和美国数据不能一起用'], correct:1 },
+    { q:'数据分四层存放（原始→清洗→因子→信号），和只放一层有什么区别？', options:['只是多占空间','像自来水处理厂——每层只做一件事。信号错了能查因子层，因子错了能查清洗层，一直追溯到原始数据。没分层的话，出问题不知道从哪查起','没区别','分层太麻烦'], correct:1 },
+    { q:'为什么需要给数据"打版本号"（像Git管理代码一样管理数据）？', options:['赶时髦','金融数据会被修正——你1月份查的GDP和6月份查的同一个年份GDP可能不一样。不锁定数据版本，你的回测结果别人永远无法复现','Git更好用','数据不会变'], correct:1 },
+    { q:'卫星图像、社交媒体情绪这些"另类数据"，和财报这种传统数据最大的区别是什么？', options:['另类数据不合法','时效性——传统数据反映已发生的事，另类数据捕捉正在发生的事。比如停车场密度在财报前6周就能透露营收趋势，这个时间差就是赚钱的机会','没区别','传统数据过时了，该扔掉'], correct:1 }
+  ]
+};
+
+// ===== MODULES =====
+const modules = [
+  {
+    title: '🍳 零基础热身：数据工程像什么？',
+    lessons: [
+      {
+        id: 'warmup-intro',
+        title: '先不讲技术——三个故事帮你建立直觉',
+        emoji: '🍳',
+        content: `
+<h3>假设你开了一家餐厅</h3>
+
+<div class="analogy">
+  <div class="label">🍳 故事一：当好采购员</div>
+  <p>想象你刚盘下一家店面，挂了招牌，招了厨师——万事俱备，明天开业。</p>
+  <p>但厨房有个致命问题：<strong>冰箱是空的。</strong></p>
+  <p>你需要：<strong>买菜</strong>（牛肉、青菜、调料……从不同的供应商那里采购）→ <strong>择菜洗菜</strong>（把烂叶子摘掉、把泥沙洗干净）→ <strong>分类存放</strong>（肉放冷柜、菜放保鲜、干货放架子上）。</p>
+  <p><span class="hl">如果买来的菜是烂的，后面的厨师再厉害也做不出好菜。量化交易中，数据就是你的食材。</span>这一课教你当好采购员、清洁工和仓库管理员——三个角色，一个都少不了。</p>
+</div>
+
+<div class="analogy">
+  <div class="label">🍳 故事二：搬家后的整理</div>
+  <p>你搬进一个新家。书、衣服、厨具、杂物全混在几十个箱子里堆在地上，一片混乱。</p>
+  <p>你需要花一个周末做三件事：</p>
+  <ol>
+    <li><strong>分堆</strong>——书放书架、衣服放衣柜、厨具放厨房</li>
+    <li><strong>清理</strong>——扔掉坏掉的、过期的、重复的</li>
+    <li><strong>贴标签</strong>——"冬装""小说类""常用碗筷"</li>
+  </ol>
+  <p>数据清洗（Data Cleaning）做的就是这个事。从各种地方采集到的原始数据，就像搬家后的杂物堆——混乱、重复、有些甚至是错的。需要分类、去重、修正。</p>
+</div>
+
+<div class="analogy">
+  <div class="label">🍳 故事三：图书馆的智慧</div>
+  <p>你想找一本关于"巴菲特投资哲学"的书。市图书馆有几百万本书——你怎么在三分钟内找到？</p>
+  <p>因为有<strong>分类系统</strong>：经济类→投资类→人物传记→巴菲特。每一本书有自己的编号（索书号），书架按规律排列。</p>
+  <p><span class="hl">数据存储的道理完全一样。</span>几千只股票、几十年的历史、成百上千个指标——没有分类和索引，你永远找不到需要的数据。</p>
+</div>
+
+<div class="deep">
+  <div class="label">🍳 三个故事 = 数据工程的全部</div>
+  <table>
+    <tr><th>故事</th><th>对应</th><th>你要做的事</th></tr>
+    <tr><td>开餐厅·买菜</td><td><strong>数据采集</strong></td><td>从不同数据源拿到数据</td></tr>
+    <tr><td>搬家·整理</td><td><strong>数据清洗</strong></td><td>去重、纠错、对齐、标准化</td></tr>
+    <tr><td>图书馆·分类</td><td><strong>数据存储</strong></td><td>分层存放、建索引、打版本</td></tr>
+  </table>
+  <p>三个环节串起来，就叫<strong>数据管道</strong>（Data Pipeline，你可以理解为"食材从菜市场到餐桌的全流程流水线"）。</p>
+  <p><span class="hl">不是在学编程——是在学怎么当个好管家。</span>明白了这三个故事，后面每一节讲的"技术"都是给这个直觉穿上工具的外衣。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">数据工程的三个环节对应生活中哪三件事？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 开车、做饭、洗碗</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 采购食材、整理房间、图书馆分类——分别对应采集数据、清洗数据、存储数据</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 看手机、刷视频、打游戏</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 没联系</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 做量化就像开餐厅——你得先有食材（采集数据）、把食材处理干净（清洗数据）、分门别类放好（存储数据）。先把这个直觉建起来，后面每一节你会发现自己其实"本来就懂"。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么说"数据是食材"，而不仅是"数字"？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 因为数据可以吃</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 因为数据质量决定最终产出的好坏——食材不新鲜，米其林大厨也做不出好菜。数据有错漏，再厉害的策略也会赔钱</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 数据和食材一样贵</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 数据也会过期</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 不是比喻——是真的。脏数据进→脏结果出。量化行业有一句行话叫"garbage in, garbage out"（垃圾进，垃圾出）。数据是你的原材料，宁愿花两小时洗数据，也别用脏数据跑策略。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '🗄️ 模块一：数据采集——当好你的采购员',
+    lessons: [
+      {
+        id: 'acq-intro',
+        title: '数据从哪来：五种"菜市场"认识一下',
+        emoji: '🏗️',
+        content: `
+<h3>数据不是凭空出现的——它来自具体的"供货商"</h3>
+
+<div class="analogy">
+  <div class="label">🏗️ 五种菜市场</div>
+  <p>你开餐厅需要食材。你不会只去一个地方买——有的去农贸市场（新鲜但需要自己挑）、有的打电话让供应商送货（方便但量受限制）、有的从批发市场整车拉（便宜但需要自己用车运）。</p>
+  <p>量化数据也一样。不同的数据来源就像不同的"菜市场"：</p>
+  <table>
+    <tr><th>数据来源</th><th>像什么</th><th>典型的用法</th></tr>
+    <tr><td><strong>REST API</strong></td><td>叫外卖——你发一个请求（点菜），它把数据（菜）送过来</td><td>东财、雪球查行情、财务数据</td></tr>
+    <tr><td><strong>WebSocket</strong></td><td>水管——打开水龙头，水就一直流。数据持续不断地推送给你</td><td>实时行情、L2逐笔数据</td></tr>
+    <tr><td><strong>FTP/SFTP</strong></td><td>去仓库整批拉货——一次性下载整个文件包</td><td>批量下载历史数据</td></tr>
+    <tr><td><strong>SDK直连</strong></td><td>供应商给了你一张专用的采购卡——插进系统直接连通</td><td>通达信底层行情（mootdx）</td></tr>
+    <tr><td><strong>网页爬虫</strong></td><td>自己去各个店里看、记、抄——自动浏览网页抓取信息</td><td>证监会公告、财报PDF</td></tr>
+  </table>
+</div>
+
+<h3>五个人、五种方言——怎么让所有人听懂同一种语言？</h3>
+
+<div class="deep">
+  <div class="label">🏗️ 统一"点菜窗口"：抽象层的智慧</div>
+  <p>五个供货商，每个用不同的"语言"。你总不能在后厨雇五个翻译——太乱了。</p>
+  <p><span class="hl">解决方案：在厨房门口设一个统一的"点菜窗口"。</span></p>
+  <p>你只要告诉这个窗口：我要"今天的茅台日线数据"。窗口后面发生了什么你不用管——它自己去判断该找东财还是找通达信，该用哪种通信方式。</p>
+  <p>这个窗口在技术术语里叫<strong>统一抽象层</strong>。它的核心想法很简单：</p>
+  <ol>
+    <li>定义一套标准化的"菜单"——比如<code>fetch("茅台", "2025-01-01", "2025-06-01", "日线")</code>（就是用统一格式说：取茅台某段时间的日线数据）</li>
+    <li>每个数据源各自写一个"翻译模块"——把这个标准菜单翻译成自己理解的格式</li>
+    <li>你永远只对着"菜单"说话——哪天东财不好用了，换个数据源，只需要新写一个翻译模块，不用改任何其他代码</li>
+  </ol>
+  <p>换一个你能直接感受到的场景：你手机上的"外卖App"。不管后面的饭店用的是美团、饿了么还是自家系统——你点的都是同样的流程：选菜→下单→等送。App帮你屏蔽了后面所有乱七八糟的事。<span class="hl">抽象层就是量化系统的"外卖App"。</span></p>
+</div>
+
+<h3>每次只拿新菜，不把整个菜市场搬回家</h3>
+
+<div class="analogy">
+  <div class="label">🏗️ 下载电影的教训</div>
+  <p>你家WiFi断了，一部4GB的电影下到80%断了。你是希望从头重新下载全部4GB，还是从80%的地方接着下？</p>
+  <p>量化数据一个道理。沪深300十年的日线数据有超过一百万行。每次更新都全部重拉一次——不仅慢、浪费流量，还会被数据源封IP（IP地址，可以理解为"你家网络的身份证"），因为你请求太频繁了。</p>
+  <p><span class="hl">正确做法：增量更新。</span>只拉上次同步之后新增的部分。具体怎么做？</p>
+  <ol>
+    <li><strong>记一笔小账</strong>——每次成功抓取后，在本子上记下"截止到今天，我已经拿到2025年6月1日的数据了"</li>
+    <li><strong>下次只问"6月1日之后的东西"</strong>——不重复要已经有的数据</li>
+    <li><strong>每季度做一次"对账"</strong>——检查是否有数据修正（比如统计调了之前的GDP），把修过的部分补上</li>
+  </ol>
+</div>
+
+<h3>保护自己：当数据源发脾气时</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 真实世界的数据源：并不可靠</div>
+  <p>你碰到过这些情况吗——外卖App提示"网络繁忙，请稍后再试"；快递追踪突然不更新了；银行App每到月底就卡。</p>
+  <p>数据源一样不靠谱：</p>
+  <ul>
+    <li>东财API（API，应用程序接口，你可以理解为"数据服务器上的点菜窗口"）：同一个IP每分钟最多请求60次。超过？封你5分钟。</li>
+    <li>雪球API：你需要先登录（登录态）。登录过期了？返回空气给你（不报错，就是数据变空）。</li>
+    <li>通达信连接：网络抖一下→连接断开→数据流中断。</li>
+  </ul>
+  <p><span class="hl">应对办法有一个"四件套"组合：</span></p>
+  <table>
+    <tr><th>工具</th><th>作用（用吃饭类比）</th></tr>
+    <tr><td><strong>限流器（Rate Limiter）</strong></td><td>像超市限购"每人限买2瓶水"——控制你请求的速度，不超过数据源的承受上限</td></tr>
+    <tr><td><strong>熔断器（Circuit Breaker）</strong></td><td>多次失败→自动暂停→等一会儿再试。就像微波炉连续工作太久会自己暂停一会儿</td></tr>
+    <tr><td><strong>重试+退避</strong></td><td>第一次失败→等1秒再试；第二次失败→等2秒→4秒→8秒……给数据源喘气的时间</td></tr>
+    <tr><td><strong>备选方案</strong></td><td>东财挂了→自动切到akshare；akshare也挂了→用本地缓存的数据（至少你还有昨天的数据）</td></tr>
+  </table>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">"统一抽象层"是什么？用吃饭的场景打个比方。</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 一个高级的菜</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 像餐厅的点菜窗口——你对着同一个菜单点菜，不用管后厨哪个厨师做、用的什么锅。数据源换了你不用改任何代码，只改翻译模块</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 一个软件</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 一个表格</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 核心思想：接口不变，实现可替换。你不用知道东财用的是REST还是TCP，你只需要说"取数据"。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">增量更新和全量更新的区别，用下载电影的例子说一说。</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 增量更新下载更清晰</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 全量=断网后重下4GB整部电影。增量=从80%接着下剩下的20%。沪深300十年数据有一百多万行，每次都全量拉=缓慢、被封号、纯浪费</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 没区别</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 全量更省时间</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 简单来说：你已经有的就不要重复要了。数据源有限流（每分钟最多请求N次），每次全量拉就是在浪费这个宝贵的额度。</div>
+</div>
+        `
+      },
+      {
+        id: 'acq-patterns',
+        title: '从手动买菜到自动采购系统',
+        emoji: '🔧',
+        content: `
+<h3>10个包裹和10万个包裹，是两种生意</h3>
+
+<div class="analogy">
+  <div class="label">🔧 快递分拣中心的启示</div>
+  <p>每天10个包裹——你用手一个一个分拣，一点问题都没有。</p>
+  <p>每天10万个包裹——你需要传送带、扫码枪、自动分拣机器人、异常处理站。</p>
+  <p><span class="hl">量化数据管道（Pipeline，可以理解为"自动化流水线"）同理。</span>如果你只是偶尔跑一次——手写个简单脚本（Script，可以理解为"一张便条上的指令清单"），够用。但如果你每天要自动更新21家公司的数据、要跑十年历史、要从五个数据源同时拉——必须有一套正规的"流水线"。</p>
+</div>
+
+<h3>手写便条 vs 自动化流水线：五个关键区别</h3>
+
+<div class="deep">
+  <div class="label">🔧 不只是"自动运行"那么简单</div>
+  <table>
+    <tr><th>维度</th><th>便条（一次性）</th><th>流水线（生产级）</th></tr>
+    <tr><td><strong>怎么启动</strong></td><td>你手动点运行</td><td>每天下午收盘后自动触发</td></tr>
+    <tr><td><strong>出错了怎么办</strong></td><td>报错，停在那等你修</td><td>某条数据出错不阻塞其他数据，最后汇总出"问题清单"</td></tr>
+    <tr><td><strong>有没有监控</strong></td><td>没有——只能事后发现"咦数据好像少了"</td><td>数据量/延迟/异常自动告警——比如"茅台今天只有10条日线？正常应该有240条，得查一下"</td></tr>
+    <tr><td><strong>重复跑了会怎样</strong></td><td>数据重复插入——表里有100条一样的</td><td>跑一百次也只产生一份数据——自动去重</td></tr>
+    <tr><td><strong>断了重来怎么办</strong></td><td>从零重新跑——一个月的进度全没</td><td>从上次中断的地方接着跑——只补缺失的部分</td></tr>
+  </table>
+</div>
+
+<h3>流水线的标准工作流程：ELT</h3>
+
+<div class="tip">
+  <div class="label">💡 ELT是什么？Extract → Load → Transform</div>
+  <p>ELT（可以理解为"先拿回来、再处理、最后加工"的三步流程）是量化数据处理的标准做法：</p>
+  <ol>
+    <li><strong>E = Extract（拿回来）</strong>：从数据源把原始数据抓取回来——原封不动、不做任何修改。就好像买菜回来先不洗，直接放一边。</li>
+    <li><strong>L = Load（存进去）</strong>：把原始数据解析、标准化之后存入数据库。这是洗菜切菜的过程。</li>
+    <li><strong>T = Transform（加工成成品）</strong>：基于标准化后的数据，计算需要的指标——比如从股价算出"过去60天涨了多少"（这叫动量因子）。</li>
+  </ol>
+  <p><span class="hl">为什么按照这个顺序而不是反过来？</span>因为数据源的格式随时可能变。如果你先处理再存，格式一变你之前的处理逻辑全废了。先原样保存——格式变了只是改"存进去"那一步，历史数据不受影响。</p>
+</div>
+
+<div class="analogy">
+  <div class="label">🔧 一个你可能碰到的真实场景</div>
+  <p>东财上个月还能正常返回数据，这个月突然更新了网站——返回的格式从A变成了B。</p>
+  <p><strong>如果你先处理再存：</strong>旧的A格式处理逻辑全废了，跑过去的数据也乱了——你要同时维护两个版本的处理逻辑。噩梦。</p>
+  <p><strong>如果你先存再处理（ELT）：</strong>原始数据（A格式的那批）安安静静躺着。你只需要更新"存进去"这一步来支持B格式。已经存入的标准数据不动。干净。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">每天更新21只股票的数据，为什么不能写个简单脚本就完事了？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 脚本不够高级</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 脚本跑一次没问题，但每天跑、21只股票、多个数据源、还可能出现网络中断——需要自动调度、出错自动处理、数据量异常自动告警。这些"便条"做不到</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 脚本太慢</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 数据太多装不下</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 一次性 vs 每天自动运行，本质区别。流水线=每天自动运行+出错自己兜底+异常自动报告。便条=你守在电脑前点了才跑、出错就停了。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">ELT的三步对应生活中什么场景？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 吃、睡、玩</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 买菜回家先把菜放桌上（Extract拿回来）→洗干净切好放冰箱（Load存进去）→做菜的时候再加工（Transform加工成成品）。先保存原样，再慢慢加工——这样菜市场卖的东西变了也不影响你冰箱里已有的食材</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 上班、开会、下班</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 看书、写字、做题</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 核心逻辑：先原样存档（保护原始数据）→再清洗入库（标准化）→最后按需加工（算因子）。顺序不能乱——先处理再存档=数据源一变你就完蛋。</div>
+</div>
+        `
+      },
+      {
+        id: 'acq-future',
+        title: '什么时候更新数据：牛奶、罐头和大米',
+        emoji: '⏰',
+        content: `
+<h3>不同的食材有不同的保鲜期</h3>
+
+<div class="analogy">
+  <div class="label">⏰ 超市补货的智慧</div>
+  <p>你家楼下的超市不会用同一个频率补所有货：</p>
+  <ul>
+    <li><strong>牛奶</strong>——每天补一次（保质期短，消耗快）</li>
+    <li><strong>罐头</strong>——每周补一次（保质期长，消耗慢）</li>
+    <li><strong>大米</strong>——每月补一次（不着急，一次买够）</li>
+    <li><strong>台风来之前</strong>——紧急补方便面和矿泉水（事件驱动）</li>
+  </ul>
+  <p><span class="hl">数据更新的道理一模一样。</span>不同的数据有不同的"新鲜度衰减周期"——你不需要用同一频率去更新所有数据。</p>
+</div>
+
+<h3>三种更新触发方式</h3>
+
+<div class="deep">
+  <div class="label">⏰ 定时、等通知、看异常——三种姿势</div>
+  <table>
+    <tr><th>模式</th><th>怎么触发</th><th>适合什么数据</th><th>你的例子</th></tr>
+    <tr><td><strong>定时（Cron）</strong></td><td>每天下午3点半收盘后</td><td>日线行情、技术指标——像牛奶每天补</td><td>21家公司的日线数据每天自动更新</td></tr>
+    <tr><td><strong>事件驱动</strong></td><td>财报公告/分红/拆股发生</td><td>财务数据、公司大事——像台风来之前补货</td><td>季报发布日自动触发财务数据更新</td></tr>
+    <tr><td><strong>异常触发</strong></td><td>数据出现不正常的变化</td><td>质量监控——像发现货架上的牛奶过期了</td><td>某股票价格一天跳空超过5%→检查数据是否出错</td></tr>
+  </table>
+</div>
+
+<h3>最容易被忽视的小设计——记一笔流水账</h3>
+
+<div class="tip">
+  <div class="label">💡 Checkpoint（检查点）：让你不用从头再来</div>
+  <p>想象你正在做一个大型Excel表，做了三个小时。这时候电脑突然蓝屏——你没有保存。</p>
+  <p>三小时白干了，从头开始。</p>
+  <p><span class="hl">数据流水线也会"蓝屏"。</span>网络断了、数据源崩了、你的程序出错了……如果没有"检查点"，每次都要从头重新跑。</p>
+  <p>"检查点"就是一个超级简单的机制：每处理完一只股票，就在一个文件里写一行：<code>茅台-2025年6月1日-已处理</code>。如果中途断了重新跑，程序一看这个"流水账"——哦，这个已经处理过了，跳过。接着处理下一个。</p>
+  <p>五千只股票、十年数据——有检查点和没检查点的时间差距，可能是一小时和十小时的区别。</p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 检查点的一个坑——"成功"不代表"完整"</div>
+  <p>数据源说"好了，返回成功"——但可能只返回了10条数据（正常应该有240条）。</p>
+  <p><span class="hl">不要只看"是否成功"，要看"数据够不够"。</span>处理完一只股票后，数一下拿到了多少条。如果条数远少于预期——打一个问号，标记为"不完整"，下次补。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么不同数据要用不同频率更新？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 无所谓，统一更新最方便</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 不同数据的新鲜度不同——日线像牛奶每天变化必须每天更新，财报像大米每季才出一次每季更新即可。统一频率=浪费计算资源+可能触发数据源限流</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 每天更新所有数据最快</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 看心情决定</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 不是所有数据都需要"新鲜"。日线每天变→每天更新。财报三个月才出一次→每季更新。区分频率=省时间+省API额度（API调用次数有上限）。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">"检查点"解决了什么问题？用一个生活中的例子说明。</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 让程序更美观</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 就像做三小时的Excel没保存，电脑蓝屏三小时白干。有了检查点=每处理完一步就保存一次——断线重启后从断点继续，不重跑已完成的。对大规模数据来说，这是"能跑完"和"永远跑不完"的区别</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 检查点不解决任何问题</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 只是程序员的习惯</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 不需要想得太复杂——就是"随时保存进度"。五千只股票跑七小时，跑到第4500只断了——没检查点你就从零再跑七小时。有检查点你只需要跑最后500只。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '🧹 模块二：数据清洗与对齐——让混乱变有序',
+    lessons: [
+      {
+        id: 'clean-align',
+        title: '对表、校时间：为什么看似简单的对齐最麻烦',
+        emoji: '🧹',
+        content: `
+<h3>"下午三点见面"——你在北京，他在纽约</h3>
+
+<div class="analogy">
+  <div class="label">🧹 时差的故事</div>
+  <p>你和朋友约"下午三点见面"。你在北京，他在纽约。你的三点和她的三点差了约12个小时。更麻烦的是，美国还有个叫"夏令时"的东西——每年调两次时间。同一个"下午三点"，不同季节可能差11小时或13小时。</p>
+  <p><strong>金融数据的时间比这混乱一百倍：</strong></p>
+  <ul>
+    <li>A股日线收盘价——标记的是北京时间 15:00</li>
+    <li>美股日线收盘价——标记的是美东时间 16:00</li>
+    <li>外汇tick数据——标记的是UTC时间（世界标准时间，你可以理解为"全世界共同的钟"）</li>
+    <li>财报发布日期——标记的是公司所在地的本地时间</li>
+  </ul>
+  <p><span class="hl">如果不把所有这些时间统一到同一把"标尺"上，你的回测结果会是一团乱麻。</span>比如你同时用A股数据和美股数据——如果不做时间对齐，你的模型会把"同一个交易日"的数据当成两个不同日子。</p>
+</div>
+
+<h3>时间对齐：三步走</h3>
+
+<div class="deep">
+  <div class="label">🧹 从粗到细的"对表"流程</div>
+  <table>
+    <tr><th>第几步</th><th>要解决的问题</th><th>怎么做</th></tr>
+    <tr><td><strong>第一步：统一时区</strong></td><td>同一个时刻在不同时区显示不同时间</td><td>全部转换成UTC（世界标准时间）存储。显示的时候再转回本地时间——就像所有人都统一用格林尼治时间对表</td></tr>
+    <tr><td><strong>第二步：统一频率</strong></td><td>你有日线数据、分钟数据、tick数据混在一起</td><td>把高频向低频"聚合"——比如把一整天的分钟数据聚合成日线（开盘价/最高价/最低价/收盘价）</td></tr>
+    <tr><td><strong>第三步：统一交易日</strong></td><td>A股休市但港股在交易——两个市场交易日不一样</td><td>如果同时交易两个市场，只取两边都开市的日子（取交集）</td></tr>
+  </table>
+</div>
+
+<h3>股价"变了"但公司没变——复权的故事</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 不看复权数据=拿着错误的股价做决策</div>
+  <p>给你讲一个真实的陷阱：某股票昨天收盘100元。今天公司执行"10送10"（你手里的1股变成2股，每股价格相应减半）。今天开盘价是50元。</p>
+  <p>如果你只看原始价格：一天跌了50%。<strong>但公司什么都没发生——只是把一张100元的钞票换成了两张50元的。</strong></p>
+  <p><span class="hl">如果不做复权，你的模型会学到"股价腰斩=卖出信号"——一个完全不存在的规律。</span></p>
+  <p>这就好比：你家体重秤昨天显示你80公斤。今天你把公斤调成了"斤"——显示160。你没有一夜胖了80公斤，只是单位变了。复权就是把被"调整过单位"的股价还原成可比较的数字。</p>
+</div>
+
+<div class="deep">
+  <div class="label">🧹 两种复权，两个用途——别搞混</div>
+  <table>
+    <tr><th>模式</th><th>什么意思</th><th>什么时候用</th></tr>
+    <tr><td><strong>前复权</strong></td><td>把过去的历史价格，按照今天的股本重新算一遍。所有历史价格都"对齐"到今天</td><td>🟢 计算因子时用——保证不同时间点的数据可以公平比较</td></tr>
+    <tr><td><strong>后复权</strong></td><td>把今天的价格，按照历史股本重新算一遍。维持每个历史时点的"原样视角"</td><td>🟢 回测时用——保证你模拟交易时看到的是当时真实的价格</td></tr>
+  </table>
+  <p><span class="hl">一句话记住：因子用前复权（可比性），回测用后复权（真实性）。混用=灾难。</span>就好比健身——记录体重变化用公斤（前复权，可比），但秤上显示的数字要看你今天调了什么单位（后复权，真实）。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么时间对齐是金融数据清洗中最麻烦的事之一？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 因为时间总是很简单</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 不同数据源用不同时区标记时间、不同数据有不同的记录频率（日/分钟/tick）、不同市场有不同的休假日——你需要把所有这些统一到一个"标尺"上，差一毫秒都可能让回测结果面目全非</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 电脑自己会处理</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 对齐不重要</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 你平时的"下午三点"和纽约的"下午三点"差12小时。股票数据如果不把这些时间统一——你的模型可能把两个不同日期的数据当成同一天，或者反过来。这比算错一个公式严重多了。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">一家公司10送10拆股，股价从100变成了50。如果不做复权会有什么后果？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 没事，股价本来就是50</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 你的模型会看到"一天跌了50%"，学到一个完全错误的模式——"拆股后暴跌要卖出"。但实际上公司基本面一点没变，只是把一张100元换成两张50元</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 不影响分析</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 50元比100元更好</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 复权=把被"调整过单位"的股价还原。就像体重秤把公斤调成斤——数字翻倍了但你的体重没变。不复权=模型学到完全不存在的规律。</div>
+</div>
+        `
+      },
+      {
+        id: 'calendar-events',
+        title: '日历和公告日：最容易踩的隐藏地雷',
+        emoji: '📅',
+        content: `
+<h3>不是每天都开市——你踩过这个坑吗？</h3>
+
+<div class="analogy">
+  <div class="label">📅 不同国家有不同"周末"</div>
+  <p>在中国，周末是周六和周日。在沙特，周末是周五和周六。在以色列，从周五下午到周六晚上都不上班。</p>
+  <p><strong>股票市场同理：每个市场有自己的交易日历。</strong></p>
+  <table>
+    <tr><th>情况</th><th>例子</th><th>怎么处理</th></tr>
+    <tr><td><strong>半天交易日</strong></td><td>某些节日前一天只交易上午——有日线但没有下午分钟线</td><td>标记为半天，分钟频率取上午收盘价</td></tr>
+    <tr><td><strong>临时休市</strong></td><td>台风、暴雪——突然哪天不交易了</td><td>维护一个动态变更的"休息日清单"</td></tr>
+    <tr><td><strong>跨市场</strong></td><td>A+H股——A股休市（比如国庆节），但港股正常交易</td><td>做多市场回测时只看两市场都开的日子</td></tr>
+  </table>
+</div>
+
+<h3>最容易忽视的前视偏差——"你其实已经知道了"</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 一个足以毁掉所有回测结果的错误</div>
+  <p>茅台4月1日下午3点收盘后发布了年报——ROE（净资产收益率，衡量公司用股东的钱赚了多少钱的指标）=30%，超预期。</p>
+  <p>4月2日开盘，股价跳涨5%。</p>
+  <p>现在回测：你的策略在4月1日收盘时就用ROE=30%来决定买卖——<strong>但实际上4月1日收盘时市场上没人知道这个数字！你在"作弊"。</strong></p>
+  <p>这个错误叫<strong>前视偏差</strong>（Look-Ahead Bias，你可以理解为"偷看了剧透"）。回测中显示你的策略大赚——但实盘不可能赚，因为你用的信息在那个时点根本不存在。</p>
+  <p><span class="hl">修正方法很简单但必须严格执行：</span>任何4月1日收盘后公告的数据，只能从4月2日开盘起使用。管理两个日期——"公司公告日"和"数据可用日"（公告日+1个交易日）。</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 公告日对齐的落地方法</div>
+  <p>你只需要做一件事：</p>
+  <ol>
+    <li><strong>问自己：</strong>这条数据是什么时候被市场知道的？</li>
+    <li><strong>把"被市场知道的那一天"记下来。</strong>比如财务数据——公司公告日（而非你的数据库收录日）。</li>
+    <li><strong>回测时，只在公告日之后才使用这条数据。</strong>收盘后公告→下个交易日才生效。</li>
+  </ol>
+  <p>如果你的数据源不提供"公告日"，用数据库收录日减5个交易日作为保守估计——宁可晚用几天，不可提前用。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">什么是"前视偏差"？用一个买彩票的比喻来说。</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 看了太多数据</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 你回测的策略在下午3点就用上了晚上8点才公布的财报数据——就像开奖后你才买彩票但声称自己中奖了。这叫"偷看答案"——回测看着很美，实盘必亏</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 信息太多</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不是个问题</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 量化交易者最怕的错误之一。看起来只是"用早了几个小时"——但业绩公告后的价格变动往往最剧烈，这几个小时的差距足以让回测结果完全不可信。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">如果数据库记录的某条财务数据没有"公告日"字段，你怎么保守处理？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 不管，直接用</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 用"数据库收录日减5个交易日"作为可用的最早日期——宁可晚用几天，不以"偷看未来"为代价。晚几天只是错过一点收益，"偷看"会导致整个回测结果不可信</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 猜一个日期</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不用这条数据</button>
+  <div class="quiz-result"><strong>答案：B。</strong> "保守估计"原则——宁可错失一点机会，不可让自己作弊。你的回测结果如果建立在"偷看答案"上，实盘一分钱都赚不到。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '💾 模块三：数据存储——不是随便塞进一个表里',
+    lessons: [
+      {
+        id: 'storage-db',
+        title: '选对仓库：不是所有数据库都一样',
+        emoji: '💾',
+        content: `
+<h3>存书和存快递，用的是不同的仓库</h3>
+
+<div class="analogy">
+  <div class="label">💾 三种仓库，三种设计</div>
+  <p>你要存100万本书——用图书馆（按分类+索引，找什么都能精准定位）。</p>
+  <p>你要存100万个快递包裹——用快递分拣中心（按时效+目的地，快速流转）。</p>
+  <p>你要存100万条天气记录——用气象局档案室（按时间+地点+指标排列，查"某地某天的温度"秒出结果）。</p>
+  <p><strong>股票数据 = 时间 + 股票代码 + 指标（价格、成交量、PE……）。这是天然的时间序列。</strong>如果用存书的仓库来存放票数据——格式不对、查起来慢到想哭。</p>
+  <p><span class="hl">金融数据需要专门的"时间序列数据库"。</span></p>
+</div>
+
+<h3>三款"仓库"的对比</h3>
+
+<div class="deep">
+  <div class="label">💾 不是什么最好——是什么最适合你</div>
+  <table>
+    <tr><th>维度</th><th>InfluxDB</th><th>TimescaleDB</th><th>ClickHouse</th></tr>
+    <tr><td><strong>最大优点</strong></td><td>存数据的速度极快</td><td>用的是你熟悉的"表格+SQL"方式</td><td>分析海量数据的速度极快</td></tr>
+    <tr><td><strong>怎么存</strong></td><td>自己的一套方法</td><td>在普通数据库上加了一个"自动按时间分区"的功能</td><td>按列而不是按行存（好比Excel的列可以独立读取）</td></tr>
+    <tr><td><strong>写入速度</strong></td><td>⭐⭐⭐⭐⭐ 最快</td><td>⭐⭐⭐⭐ 很优秀</td><td>⭐⭐⭐⭐ 批量很快</td></tr>
+    <tr><td><strong>查询速度</strong></td><td>⭐⭐⭐ 简单查询快</td><td>⭐⭐⭐⭐ 复杂查询快</td><td>⭐⭐⭐⭐⭐ 分析最快</td></tr>
+    <tr><td><strong>学习难度</strong></td><td>有自己的"方言"</td><td>标准SQL——你已经在用的</td><td>有自己的"方言"</td></tr>
+    <tr><td><strong>管理难度</strong></td><td>中等</td><td>低——你已经在用PostgreSQL</td><td>较高</td></tr>
+  </table>
+</div>
+
+<div class="tip">
+  <div class="label">💡 给你的建议：选TimescaleDB</div>
+  <p>为什么？不是因为它"最好"——是因为它<strong>最适合你</strong>：</p>
+  <ol>
+    <li>你已经在用PostgreSQL——TimescaleDB是它的一个扩展（就像给你的车加个导航），不需要学全新的东西</li>
+    <li>量化工作中日复一日做的事——查PE、算ROE排名、筛选股票——全部是SQL查询。PostgreSQL的SQL是最强大的</li>
+    <li>自动按时间分区+自动压缩——20年×5000只股票的数据量完全扛得住，不需要你操心</li>
+    <li>开源免费——没有授权费</li>
+  </ol>
+  <p><span class="hl">一句话原则：选那个最符合你日常工作习惯的，不是那个看起来"最先进"的。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么股票数据不适合用普通的关系型数据库（比如不加任何扩展的PostgreSQL）直接存？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 关系数据库太贵</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 股票数据是时间序列——按时间查询是绝对主力操作。普通表没有按时间自动分区和压缩，数据多了查询会越来越慢。就像用书架（分类结构）存放快递（时序结构）——格式不匹配，效率极低</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 关系数据库不能用</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 都可以，没区别</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 不是不能存，是存多了查着慢。TimescaleDB做的事=在普通PostgreSQL上加了"自动按时间管理+压缩"——还是原来的配方，但专门优化了时序查询。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">选数据库的第一原则是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 选最快的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 选最匹配你工作流的——你日常90%的操作是SQL查询→选SQL最强的。你日复一日做的事决定了你该用什么工具，而非技术指标排行榜</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 选最贵的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 选最新的</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 很多工程师会陷入"性能指标竞赛"。但实际工作里——你每天查PE、算ROE、跑回测——全是SQL。选一个SQL最强、你已经熟悉的工具，比选一个"理论上最快但你每天都要重新学"的工具明智得多。</div>
+</div>
+        `
+      },
+      {
+        id: 'storage-layers',
+        title: '四层楼：每层只做一件事',
+        emoji: '🏗️',
+        content: `
+<h3>你喝的自来水，经过了四道工序</h3>
+
+<div class="analogy">
+  <div class="label">🏗️ 自来水厂的四层处理</div>
+  <p>打开水龙头，水流出来——干净、清澈、可以直接喝。</p>
+  <p>但你知道这水经过了什么吗？</p>
+  <ol>
+    <li><strong>取自水库——</strong>里面可能有泥沙、微生物、树叶</li>
+    <li><strong>沉淀过滤——</strong>让泥沙沉下去，粗过滤去掉大颗粒</li>
+    <li><strong>加氯消毒——</strong>杀死细菌病毒</li>
+    <li><strong>输送到你家水龙头——</strong>干净的水</li>
+  </ol>
+  <p><strong>没有人直接从水库舀水喝——那叫作死。也没有人要求每家每户自己建个净水厂——那叫浪费。</strong></p>
+  <p><span class="hl">数据处理的四层架构，就是自来水厂的翻版。</span>每一层有且只有一个任务——做完自己的事，把水（数据）交给下一层。</p>
+</div>
+
+<h3>四层楼的具体样子</h3>
+
+<div class="deep">
+  <div class="label">🏗️ 每层只管一件事</div>
+  <table>
+    <tr><th>楼层</th><th>数据状态</th><th>这层的任务</th><th>生活中的类比</th></tr>
+    <tr><td><strong>① 原始层</strong>（raw）</td><td>原封不动——从数据源拿到是什么样就存什么样</td><td>永久保存原始数据。不动任何手脚</td><td>水库原水——什么杂质都还在</td></tr>
+    <tr><td><strong>② 清洗层</strong>（clean）</td><td>标准化了——去重、去异常值、统一格式</td><td>清洗+对齐+标准化。把"脏水"变"净水"</td><td>沉淀过滤后的水——杂质都去掉了</td></tr>
+    <tr><td><strong>③ 因子层</strong>（feature）</td><td>计算好的指标——都是数字（如PE=15.3，动量=0.08）</td><td>基于清洗层计算投资指标（因子）</td><td>加氯消毒——水已经可以喝了，但还需要最后一步</td></tr>
+    <tr><td><strong>④ 信号层</strong>（signal）</td><td>0/1买卖信号，或者一个综合得分</td><td>把多个因子组合成交易决策</td><td>输送到你家水龙头——最终产物</td></tr>
+  </table>
+</div>
+
+<h3>为什么一定要分层？——一句话：能"倒查"</h3>
+
+<div class="tip">
+  <div class="label">💡 分层不是为了好看——是为了出问题时能找到根</div>
+  <p>假设你的回测结果很奇怪——某只股票突然表现异常。</p>
+  <p><strong>有分层：</strong>信号层得分不对→去因子层查→因子值异常→去清洗层查→发现那天PE是-500（不可能）→去原始层查→发现数据源那天返回了一个异常值。问题定位了——是数据源的错。</p>
+  <p><strong>没分层：</strong>所有逻辑混在一起。不知道是数据错了、还是计算过程出错了、还是因子公式写错了。你只能一行一行查代码——耗时、痛苦、可能找不到。</p>
+  <p><span class="hl">分层=给每个步骤建立"问责制"。</span>出问题不是一个黑箱——是能精确到哪一层、哪一个步骤。</p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 分层最容易犯的四个错误</div>
+  <p><strong>❌ 清洗层顺便计算因子：</strong>清洗层只管洗——不要把计算逻辑混进去。你今天觉得"顺手算个PE"，明天就忘了PE是在哪层算的。</p>
+  <p><strong>❌ 信号层直接去查原始层：</strong>信号层只能看因子层——不能跳过中间两层。跳过=断了因果链。</p>
+  <p><strong>❌ 不建原始层——"我处理完再存"：</strong>丢失了原始数据，永远无法回头查"源头到底是什么"。数据源格式变了，你连对比都做不到。</p>
+  <p><strong>❌ 原始层"顺便"洗一下：</strong>"这个缺失值我顺手填上了"——完了。以后你永远无法区分"数据源本身就是空的"还是"被我填的"。原始层必须绝对干净——一步不动。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么原始层（raw）绝不允许做任何清洗处理？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 清洗太慢</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 原始层=数据的"底片"。如果底片被修改了，你永远不知道原始图像是什么——以后区分不了"数据源本身就错了"还是"被我改的"。断了所有追溯的可能性</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 清洗不需要做</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 没有原始层也行</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 原始层是最后一道防线。当一切都出问题时，你唯一能完全信任的就是原始数据。它必须保持"从源头拿到的原样"——绝对不能被任何处理污染。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">四层架构和一口锅里全煮了，最大的区别是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 四层需要更多磁盘空间</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 四层=每步有"问责制"。信号错了→查因子→查清洗→查原始→精准定位。全煮一锅=错了不知道哪步出的问题，只能从头捋一遍所有逻辑</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 一锅出更好</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 没区别</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 就像你付了钱但菜没上——"谁的责任？"如果后厨流水线清晰：服务员下单→厨房接单→厨师做菜→传菜员上菜，每一环都能查。如果所有人混在一起，你只能问"你们谁负责？"——没人能回答。</div>
+</div>
+        `
+      },
+      {
+        id: 'storage-version',
+        title: '给数据打"版本号"——像管理代码一样管理数据',
+        emoji: '🔄',
+        content: `
+<h3>同一页书，2024年版和2025年版内容不一样</h3>
+
+<div class="analogy">
+  <div class="label">🔄 被修改的历史书</div>
+  <p>你买了本《2023年中国经济统计》。</p>
+  <p>2024年1月版：GDP增速 = 5.2%。</p>
+  <p>2025年1月修订版：同一页、同一行——GDP增速 = 5.3%。统计局修正了数据。</p>
+  <p><strong>金融数据是"活"的。</strong>它会不断被修正——财报修正、指数调整成分股、复权因子更新。</p>
+  <p><span class="hl">后果：你1月份做的回测显示策略收益率+15%，6月份再跑一遍——只赚了+8%。策略没变、代码没变——变的是数据。</span></p>
+  <p>如果数据版本不锁定——你的任何回测结果都无法被验证。"它上次赚了15%"——"上次用的是哪版数据？""呃……不知道。"</p>
+</div>
+
+<h3>数据版本控制：三种精确度</h3>
+
+<div class="deep">
+  <div class="label">🔄 从简单到精确</div>
+  <table>
+    <tr><th>级别</th><th>方法</th><th>成本</th><th>精确度</th></tr>
+    <tr><td><strong>L1：贴时间标签</strong></td><td>每条数据记上"拉取时间"</td><td>低——几乎不费事</td><td>粗——知道什么时候拿的，但拿的那份数据找不回来了</td></tr>
+    <tr><td><strong>L2：定期打快照</strong></td><td>每季度把全部数据打包存一份</td><td>中——多占点磁盘空间</td><td>中——能回溯到任意季度的数据状态</td></tr>
+    <tr><td><strong>L3：变更日志</strong></td><td>每一条数据每一次变化都记下来</td><td>高——存储量大、维护复杂</td><td>极精——能回溯到任意历史时刻</td></tr>
+  </table>
+  <p><span class="hl">推荐L2（季度快照）。</span>金融数据的变化频率并不高（财报最多一个季度修一次），L2完全够用。L3就像一个24小时录像——精确但大多数时候没必要。</p>
+</div>
+
+<h3>用DVC管数据——就像用Git管代码</h3>
+
+<div class="tip">
+  <div class="label">💡 DVC（Data Version Control）：给数据用的Git</div>
+  <p>你已经在用Git管理代码了——改了什么、谁改的、什么时候改的，一目了然。</p>
+  <p><strong>数据也可以用同样的方法管理。</strong>DVC就是做这个的：</p>
+  <ul>
+    <li><strong>dvc add data/clean/</strong> → 为当前数据创建一个"快照"</li>
+    <li><strong>dvc push</strong> → 把快照存到安全的地方</li>
+    <li><strong>dvc checkout v2024Q1</strong> → 一键恢复到你2024年一季度时的数据状态</li>
+  </ul>
+  <p><span class="hl">三项锁定 = 完全可复现的回测：</span></p>
+  <ol>
+    <li>代码版本锁定（Git：用哪个版本跑的）</li>
+    <li>数据版本锁定（DVC：用哪批数据跑的）</li>
+    <li>参数版本锁定（配置文件：用了什么参数）</li>
+  </ol>
+  <p>缺了任何一环——你的回测结果就是"不可复现的"，等于没有科学意义。</p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 最容易漏掉的一环</div>
+  <p><strong>因子计算公式的版本也得锁定。</strong>即使数据一模一样，如果你把"动量"的定义从"过去60天涨幅"改成了"过去90天涨幅"——因子层的输出全变了。版本控制不只是数据的事——代码、数据、因子定义、参数，四位一体。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么金融数据需要版本控制而普通App的数据通常不需要？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 金融数据更多</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 金融数据会被"事后修正"——你1月份查的GDP和6月份查的同一年GDP可能不一样。不锁定数据版本→每次回测结果不同→策略好坏无法判断→回测结果失去科学意义</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 都一样，不需要</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. Git更好用</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 你的回测显示夏普比率2.0（衡量风险调整后收益的指标，越高越好），别人说"我复现只有0.8"。不是你的代码有问题——是你跑回测时的数据和现在不一样。没有数据版本控制，量化研究就不叫"科学"。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">"完全可复现的回测"需要锁定哪三样东西？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 时间、地点、人物</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 代码版本（Git）+ 数据版本（DVC）+ 参数版本（配置文件）。三位一体。缺了任何一个，换个人（或换台电脑）就跑不出同样的结果</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. CPU、内存、硬盘</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不需要锁定</button>
+  <div class="quiz-result"><strong>答案：B。</strong> "可复现"是科学的底线。如果你的回测只有你自己能跑出来——那和算命有什么区别？代码+数据+参数，三把锁只缺一把都不行。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '🛰️ 模块四：另类数据——当传统数据不够用了',
+    lessons: [
+      {
+        id: 'alt-data',
+        title: '另类数据：别人还在挖金矿，你已经找到了新河',
+        emoji: '🛰️',
+        content: `
+<h3>第一条河的金子快被淘光了</h3>
+
+<div class="analogy">
+  <div class="label">🛰️ 淘金热的故事</div>
+  <p>第一条河被发现有金子→最早去的那批人赚翻了→消息传开→越来越多人涌来→每条河里金子越来越少。</p>
+  <p><strong>PE、ROE、动量——这些传统指标就是"第一条河"。</strong>几十年前当你最早用它们选股的时候——Alpha（超额收益，你可以理解为"比别人多赚的钱"）很肥。今天所有人都知道了——超额收益变薄了，变成Beta（市场平均收益，你可以理解为"跟着大盘走就能赚到的钱"）。</p>
+  <p><span class="hl">另类数据=还没被注意到的新河。</span>它不是替代传统数据——是提供传统数据没有的信息维度。别人还在第一条河里死磕，你已经找到新的水源了。</p>
+</div>
+
+<h3>三种另类数据，三种不同玩法</h3>
+
+<div class="deep">
+  <div class="label">🛰️ 从卫星到社交媒体——三座新金矿</div>
+  <table>
+    <tr><th>类型</th><th>数据从哪来</th><th>能告诉你什么</th><th>上手难度</th></tr>
+    <tr><td><strong>卫星图像</strong></td><td>卫星拍的地面照片</td><td>数停车场里有多少车→预测零售商的客流→推测营收；看油罐的影子→推测原油库存→预测油价</td><td>高——需要图像识别技术</td></tr>
+    <tr><td><strong>另类消费数据</strong></td><td>信用卡刷卡流水、电商评论、App下载量</td><td>追踪消费趋势——比官方财报早1-2个月。比如某品牌App下载量暴增→下一季度财报大概率不错</td><td>中——需要文本分析+去噪音</td></tr>
+    <tr><td><strong>社交媒体情绪</strong></td><td>即刻/雪球/股吧帖子里的语气和态度</td><td>散户情绪——太乐观往往意味着顶部临近；机构关注度——被频繁讨论的股票可能有机会</td><td>低——你从帖子语气就能感受到</td></tr>
+  </table>
+</div>
+
+<h3>停车场的故事——量化界的007</h3>
+
+<div class="analogy">
+  <div class="label">🛰️ 沃尔玛停车场里藏着什么？</div>
+  <p>你无法提前知道沃尔玛这个季度的营收——财报还有六周才发布。</p>
+  <p><strong>但你可以数停车场里的车。</strong>用卫星照片+计算机视觉模型（可以理解为"自动识别图片内容的技术"）→自动数出全球主要零售商店的停车场饱和度。过去三个月平均比上季度多15%→这个季度营收大概率超预期。</p>
+  <p>六周——从你知道到市场知道。<span class="hl">这个时间差就是Alpha。</span></p>
+</div>
+
+<h3>社交媒体情绪——把"感觉"变成数字</h3>
+
+<div class="tip">
+  <div class="label">💡 从"我觉得大家都在看多"到"今天看多指数=0.72"</div>
+  <p>你的任务不是凭感觉判断市场情绪——而是把它变成可量化的数字：</p>
+  <ol>
+    <li><strong>收集帖子：</strong>把某股票相关的帖子/评论全部收过来</li>
+    <li><strong>打分：</strong>用NLP（自然语言处理，可以理解为"让计算机读懂文字情绪的技术"）给每条帖子打情绪分——-1是极度看空，+1是极度看多</li>
+    <li><strong>聚合：</strong>把当天所有帖子的得分综合成一个"日度情绪指数"</li>
+    <li><strong>验证：</strong>用历史数据回测——这个情绪指数能不能真的预测股价变动？如果能，且和传统指标不重复→加入你的"因子工具箱"</li>
+  </ol>
+  <p><span class="hl">关键：情绪指标必须和传统指标做"正交化"（你可以理解为"去重"——如果它只是PE/动量的影子，加了也没增量价值。必须自带独特信息）。</span></p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 另类数据的三个现实局限</div>
+  <p><strong>① 贵的真的很贵：</strong>高质量卫星图像、信用卡流水的年费可达六位数美元——个人投资者很难承担。从免费的开始：社交媒体公开内容、公开聚合数据。</p>
+  <p><strong>② 法律红线不能碰：</strong>爬取用户隐私数据（比如位置信息）是违法的。只使用公开可见的内容+聚合后的统计数据。</p>
+  <p><strong>③ 看到的"信号"可能是噪音：</strong>停车场多了≠营收好了——可能是竞争对手关门了，顾客被迫来这家。任何单一来源的另类数据都需要交叉验证。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">另类数据（比如卫星图像中的停车场密度）和传统财报数据最重要的区别是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 另类数据更准确</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 时效性——传统财报反映的是已经发生的事，另类数据捕捉正在发生的事。停车场密度在财报发布前六周就能透露营收趋势，这个时间差就是赚钱的窗口</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 另类数据更便宜</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不需要处理</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 另类数据不替代传统数据——是补充。它的核心价值在"更快"和"新维度"。别人等财报出来才反应，你六周前就有信号。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">社交媒体情绪指数怎么量化？用生活中的场景来说明。</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 凭感觉判断</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 收集帖子→给每条打分（-1看空到+1看多）→综合成日度情绪数字→回测验证是否真的能预测股价。就像你逛菜市场——听听大妈们在聊什么、语气是兴奋还是担忧——但把"感觉"精确到小数点</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 看新闻标题</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 问朋友</button>
+  <div class="quiz-result"><strong>答案：B。</strong> "情绪"听起来很玄学——但如果你每天给500条帖子打分取平均，你就得到了一个可以放进数学公式的数字。前提是：验证过它真的管用（而非凭感觉觉得管用）。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '🏭 模块五：实战——把你的知识变成系统',
+    lessons: [
+      {
+        id: 'real-align',
+        title: '当前状态与优化路线图',
+        emoji: '🏭',
+        content: `
+<h3>你现在有什么（截至2026年5月）</h3>
+
+<div class="deep">
+  <div class="label">🏭 已有基础一览</div>
+  <table>
+    <tr><th>组件</th><th>状态</th><th>覆盖范围</th></tr>
+    <tr><td><strong>mootdx（通达信底层连接）</strong></td><td>✅ 稳定运行</td><td>全A股日线/分钟线</td></tr>
+    <tr><td><strong>akshare（Python数据工具）</strong></td><td>✅ 广度足够</td><td>财务/宏观/资金流向/行业分类</td></tr>
+    <tr><td><strong>东财/雪球直连</strong></td><td>✅ 深度补充</td><td>股东数据/深度财务/实时行情</td></tr>
+    <tr><td><strong>PostgreSQL存储</strong></td><td>✅ 核心就绪</td><td>21家公司全量+37行业周期数据</td></tr>
+    <tr><td><strong>因子计算</strong></td><td>🟡 有雏形</td><td>基本面因子已算，待系统化</td></tr>
+    <tr><td><strong>信号融合（买卖决策）</strong></td><td>🔴 空白</td><td>多因子综合→交易清单生成</td></tr>
+  </table>
+</div>
+
+<h3>三步走：把现有系统装进"四层楼"</h3>
+
+<div class="tip">
+  <div class="label">💡 不是推倒重建——是给现有系统穿上标准化外衣</div>
+  <p><strong>第一步——原始层：</strong>每次从数据源抓数据时，加一个"原样存档"步骤。不改变任何现有逻辑，就是多存一份原始文件。</p>
+  <p><strong>第二步——清洗层：</strong>现有PostgreSQL数据已基本达标。需要检查的：①统一时区为UTC ②确认所有数据用的是同一种复权方式 ③建立交易日历表。</p>
+  <p><strong>第三步——因子层+信号层：</strong>把因子计算独立出来（因子版本管理），然后新建信号层——把多个因子综合成买卖信号。</p>
+</div>
+
+<h3>自动化：一觉醒来，数据已经更新好了</h3>
+
+<div class="analogy">
+  <div class="label">🏭 从手动→自动化</div>
+  <p>目前：21家公司的数据手动触发更新。</p>
+  <p>目标：</p>
+  <ul>
+    <li>每天下午3:30（收盘后半小时）→ 自动更新21家日线数据</li>
+    <li>每周末 → 自动更新资金流向（周频数据）</li>
+    <li>财报公告日+1天 → 自动更新最新财报</li>
+    <li>数据拉完 → 自动重新计算所有因子 → 自动刷新仪表盘</li>
+  </ul>
+  <p><span class="hl">实现方式：Airflow或Prefect——一个"定时任务编排工具"。</span>就像手机闹钟——到点自动触发指定的任务链。不需要复杂的服务器部署，单机就能跑。</p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 自动化之前必做的四道保险</div>
+  <p><strong>① 限流器就位——</strong>自动抓取没有人盯着，超限被ban了你自己都不知道</p>
+  <p><strong>② 异常告警——</strong>某只股票数据量不足预期的80%→自动通知你</p>
+  <p><strong>③ 保留手动入口——</strong>自动化管道也要能手动触发，应对意外情况</p>
+  <p><strong>④ 先"影子运行"一周——</strong>让新管道在后台跑但是不写入数据库，观察错误率→确认稳定后再正式"上岗"。就像新厨师先试做一周，不上菜给顾客</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">自动化数据管道上线前，最重要的准备是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 直接上线试试</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 先"影子运行"一周——新管道在后台正常工作但不影响生产数据。这周里所有的问题都会暴露（漏数据、频率超限、网络中断），修复后再正式切换。就像新厨师先试做一周不上菜</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 不需要准备</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 买更好的服务器</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 影子模式（Shadow Mode）是从手动到自动化的标准过渡方式。在真实数据流中测试但不影响实际数据——所有问题在"影子"中暴露，不会造成任何破坏。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">把现有的"6层8源"系统升级到"4层标准"，核心思路是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 全部删了重建</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 不是推倒重建——是给现有系统"穿衣服"。在现有采集逻辑上加一个原始存档步骤（原始层），在现有数据库上加时区统一和复权检查（清洗层），把因子计算独立出来（因子层），新建信号融合模块（信号层）。每一步都是增量改进</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 增加更多数据源</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 把数据都删了</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 标准化不是革命——是改良。已有的数据不需要动，只需在每个环节按"四层楼"的职责对号入座。缺哪层补哪层。</div>
+</div>
+        `
+      },
+      {
+        id: 'glossary',
+        title: '📖 术语表：那些你刚才学到的词',
+        emoji: '📖',
+        content: '<h3>数据工程核心术语速查</h3><div class="deep"><div class="label">📖 本课涉及的全部关键术语</div><table><tr><th>中文</th><th>English</th><th>用一句话理解</th></tr><tr><td><strong>数据管道</strong></td><td><code>Data Pipeline</code></td><td>从"买菜"到"上菜"的自动化流水线——采集→清洗→存储→分发</td></tr><tr><td><strong>多源异构</strong></td><td><code>Multi-source Heterogeneous</code></td><td>数据来自不同的"菜市场"且用不同的"语言"→需要统一的"翻译窗口"</td></tr><tr><td><strong>增量更新</strong></td><td><code>Incremental Update</code></td><td>只取上次之后新增的——像下载电影从80%接着下，不重下全部</td></tr><tr><td><strong>断点续传</strong></td><td><code>Checkpoint/Resume</code></td><td>像做Excel时随时保存——断了从上次保存的地方继续，不重来</td></tr><tr><td><strong>限流</strong></td><td><code>Rate Limiting</code></td><td>控制请求速度不超过数据源的"肚量"——像超市限购</td></tr><tr><td><strong>熔断</strong></td><td><code>Circuit Breaker</code></td><td>连续失败→自动暂停→等一会儿再试→像微波炉过热自动停</td></tr><tr><td><strong>指数退避</strong></td><td><code>Exponential Backoff</code></td><td>重试间隔逐次加倍（1秒→2秒→4秒→8秒）——给数据源喘气时间</td></tr><tr><td><strong>ELT</strong></td><td><code>Extract-Load-Transform</code></td><td>先原样取回来→再洗好存起来→最后加工成成品。数据源变了不怕</td></tr><tr><td><strong>时间戳对齐</strong></td><td><code>Timestamp Alignment</code></td><td>把所有不同时区的"表"统一到同一把标尺上——全部转UTC</td></tr><tr><td><strong>前复权</strong></td><td><code>Forward-Adjusted</code></td><td>把历史价格按今天的股本重新算——因子计算专用，保证可比</td></tr><tr><td><strong>后复权</strong></td><td><code>Backward-Adjusted</code></td><td>维持每个历史时点的"原样视角"——回测专用，保证真实</td></tr><tr><td><strong>前视偏差</strong></td><td><code>Look-Ahead Bias</code></td><td>回测中"偷看了剧透"——用了当时市场还不知道的信息。致命错误</td></tr><tr><td><strong>交易日历</strong></td><td><code>Trading Calendar</code></td><td>记录哪些天开市、哪些天休市——就像知道不同国家的"周末"是哪天</td></tr><tr><td><strong>数据分层</strong></td><td><code>Data Layering</code></td><td>原始→清洗→因子→信号——像自来水厂的四道工序，每道只管一件事</td></tr><tr><td><strong>数据版本控制</strong></td><td><code>Data Version Control (DVC)</code></td><td>给数据打版本号——像Git管代码一样管数据。代码+数据+参数=完全可复现</td></tr><tr><td><strong>幂等性</strong></td><td><code>Idempotency</code></td><td>同一件事做一百遍结果不变——重复跑不会产生重复数据</td></tr><tr><td><strong>时序数据库</strong></td><td><code>Time-Series Database</code></td><td>专门为"时间+数值"这种数据优化的数据库——查历史行情特别快</td></tr><tr><td><strong>HyperTable</strong></td><td><code>Hypertable (TimescaleDB)</code></td><td>自动按时间分区+压缩——让普通表升级成时序表的功能</td></tr><tr><td><strong>另类数据</strong></td><td><code>Alternative Data</code></td><td>传统财报/行情之外的数据——卫星图、社媒情绪、消费流水——新的Alpha来源</td></tr><tr><td><strong>NLP情绪分析</strong></td><td><code>Sentiment Analysis</code></td><td>让计算机"读懂"文字里的情绪——是兴奋、愤怒还是担忧</td></tr><tr><td><strong>影子模式</strong></td><td><code>Shadow Mode</code></td><td>新管道在后台跑但不影响真实数据——先观察一周再正式上。像新厨师先试做不上菜</td></tr><tr><td><strong>事件溯源</strong></td><td><code>Event Sourcing</code></td><td>每一条数据每次变化都记录下来——理论上可以"倒带"到任意历史时刻</td></tr><tr><td><strong>公告日对齐</strong></td><td><code>Announcement-Date Alignment</code></td><td>保证策略只在"市场知道信息之后"才用信息——不"偷看"</td></tr></table></div>'
+      },
+      {
+        id: 'quiz-mod5',
+        title: '🧪 综合测验',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '你同时从三个数据源获取数据，它们返回的格式都不一样。最好的做法是什么？',
+              options: ['分别写三套处理代码', '设计一个统一"点菜窗口"——每个数据源对接这个窗口，你只用一套标准方式调用。换数据源不改任何代码', '只用最快那个', '手动复制粘贴'],
+              correct: 1,
+              explain: '统一抽象层=外卖App。后面有多少家饭店你不管，你永远用同样的方式点菜。'
+            },
+            {
+              q: '如果某个数据源突然不可用了（比如被限流了），你的系统应该怎么反应？',
+              options: ['报错停止', '先自动重试（指数退避）→还不通就自动切备用数据源→都不可用就用昨天的缓存数据+发送告警通知你', '一直重试', '不管，跳过'],
+              correct: 1,
+              explain: '生产级系统的核心=优雅降级。主源挂了用备源，备源挂了用缓存，全挂了发告警——系统不崩、数据不丢。'
+            },
+            {
+              q: '"公告日对齐"要防止的是什么问题？',
+              options: ['公告写得不对', '前视偏差——模型在公告日当天就用了收盘后才发布的财报数据，等于"偷看答案"。正确做法是公告日+1交易日才更新因子', '公告太长', '不需要对齐'],
+              correct: 1,
+              explain: '看起来只是"差了几个小时"——但重大财报公告后的价格波动往往最剧烈，这几个小时足以让全部回测结果高估10%以上。'
+            },
+            {
+              q: '数据分四层存放，和全存在一起最大的区别是什么？',
+              options: ['多占空间', '出问题时能一层一层往回追——信号不对查因子、因子不对查清洗、清洗不对查原始。没分层=错了不知道哪步出的问题', '分层太麻烦', '没区别'],
+              correct: 1,
+              explain: '分层=给每个步骤建立"问责制"。数据出错时能精准定位到哪一层、哪一步——而非在大锅里捞针。'
+            },
+            {
+              q: '另类数据在量化中最重要的价值是什么？',
+              options: ['数量更多', '时效性+新维度——传统数据说的是"过去发生了什么"，另类数据说的是"现在正在发生什么"。这个时间差就是超额收益的来源', '比传统数据准确', '更好看'],
+              correct: 1,
+              explain: '另类数据不替代传统数据——互补。核心优势在"更快"和"别人还没有"。'
+            }
+          ]
+        }
+      }
+    ]
+  }
+];
+
+// ===== APP STATE =====
+let completedLessons = new Set(JSON.parse(localStorage.getItem(P + 'completed') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem(P + 'quiz_results') || '{}');
+let currentSection = null;
+let finalExamDone = finalExam.questions.every((_,i) => quizResults['final_' + i] !== undefined);
+
+function save() {
+  localStorage.setItem(P + 'completed', JSON.stringify([...completedLessons]));
+  localStorage.setItem(P + 'quiz_results', JSON.stringify(quizResults));
+}
+
+function quickQuiz(btn, correctChoice) {
+  const card = btn.closest('.quiz-card');
+  if (card.dataset.answered) return;
+  card.dataset.answered = 'true';
+  const options = card.querySelectorAll('.quiz-option');
+  options.forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    if (i === correctChoice) o.classList.add('correct');
+    else o.classList.add('wrong');
+  });
+  const result = card.querySelector('.quiz-result');
+  if (result) { result.classList.add('show'); }
+}
+
+function calcProgress() {
+  let total = 0;
+  modules.forEach(m => { total += m.lessons.length; });
+  total += finalExam.questions.length;
+  let done = completedLessons.size;
+  for (let i = 0; i < finalExam.questions.length; i++) {
+    if (quizResults['final_' + i] !== undefined) done++;
+  }
+  return Math.round((done / total) * 100);
+}
+
+function updateUI() {
+  const pct = calcProgress();
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+  const nav = document.getElementById('navContainer');
+  let html = '';
+  modules.forEach((mod) => {
+    html += '<div class="nav-module-title">' + mod.title + '</div>';
+    mod.lessons.forEach((lesson) => {
+      const id = lesson.id;
+      const done = completedLessons.has(id);
+      const active = currentSection === id;
+      html += '<div class="nav-item' + (active ? ' active' : '') + (done ? ' done' : '') + '" onclick="navigateTo(\'' + id + '\')">';
+      html += '<span class="check">' + (done ? '✅' : lesson.emoji || '📖') + '</span>';
+      html += lesson.title + '</div>';
+    });
+  });
+  html += '<div class="nav-item' + (currentSection === 'final' ? ' active' : '') + (finalExamDone ? ' done' : '') + '" onclick="navigateTo(\'final\')">';
+  html += '<span class="check">' + (finalExamDone ? '✅' : '🏆') + '</span> 终极测验</div>';
+  nav.innerHTML = html;
+}
+
+function navigateTo(id) {
+  currentSection = id;
+  updateUI();
+  renderContent(id);
+  window.scrollTo(0, 0);
+}
+
+function renderContent(id) {
+  const main = document.getElementById('mainContent');
+  if (id === 'final') { renderFinalExam(main); return; }
+  let lesson = null, modIndex = -1, lesIndex = -1;
+  for (let mi = 0; mi < modules.length; mi++) {
+    for (let li = 0; li < modules[mi].lessons.length; li++) {
+      if (modules[mi].lessons[li].id === id) {
+        lesson = modules[mi].lessons[li]; modIndex = mi; lesIndex = li; break;
+      }
+    }
+    if (lesson) break;
+  }
+  if (!lesson) { main.innerHTML = '<p>课程未找到</p>'; return; }
+  let html = '';
+  if (lesson.quiz) {
+    const savedAnswers = quizResults[id] || [];
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">共' + lesson.quiz.questions.length + '题</div>';
+    lesson.quiz.questions.forEach((q, qi) => {
+      const ua = savedAnswers[qi];
+      const answered = ua !== undefined;
+      const isCorrect = answered && ua === q.correct;
+      html += '<div class="quiz-card"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+      html += '<div class="quiz-question">' + q.q + '</div>';
+      q.options.forEach((opt, oi) => {
+        let cls = 'quiz-option';
+        if (answered && oi === q.correct) cls += ' correct';
+        if (answered && oi === ua && oi !== q.correct) cls += ' wrong';
+        html += '<button class="' + cls + '" onclick="answerQuiz(\'' + id + '\', ' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+      });
+      if (answered) {
+        html += '<div class="quiz-result show ' + (isCorrect ? 'pass' : 'fail') + '">';
+        html += '<strong>' + (isCorrect ? '✅ 正确！' : '❌ 不太对') + '</strong><p>' + (q.explain || '') + '</p></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">' + modules[modIndex].title.replace(/^[^\s]+\s/, '') + '</div>';
+    html += lesson.content;
+    html += '</div>';
+    markComplete(id);
+  }
+  html += '<div class="nav-btns">';
+  let prevId = null;
+  if (lesIndex > 0) prevId = modules[modIndex].lessons[lesIndex - 1].id;
+  else if (modIndex > 0) { const pm = modules[modIndex - 1]; prevId = pm.lessons[pm.lessons.length - 1].id; }
+  if (prevId) html += '<button class="btn btn-secondary" onclick="navigateTo(\'' + prevId + '\')">⬅ 上一节</button>';
+  else html += '<div></div>';
+  let nextId = null;
+  if (lesIndex < modules[modIndex].lessons.length - 1) nextId = modules[modIndex].lessons[lesIndex + 1].id;
+  else if (modIndex < modules.length - 1) nextId = modules[modIndex + 1].lessons[0].id;
+  if (nextId) html += '<button class="btn btn-primary" onclick="navigateTo(\'' + nextId + '\')">下一节 ➡</button>';
+  else html += '<button class="btn btn-success" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>';
+  html += '</div>';
+  main.innerHTML = html;
+}
+
+function answerQuiz(lessonId, qi, choice) {
+  if (!quizResults[lessonId]) quizResults[lessonId] = [];
+  quizResults[lessonId][qi] = choice;
+  save();
+  const lesson = modules.flatMap(m => m.lessons).find(l => l.id === lessonId);
+  if (lesson && lesson.quiz && quizResults[lessonId].length === lesson.quiz.questions.length) {
+    const allAnswered = quizResults[lessonId].every(v => v !== undefined);
+    if (allAnswered) markComplete(lessonId);
+  }
+  renderContent(lessonId);
+}
+
+function markComplete(id) {
+  if (!completedLessons.has(id)) {
+    completedLessons.add(id);
+    save();
+  }
+}
+
+function renderFinalExam(main) {
+  let html = '<div class="lesson-card"><h2>🏆 终极测验</h2><div class="meta">共' + finalExam.questions.length + '题 — 检验你对数据工程的掌握</div>';
+  finalExam.questions.forEach((q, qi) => {
+    const ua = quizResults['final_' + qi];
+    const answered = ua !== undefined;
+    const isCorrect = answered && ua === q.correct;
+    html += '<div class="quiz-card"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+    html += '<div class="quiz-question">' + q.q + '</div>';
+    q.options.forEach((opt, oi) => {
+      let cls = 'quiz-option';
+      if (answered && oi === q.correct) cls += ' correct';
+      if (answered && oi === ua && oi !== q.correct) cls += ' wrong';
+      html += '<button class="' + cls + '" onclick="answerFinalExam(' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+    });
+    html += '</div>';
+  });
+  if (finalExamDone) {
+    const score = finalExam.questions.filter((q, i) => quizResults['final_' + i] === q.correct).length;
+    const total = finalExam.questions.length;
+    const passed = score / total >= 0.6;
+    html += '<div class="lesson-card" style="text-align:center"><h2>' + (passed ? '🎉 恭喜通过！' : '📚 还需要再练练') + '</h2>';
+    html += '<p style="font-size:2em;margin:20px 0">' + score + ' / ' + total + '</p>';
+    html += '<p>' + (passed ? '你已经掌握了数据工程在量化中的核心概念！数据管道+清洗对齐+存储分层+另类数据——量化系统的地基已经打好。' : '建议复习薄弱环节后再试。') + '</p>';
+    if (!passed) {
+      const wrong = finalExam.questions.map((q, i) => ({ q, i })).filter(x => quizResults['final_' + x.i] !== x.q.correct);
+      html += '<div style="margin-top: 16px; text-align: left;"><p style="color: var(--accent2);">需要复习的题目：</p>';
+      wrong.forEach(w => { html += '<p style="color:var(--sub);font-size:0.9em">• ' + w.q.q.substring(0, 60) + '…</p>'; });
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  main.innerHTML = html;
+}
+
+function answerFinalExam(qi, choice) {
+  quizResults['final_' + qi] = choice;
+  if (finalExam.questions.every((_, i) => quizResults['final_' + i] !== undefined)) finalExamDone = true;
+  save();
+  renderFinalExam(document.getElementById('mainContent'));
+}
+
+function resetAll() {
+  localStorage.removeItem(P + 'completed');
+  localStorage.removeItem(P + 'quiz_results');
+  location.reload();
+}
+
+// ===== INIT =====
+(function init() {
+  currentSection = 'warmup-intro';
+  updateUI();
+  renderContent('warmup-intro');
+})();
+</script>
+</body>
+</html>

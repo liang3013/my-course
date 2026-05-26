@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI与机器学习 · 量化投研核心引擎</title>
+<style>
+:root {
+  --bg: #06080d; --card: #0e131f; --card2: #151c2b; --border: #253049;
+  --text: #e4eaf2; --sub: #7c8aa2;
+  --c1: #40a8e0; --c1d: #1a6fc4; --c2: #2dd4bf; --c2d: #0d9488;
+  --c3: #a880e0; --c3d: #7c5cbf; --c4: #e28413; --c4d: #c07a20;
+  --c5: #e86040; --c5d: #c0392b;
+  --radius: 18px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system,'SF Pro Display','PingFang SC',sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.7;
+  min-height:100vh; overflow-x:hidden;
+}
+
+.hero {
+  text-align:center; padding:72px 24px 56px;
+  background:linear-gradient(180deg, rgba(64,168,224,0.08) 0%, rgba(45,212,191,0.04) 50%, var(--bg) 100%);
+}
+.hero .badges { margin-bottom:16px; }
+.hero .badge {
+  display:inline-block; padding:5px 16px; border-radius:20px; font-size:0.8em; margin:0 6px;
+  background:rgba(64,168,224,0.12); color:#58c4f0; border:1px solid rgba(64,168,224,0.2);
+}
+.hero h1 { font-size:3em; font-weight:800; letter-spacing:-0.5px; margin-bottom:12px; }
+.hero h1 span.g1 { background:linear-gradient(135deg,#40a8e0,#2dd4bf); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero h1 span.g2 { background:linear-gradient(135deg,#a880e0,#e28413,#e86040); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero .subtitle { font-size:1.15em; color:var(--sub); max-width:680px; margin:0 auto 28px; }
+.hero .stats { display:flex; justify-content:center; gap:40px; margin-top:8px; flex-wrap:wrap; }
+.hero .stat .n { font-size:1.6em; font-weight:800; }
+.hero .stat .l { font-size:0.82em; color:var(--sub); }
+
+.courses { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px; max-width:1400px; margin:0 auto; padding:0 24px 48px; }
+.course-card {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:26px 20px; cursor:pointer; transition:.25s; position:relative; overflow:hidden;
+  display:flex; flex-direction:column; text-decoration:none; color:inherit;
+}
+.course-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,0.4); }
+.course-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+}
+.course-card:nth-child(1)::before { background:linear-gradient(90deg,var(--c1),var(--c1d)); }
+.course-card:nth-child(2)::before { background:linear-gradient(90deg,var(--c2),var(--c2d)); }
+.course-card:nth-child(3)::before { background:linear-gradient(90deg,var(--c3),var(--c3d)); }
+.course-card:nth-child(4)::before { background:linear-gradient(90deg,var(--c4),var(--c4d)); }
+.course-card:nth-child(5)::before { background:linear-gradient(90deg,var(--c5),var(--c5d)); }
+
+.course-card .num {
+  display:inline-block; padding:3px 12px; border-radius:12px; font-size:0.7em;
+  font-weight:700; margin-bottom:12px; letter-spacing:0.5px; width:fit-content;
+}
+.course-card:nth-child(1) .num { background:rgba(64,168,224,0.12); color:var(--c1); }
+.course-card:nth-child(2) .num { background:rgba(45,212,191,0.12); color:var(--c2); }
+.course-card:nth-child(3) .num { background:rgba(168,128,224,0.12); color:var(--c3); }
+.course-card:nth-child(4) .num { background:rgba(226,132,19,0.12); color:var(--c4); }
+.course-card:nth-child(5) .num { background:rgba(232,96,64,0.12); color:var(--c5); }
+
+.course-card:nth-child(1):hover { border-color:var(--c1); }
+.course-card:nth-child(2):hover { border-color:var(--c2); }
+.course-card:nth-child(3):hover { border-color:var(--c3); }
+.course-card:nth-child(4):hover { border-color:var(--c4); }
+.course-card:nth-child(5):hover { border-color:var(--c5); }
+
+.course-card .icon { font-size:2.2em; margin-bottom:10px; }
+.course-card h3 { font-size:1.1em; margin-bottom:4px; line-height:1.3; }
+.course-card .tagline { font-size:0.82em; color:var(--sub); margin-bottom:12px; line-height:1.5; flex:1; }
+.course-card .tools { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px; }
+.course-card .tool-tag {
+  font-size:0.7em; padding:2px 8px; border-radius:10px;
+  background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--sub);
+}
+.course-card .meta { font-size:0.74em; color:var(--sub); margin-top:auto; padding-top:12px; border-top:1px solid var(--border); }
+
+.path { max-width:900px; margin:0 auto 64px; padding:0 24px; }
+.path h2 { text-align:center; font-size:1.5em; margin-bottom:8px; }
+.path .path-hint { text-align:center; color:var(--sub); font-size:0.84em; margin-bottom:36px; }
+.timeline { position:relative; padding-left:28px; }
+.timeline::before {
+  content:''; position:absolute; left:12px; top:0; bottom:0; width:2px;
+  background:linear-gradient(180deg,var(--c1),var(--c2),var(--c3),var(--c4),var(--c5));
+}
+.tl-item { position:relative; margin-bottom:24px; padding-left:28px; }
+.tl-item::before {
+  content:''; position:absolute; left:-20px; top:6px; width:18px; height:18px;
+  border-radius:50%; border:3px solid; background:var(--bg);
+}
+.tl-item:nth-child(1)::before { border-color:var(--c1); }
+.tl-item:nth-child(2)::before { border-color:var(--c2); }
+.tl-item:nth-child(3)::before { border-color:var(--c3); }
+.tl-item:nth-child(4)::before { border-color:var(--c4); }
+.tl-item:nth-child(5)::before { border-color:var(--c5); }
+.tl-item h4 { font-size:1em; margin-bottom:4px; }
+.tl-item p { font-size:0.84em; color:var(--sub); }
+
+.overview { max-width:1100px; margin:0 auto 56px; padding:0 28px; }
+.overview h2 { text-align:center; font-size:1.5em; margin-bottom:28px; }
+.ov-table { width:100%; border-collapse:collapse; font-size:0.88em; }
+.ov-table th { background:var(--border); padding:14px 16px; text-align:left; font-weight:600; font-size:0.82em; text-transform:uppercase; letter-spacing:1px; color:var(--sub); }
+.ov-table td { padding:14px 16px; border-bottom:1px solid var(--border); }
+.ov-table tr:hover td { background:rgba(255,255,255,0.02); }
+.ov-table .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; }
+.ov-table .dot.d1 { background:var(--c1); }
+.ov-table .dot.d2 { background:var(--c2); }
+.ov-table .dot.d3 { background:var(--c3); }
+.ov-table .dot.d4 { background:var(--c4); }
+.ov-table .dot.d5 { background:var(--c5); }
+
+.footer { text-align:center; padding:40px 24px; color:var(--sub); font-size:0.82em; border-top:1px solid var(--border); }
+.footer strong { color:var(--text); }
+
+/* Glossary Search */
+.glossary-search { max-width:900px; margin:0 auto 56px; padding:0 28px; }
+.glossary-search h2 { text-align:center; font-size:1.5em; margin-bottom:8px; }
+.glossary-search .search-hint { text-align:center; color:var(--sub); font-size:0.84em; margin-bottom:24px; }
+.search-box { position:relative; max-width:640px; margin:0 auto 20px; }
+.search-box input { width:100%; padding:14px 48px 14px 20px; border-radius:14px; background:var(--card); border:2px solid var(--border); color:var(--text); font-size:1em; outline:none; transition:.25s; }
+.search-box input:focus { border-color:var(--c1); box-shadow:0 0 0 4px rgba(64,168,224,0.08); }
+.search-box input::placeholder { color:var(--sub); }
+.search-box .search-icon { position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:1.2em; color:var(--sub); pointer-events:none; }
+.search-box .clear-btn { position:absolute; right:44px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--sub); font-size:1.1em; cursor:pointer; padding:4px 8px; border-radius:6px; display:none; }
+.search-box .clear-btn:hover { color:var(--text); background:var(--card2); }
+.search-box .clear-btn.show { display:block; }
+.search-stats { text-align:center; color:var(--sub); font-size:0.82em; margin-bottom:12px; }
+.cat-chips { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+.cat-chip { padding:6px 16px; border-radius:20px; cursor:pointer; font-size:0.82em; background:var(--card); border:1px solid var(--border); color:var(--sub); transition:.2s; user-select:none; }
+.cat-chip:hover { border-color:rgba(64,168,224,0.4); color:var(--text); }
+.cat-chip.active { background:rgba(64,168,224,0.12); border-color:var(--c1); color:var(--c1); font-weight:600; }
+.glossary-results { display:flex; flex-direction:column; gap:10px; max-width:800px; margin:0 auto; max-height:60vh; overflow-y:auto; }
+.glossary-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 22px; transition:.2s; }
+.glossary-card:hover { border-color:var(--c1); background:var(--card2); }
+.glossary-card .term-row { display:flex; align-items:baseline; gap:10px; margin-bottom:6px; flex-wrap:wrap; }
+.glossary-card .term-cn { font-size:1.05em; font-weight:700; color:var(--text); }
+.glossary-card .term-en { font-size:0.86em; color:var(--c1); font-family:'SF Mono','JetBrains Mono',monospace; }
+.glossary-card .term-badge { display:inline-block; padding:2px 10px; border-radius:10px; font-size:0.7em; font-weight:600; margin-left:auto; }
+.glossary-card .term-badge.c01 { background:rgba(64,168,224,0.12); color:var(--c1); }
+.glossary-card .term-badge.c02 { background:rgba(45,212,191,0.12); color:var(--c2); }
+.glossary-card .term-badge.c03 { background:rgba(168,128,224,0.12); color:var(--c3); }
+.glossary-card .term-badge.c04 { background:rgba(226,132,19,0.12); color:var(--c4); }
+.glossary-card .term-badge.c05 { background:rgba(232,96,64,0.12); color:var(--c5); }
+.glossary-card .term-def { font-size:0.86em; color:var(--sub); line-height:1.6; }
+.no-results { text-align:center; padding:40px 20px; color:var(--sub); font-size:0.95em; }
+.no-results .emoji { font-size:2.5em; display:block; margin-bottom:12px; }
+
+@media(max-width:768px) {
+  .hero h1 { font-size:2em; }
+  .hero .stats { gap:24px; }
+  .courses { grid-template-columns:1fr; }
+  .ov-table { font-size:0.75em; }
+}
+/* Back Bar */
+.back-bar { position:sticky; top:0; z-index:100; background:rgba(14,19,31,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:10px 24px; display:flex; align-items:center; }
+.back-btn { display:inline-flex; align-items:center; gap:8px; color:var(--sub); text-decoration:none; font-size:0.85em; font-weight:600; padding:6px 16px; border-radius:10px; transition:.2s; border:1px solid transparent; }
+.back-btn:hover { color:var(--text); background:rgba(255,255,255,0.06); border-color:var(--border); }
+.back-btn .arr { font-size:1.1em; }
+.back-bar .crumb { font-size:0.78em; color:#555d6d; margin-left:8px; }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a href="../课程首页_量化交易实战系列课程.html" class="back-btn">
+    <span class="arr">←</span> 返回系列总首页
+  </a>
+  <span class="crumb">量化交易实战系列课程</span>
+</div>
+
+<div class="hero">
+  <div class="badges">
+    <span class="badge">🤖 机器学习</span>
+    <span class="badge">📊 量化投研</span>
+    <span class="badge">🧠 六门课程</span>
+  </div>
+  <h1>
+    <span class="g1">AI与机器学习</span><br>
+    <span class="g2">量化投研核心引擎</span>
+  </h1>
+  <p class="subtitle">
+    从XGBoost到强化学习，从NLP到知识图谱。<br>
+    不是成为程序员——是成为能设计「智能投研系统」的架构师。
+  </p>
+  <div class="stats">
+    <div class="stat"><div class="n">6</div><div class="l">门交互式课程</div></div>
+    <div class="stat"><div class="n">由浅入深</div><div class="l">渐进式学习</div></div>
+    <div class="stat"><div class="n">60+</div><div class="l">核心概念</div></div>
+    <div class="stat"><div class="n">30+</div><div class="l">代码示例</div></div>
+    <div class="stat"><div class="n">50+</div><div class="l">随堂测验</div></div>
+  </div>
+</div>
+
+<div class="courses">
+  <a href="01_机器学习入门.html" class="course-card">
+    <div class="num">🟢 第一课 · 入门</div>
+    <div class="icon">🧠</div>
+    <h3>机器学习入门</h3>
+    <p class="tagline">ML是什么？有监督vs无监督·XGBoost·HMM·过拟合防御。从零跑通第一个因子预测模型。</p>
+    <div class="tools"><span class="tool-tag">XGBoost</span><span class="tool-tag">LightGBM</span><span class="tool-tag">HMM</span><span class="tool-tag">PCA</span></div>
+    <div class="meta">先修：概率论基础</div>
+  </a>
+
+  <a href="02_金融NLP与文本挖掘.html" class="course-card">
+    <div class="num">🟡 第二课 · 进阶</div>
+    <div class="icon">📝</div>
+    <h3>金融NLP与文本挖掘</h3>
+    <p class="tagline">词向量→BERT·NER实体识别·情感分析·LLM微调。让AI读懂年报、研报和新闻。</p>
+    <div class="tools"><span class="tool-tag">BERT</span><span class="tool-tag">LoRA</span><span class="tool-tag">NER</span><span class="tool-tag">情感分析</span></div>
+    <div class="meta">先修：机器学习入门</div>
+  </a>
+
+  <a href="03_知识图谱与产业链.html" class="course-card">
+    <div class="num">🟠 第三课 · 应用</div>
+    <div class="icon">🕸️</div>
+    <h3>知识图谱与产业链</h3>
+    <p class="tagline">Neo4j图数据库·实体对齐·供应链穿透·社区发现。构建公司关系网络。</p>
+    <div class="tools"><span class="tool-tag">Neo4j</span><span class="tool-tag">NetworkX</span><span class="tool-tag">spaCy</span></div>
+    <div class="meta">先修：机器学习入门</div>
+  </a>
+
+  <a href="04_Agent量化接口.html" class="course-card">
+    <div class="num">🔴 第四课 · 系统</div>
+    <div class="icon">🔌</div>
+    <h3>Agent量化接口</h3>
+    <p class="tagline">Function Calling·信号输出·多空辩论·回测闭环。把Agent接入量化决策流水线。</p>
+    <div class="tools"><span class="tool-tag">LangChain</span><span class="tool-tag">API</span><span class="tool-tag">回测引擎</span></div>
+    <div class="meta">先修：ML入门 + Agent课程</div>
+  </a>
+
+  <a href="05_强化学习择时.html" class="course-card">
+    <div class="num">⚫ 第五课 · 前沿</div>
+    <div class="icon">🎮</div>
+    <h3>强化学习择时</h3>
+    <p class="tagline">MDP·DQN·投资惩罚函数·对抗训练。让Agent在模拟环境中自己学会择时。</p>
+    <div class="tools"><span class="tool-tag">Stable-Baselines3</span><span class="tool-tag">Gym</span><span class="tool-tag">FinRL</span></div>
+    <div class="meta">先修：ML入门 + Agent接口</div>
+  </a>
+
+  <a href="06_Python量化编程入门.html" class="course-card">
+    <div class="num">🚲 第六课 · 入门</div>
+    <div class="icon">🐍</div>
+    <h3>Python量化编程入门</h3>
+    <p class="tagline">零基础友好 · Pandas数据清洗 · akshare获取行情 · 因子计算 · 简单回测。编程不是目的，是放大你的投资能力。</p>
+    <div class="tools"><span class="tool-tag">Python</span><span class="tool-tag">Pandas</span><span class="tool-tag">akshare</span><span class="tool-tag">matplotlib</span></div>
+    <div class="meta">12节 · 零基础3节 · 实战小项目</div>
+  </a>
+</div>
+
+<div class="path">
+  <h2>🎯 渐进式学习路径</h2>
+  <p class="path-hint">从「会用工具」到「设计系统」——六门课构成完整AI量化技术栈</p>
+  <div class="timeline">
+    <div class="tl-item">
+      <h4>🚲 第零步：Python量化编程入门（2-3小时）</h4>
+      <p>零基础友好——从print("Hello")到用Pandas算因子IC、用akshare拉行情数据。编程不是目的，是放大你的投资能力。先修：无。</p>
+    </div>
+    <div class="tl-item">
+      <h4>🟢 第一步：机器学习入门（2-3小时）</h4>
+      <p>理解有监督/无监督学习的核心思想。跑通XGBoost因子模型，学会HMM周期识别。这是所有后续模块的地基。</p>
+    </div>
+    <div class="tl-item">
+      <h4>🟡 第二步：金融NLP（1.5-2小时）</h4>
+      <p>从词向量到BERT，从NER到情感分析。让AI像分析师一样阅读年报——提取关键信息，量化市场情绪。</p>
+    </div>
+    <div class="tl-item">
+      <h4>🟠 第三步：知识图谱（1.5-2小时）</h4>
+      <p>构建公司之间的关系网络——供应链、竞争、股权。当一家公司出事时，AI自动找到受影响的上下游。</p>
+    </div>
+    <div class="tl-item">
+      <h4>🔴 第四步：Agent量化接口（2-3小时）</h4>
+      <p>将前三课学到的ML/NLP/图谱能力封装为Agent的工具。多空辩论→信号融合→接入回测引擎。</p>
+    </div>
+    <div class="tl-item">
+      <h4>⚫ 第五步：强化学习择时（2-3小时）</h4>
+      <p>让Agent在模拟市场中自主学习——不靠人写规则，靠试错找到最优策略。这是量化AI的终极形态。</p>
+    </div>
+  </div>
+</div>
+
+<div class="overview">
+  <h2>📋 课程体系一览</h2>
+  <table class="ov-table">
+    <tr><th>课程</th><th>核心问题</th><th>你会学到</th><th>关键工具</th><th>量化落地</th></tr>
+    <tr>
+      <td><span class="dot d1"></span>ML入门</td>
+      <td>怎么让数据替你判断？</td>
+      <td>XGBoost·HMM·PCA·过拟合防御</td>
+      <td>scikit-learn, XGBoost</td>
+      <td>因子预测·周期识别</td>
+    </tr>
+    <tr>
+      <td><span class="dot d2"></span>金融NLP</td>
+      <td>怎么让AI读懂文本？</td>
+      <td>BERT微调·NER·情感分析·LLM</td>
+      <td>Transformers, spaCy</td>
+      <td>年报抽取·舆情监控</td>
+    </tr>
+    <tr>
+      <td><span class="dot d3"></span>知识图谱</td>
+      <td>公司之间什么关系？</td>
+      <td>实体对齐·路径分析·社区发现</td>
+      <td>Neo4j, NetworkX</td>
+      <td>供应链穿透·概念股识别</td>
+    </tr>
+    <tr>
+      <td><span class="dot d4"></span>Agent接口</td>
+      <td>Agent怎么接入量化？</td>
+      <td>Function Calling·多空辩论·信号融合</td>
+      <td>LangChain, API</td>
+      <td>投研决策流水线</td>
+    </tr>
+    <tr>
+      <td><span class="dot d5"></span>强化学习</td>
+      <td>机器能自己学会交易吗？</td>
+      <td>MDP·DQN·投资惩罚函数·对抗训练</td>
+      <td>SB3, FinRL</td>
+      <td>自适应轮动择时</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Glossary Search -->
+<div class="glossary-search" id="glossarySearch">
+  <h2>🔍 专用名词索引</h2>
+  <p class="search-hint">输入中文或英文，快速查找六门课程中的核心术语 · 共95+个术语</p>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="比如：过拟合、XGBoost、Self-Attention、Cypher…" autocomplete="off">
+    <button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
+    <span class="search-icon">🔍</span>
+  </div>
+  <div class="search-stats" id="searchStats"></div>
+  <div class="cat-chips" id="catChips">
+    <span class="cat-chip active" onclick="filterCat('all',this)">全部</span>
+    <span class="cat-chip" onclick="filterCat('01',this)">🧠 ML入门</span>
+    <span class="cat-chip" onclick="filterCat('02',this)">📝 金融NLP</span>
+    <span class="cat-chip" onclick="filterCat('03',this)">🕸️ 知识图谱</span>
+    <span class="cat-chip" onclick="filterCat('04',this)">🔌 Agent接口</span>
+    <span class="cat-chip" onclick="filterCat('05',this)">🎮 强化学习</span>
+  </div>
+  <div class="glossary-results" id="glossaryResults">
+    <div class="no-results"><span class="emoji">📖</span>输入关键词开始检索</div>
+  </div>
+</div>
+
+<div class="footer">
+  <p><strong>AI与机器学习 · 量化投研核心引擎</strong> · 纯前端 · 交互式 · 暗色主题</p>
+  <p style="margin-top:6px">基于「计算机科学与AI课程框架」构建 · 创建于 2026-05-23</p>
+</div>
+
+<script>
+const GLOSSARY = [
+  // 01 ML入门
+  {cn:'机器学习',en:'Machine Learning',def:'让计算机从数据中自动发现规律',course:'01'},
+  {cn:'过拟合',en:'Overfitting',def:'模型记住噪声而非规律——训练完美、测试翻车',course:'01'},
+  {cn:'欠拟合',en:'Underfitting',def:'模型太简单，连基本规律都没学到',course:'01'},
+  {cn:'特征工程',en:'Feature Engineering',def:'将原始数据转化为ML可用特征——决定80%表现',course:'01'},
+  {cn:'交叉验证',en:'Cross-Validation',def:'分多份轮流训练验证——防止背答案',course:'01'},
+  {cn:'XGBoost',en:'eXtreme Gradient Boosting',def:'梯度提升树——量化最常用的ML模型',course:'01'},
+  {cn:'SHAP值',en:'SHAP Values',def:'解释每个特征对单次预测的贡献',course:'01'},
+  {cn:'正则化',en:'Regularization',def:'给复杂度加惩罚——防过拟合(L1/L2)',course:'01'},
+  {cn:'隐马尔可夫模型',en:'Hidden Markov Model (HMM)',def:'从观测数据推断隐藏状态——周期识别核心武器',course:'01'},
+  {cn:'主成分分析',en:'Principal Component Analysis (PCA)',def:'高维压缩到低维——去除共线性',course:'01'},
+  {cn:'维度灾难',en:'Curse of Dimensionality',def:'维度越高数据越稀疏——因子数与样本数的硬约束',course:'01'},
+  {cn:'偏差-方差权衡',en:'Bias-Variance Tradeoff',def:'模型复杂度与泛化能力的根本矛盾',course:'01'},
+  {cn:'时间序列交叉验证',en:'TimeSeriesSplit',def:'训练集永远在验证集之前——金融ML专用',course:'01'},
+  {cn:'去极值',en:'Winsorization',def:'将极端值压平到边界——防止异常值污染模型',course:'01'},
+  // 02 NLP
+  {cn:'自然语言处理',en:'Natural Language Processing (NLP)',def:'让计算机理解、生成、分析人类语言',course:'02'},
+  {cn:'分词',en:'Tokenization',def:'将文本切分成词语——中文NLP第一步也是最大的坑',course:'02'},
+  {cn:'词向量',en:'Word Embedding',def:'将词语表示为稠密向量——语义近则距离近',course:'02'},
+  {cn:'BERT',en:'Bidirectional Encoder Representations from Transformers',def:'基于注意力的双向语言模型——同词不同义',course:'02'},
+  {cn:'自注意力',en:'Self-Attention',def:'每个词直接看到其他所有词——BERT核心',course:'02'},
+  {cn:'命名实体识别',en:'Named Entity Recognition (NER)',def:'自动识别文本中的人名/公司名/金额等实体',course:'02'},
+  {cn:'情感分析',en:'Sentiment Analysis',def:'判断文本情感——不只看正负还看强度和确定性',course:'02'},
+  {cn:'LoRA',en:'Low-Rank Adaptation',def:'只训练<1%参数让LLM适应特定领域',course:'02'},
+  {cn:'微调',en:'Fine-tuning',def:'在预训练模型上用领域数据继续训练',course:'02'},
+  {cn:'大语言模型',en:'Large Language Model (LLM)',def:'海量文本训练的巨型网络——ChatGPT属此类',course:'02'},
+  {cn:'幻觉',en:'Hallucination',def:'LLM编造不存在的事实——投资中必须审计',course:'02'},
+  {cn:'FinBERT',en:'Financial BERT',def:'金融文本微调的BERT——理解行话',course:'02'},
+  {cn:'结构化输出',en:'Structured Output',def:'让LLM输出JSON等可被程序直接使用的格式',course:'02'},
+  // 03 知识图谱
+  {cn:'知识图谱',en:'Knowledge Graph',def:'节点+边表示实体及关系——让计算机理解关联',course:'03'},
+  {cn:'三元组',en:'Triple',def:'图谱基本单元——(宁德时代,供应,特斯拉)',course:'03'},
+  {cn:'图数据库',en:'Graph Database',def:'专为图结构设计的数据库——遍历远超SQL',course:'03'},
+  {cn:'Neo4j',en:'Neo4j',def:'最流行的图数据库——使用Cypher查询语言',course:'03'},
+  {cn:'Cypher',en:'Cypher Query Language',def:'Neo4j查询语言——MATCH原生表达图遍历',course:'03'},
+  {cn:'实体对齐',en:'Entity Alignment',def:'统一同一实体的不同名称到一个ID',course:'03'},
+  {cn:'供应链穿透',en:'Supply Chain Penetration',def:'沿产业链上下游遍历——找到二阶三阶影响',course:'03'},
+  {cn:'社区发现',en:'Community Detection',def:'自动划分内部连接紧密的社区',course:'03'},
+  {cn:'Louvain算法',en:'Louvain Algorithm',def:'基于模块度优化的社区发现——两步迭代',course:'03'},
+  {cn:'模块度',en:'Modularity',def:'衡量社区划分质量——越高越真实',course:'03'},
+  {cn:'事理图谱',en:'Event Graph',def:'记录事件间因果传导路径的动态图谱',course:'03'},
+  {cn:'中心度',en:'Centrality',def:'节点在网络中的重要程度',course:'03'},
+  // 04 Agent
+  {cn:'AI智能体',en:'AI Agent',def:'能自主感知、规划、调用工具、执行的AI系统',course:'04'},
+  {cn:'函数调用',en:'Function Calling',def:'给LLM配备工具调用能力——从能说到能做',course:'04'},
+  {cn:'多智能体系统',en:'Multi-Agent System (MAS)',def:'多个Agent各司其职相互协作',course:'04'},
+  {cn:'多空辩论',en:'Long-Short Debate',def:'多Agent找好处、空Agent找风险——用对抗产生客观',course:'04'},
+  {cn:'信号融合',en:'Signal Fusion',def:'多Agent输出合并为单一交易信号',course:'04'},
+  {cn:'贝叶斯推断',en:'Bayesian Inference',def:'基于先验和新证据更新概率——Agent信念更新引擎',course:'04'},
+  {cn:'风控Agent',en:'Risk Control Agent',def:'拥有一票否决权的特殊Agent——超风险预算就否决',course:'04'},
+  {cn:'回测闭环',en:'Backtesting Loop',def:'信号→回测→反馈→调整→持续进化',course:'04'},
+  {cn:'决策审计',en:'Decision Audit',def:'追溯Agent每个决策的数据来源和推理链',course:'04'},
+  {cn:'一票否决权',en:'Veto Power',def:'风控Agent专属——不管理由多充分超限就否',course:'04'},
+  // 05 RL
+  {cn:'强化学习',en:'Reinforcement Learning (RL)',def:'Agent在环境中试错学习最优策略',course:'05'},
+  {cn:'马尔可夫决策过程',en:'Markov Decision Process (MDP)',def:'RL数学框架——状态动作奖励转移策略五要素',course:'05'},
+  {cn:'Q学习',en:'Q-Learning',def:'学习每个(状态,动作)对的长期价值',course:'05'},
+  {cn:'深度Q网络',en:'Deep Q-Network (DQN)',def:'用神经网络替代Q值表格——查表变学会规律',course:'05'},
+  {cn:'Bellman方程',en:'Bellman Equation',def:'Q-Learning核心更新规则',course:'05'},
+  {cn:'折扣因子',en:'Discount Factor (γ)',def:'未来奖励打多少折——γ=0.99长线γ=0.9短线',course:'05'},
+  {cn:'经验回放',en:'Experience Replay',def:'存储历史随机抽样训练——打破时间相关性',course:'05'},
+  {cn:'策略梯度',en:'Policy Gradient',def:'直接学习策略函数——输出动作概率分布',course:'05'},
+  {cn:'投资常识惩罚函数',en:'Investment Penalty Function',def:'把不能加杠杆追涨停编码为负奖励——RL安全网',course:'05'},
+  {cn:'对抗训练',en:'Adversarial Training',def:'在极端行情中训练Agent——让它见过最坏情况',course:'05'},
+  {cn:'模仿学习',en:'Imitation Learning',def:'先观察经典策略再RL微调——降低初始探索成本',course:'05'},
+  {cn:'PPO',en:'Proximal Policy Optimization',def:'最流行的策略梯度算法——稳定高效',course:'05'},
+];
+
+let currentCat = 'all';
+
+function filterCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  doSearch();
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('clearBtn').classList.remove('show');
+  doSearch();
+}
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const btn = document.getElementById('clearBtn');
+  if (q) btn.classList.add('show'); else btn.classList.remove('show');
+  
+  let results = GLOSSARY;
+  if (currentCat !== 'all') results = results.filter(t => t.course === currentCat);
+  if (q) results = results.filter(t => t.cn.includes(q) || t.en.toLowerCase().includes(q) || t.def.includes(q));
+  
+  document.getElementById('searchStats').textContent = results.length ? '找到 ' + results.length + ' 个术语' : '';
+  const container = document.getElementById('glossaryResults');
+  if (!results.length) {
+    container.innerHTML = '<div class="no-results"><span class="emoji">🔍</span>没有匹配的术语</div>';
+    return;
+  }
+  
+  const courseNames = {'01':'🧠 ML入门','02':'📝 金融NLP','03':'🕸️ 知识图谱','04':'🔌 Agent接口','05':'🎮 强化学习'};
+  container.innerHTML = results.map(t => 
+    '<div class="glossary-card"><div class="term-row">' +
+    '<span class="term-cn">' + t.cn + '</span>' +
+    '<span class="term-en">' + t.en + '</span>' +
+    '<span class="term-badge c' + t.course + '">' + courseNames[t.course] + '</span>' +
+    '</div><div class="term-def">' + t.def + '</div></div>'
+  ).join('');
+}
+
+document.getElementById('searchInput').addEventListener('input', doSearch);
+document.addEventListener('DOMContentLoaded', () => doSearch());
+</script>
+
+</body>
+</html>
