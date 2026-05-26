@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ 最优化理论 · 量化金融专家课程</title>
+<style>
+:root {
+  --bg: #06080d; --card: #0e131f; --card-hover: #151c2b; --border: #253049;
+  --text: #e4eaf2; --sub: #7c8aa2;
+  --accent: #e86040; --accent2: #40a8e0;
+  --green: #3fb950; --red: #f85149; --yellow: #d2991d;
+  --radius: 14px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(232,96,64,0.3); color: #fff; }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+body {
+  font-family: -apple-system,'SF Pro Display','PingFang SC',sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #140a06 0%, var(--bg) 70%);
+  color: var(--text); line-height: 1.75; min-height:100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width:280px; background:var(--card); border-right:1px solid var(--border);
+  padding:24px 16px; position:sticky; top:0; height:100vh; overflow-y:auto; flex-shrink:0;
+}
+.main { flex:1; padding:32px 48px; max-width:920px; }
+.logo { font-size:1.2em; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+.subtitle { color:var(--sub); font-size:0.82em; margin-bottom:10px; opacity:0.8; }
+.back-link { display:block; margin-bottom:14px; padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:8px; font-size:0.82em; color:var(--sub); text-decoration:none; text-align:center; transition:all 0.15s; }
+.back-link:hover { border-color:var(--accent); color:var(--accent); }
+.progress-text { font-size:0.78em; color:var(--sub); margin-bottom:4px; }
+.progress-bar-wrap { background:var(--border); border-radius:8px; height:6px; margin-bottom:18px; overflow:hidden; }
+.progress-bar { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:8px; transition:width 0.5s; }
+.nav-module { margin-bottom:16px; }
+.nav-module-title { font-size:0.7em; text-transform:uppercase; color:var(--sub); letter-spacing:1.5px; margin-bottom:6px; padding:0 8px; opacity:0.7; }
+.nav-item { display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; cursor:pointer; transition:all 0.2s; font-size:0.86em; color:var(--sub); border-left:3px solid transparent; margin-bottom:2px; }
+.nav-item:hover { background:var(--card-hover); color:var(--text); border-left-color:rgba(232,96,64,0.3); }
+.nav-item.active { background:rgba(232,96,64,0.1); color:var(--accent); font-weight:600; border-left-color:var(--accent); }
+.nav-item.done { color:var(--green); }
+.nav-item .check { width:20px; text-align:center; font-size:0.8em; }
+.divider { border-top:1px solid var(--border); margin:14px 0; }
+.section { display:none; }
+.section.active { display:block; animation:fadeIn 0.3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.lesson-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:32px 34px; margin-bottom:24px; }
+.lesson-card:hover { border-color:rgba(232,96,64,0.2); }
+.lesson-card h2 { font-size:1.45em; margin-bottom:6px; display:flex; align-items:center; gap:10px; }
+.lesson-card .meta { color:var(--sub); font-size:0.85em; margin-bottom:22px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.lesson-card h3 { font-size:1.1em; margin:26px 0 12px; color:var(--accent); position:relative; padding-left:14px; }
+.lesson-card h3::before { content:''; position:absolute; left:0; top:3px; bottom:3px; width:3px; border-radius:2px; background:linear-gradient(180deg,var(--accent),var(--accent2)); }
+.lesson-card p { margin-bottom:14px; }
+.lesson-card ul,.lesson-card ol { padding-left:24px; margin-bottom:14px; }
+.lesson-card li { margin-bottom:8px; }
+.analogy { background:linear-gradient(135deg, rgba(232,96,64,0.05), rgba(64,168,224,0.04)); border:1px solid rgba(232,96,64,0.15); border-left:3px solid var(--accent); border-radius:var(--radius); padding:18px 22px; margin:18px 0; }
+.analogy .label { font-size:0.78em; color:var(--accent); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; font-weight:600; display:flex; align-items:center; gap:6px; }
+.tip,.warning,.deep { border-radius:var(--radius); padding:18px 22px; margin:18px 0; }
+.tip { background:rgba(63,185,80,0.06); border:1px solid rgba(63,185,80,0.2); border-left:3px solid var(--green); }
+.warning { background:rgba(248,81,73,0.06); border:1px solid rgba(248,81,73,0.2); border-left:3px solid var(--red); }
+.deep { background:rgba(232,96,64,0.05); border:1px solid rgba(232,96,64,0.12); border-left:3px solid var(--accent); }
+.tip .label,.warning .label,.deep .label { font-weight:700; margin-bottom:6px; font-size:0.85em; display:flex; align-items:center; gap:6px; }
+.tip .label { color:var(--green); } .warning .label { color:var(--red); } .deep .label { color:var(--accent); }
+.formula { background:rgba(232,96,64,0.06); border:1px solid rgba(232,96,64,0.15); border-radius:8px; padding:14px 20px; margin:14px 0; text-align:center; font-family:'SF Mono','Menlo',monospace; font-size:0.95em; }
+.step-list { display:flex; gap:12px; flex-wrap:wrap; margin:16px 0; }
+.step-card { flex:1; min-width:160px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:18px 14px; text-align:center; transition:all 0.2s; }
+.step-card:hover { border-color:rgba(232,96,64,0.3); transform:translateY(-2px); }
+.step-card .num { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#c04020); color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:700; font-size:0.85em; }
+.step-card .title { font-weight:600; margin-bottom:4px; font-size:0.9em; }
+.step-card .desc { font-size:0.8em; color:var(--sub); line-height:1.5; }
+.table-wrap { overflow-x:auto; margin:16px 0; border-radius:var(--radius); border:1px solid var(--border); }
+table { width:100%; border-collapse:collapse; font-size:0.86em; }
+th { background:rgba(232,96,64,0.07); padding:11px 14px; text-align:left; font-weight:600; color:var(--accent); font-size:0.8em; text-transform:uppercase; letter-spacing:0.5px; }
+td { padding:11px 14px; border-bottom:1px solid var(--border); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(232,96,64,0.03); }
+.quiz-card { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:var(--radius); padding:26px 28px; margin:24px 0; }
+.quiz-card h3 { font-size:1.1em; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.quiz-question { margin:16px 0 8px; font-weight:600; font-size:0.93em; }
+.quiz-option { display:block; width:100%; text-align:left; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin:7px 0; cursor:pointer; color:var(--text); font-size:0.9em; transition:all 0.2s; }
+.quiz-option:hover { border-color:var(--accent); background:var(--card-hover); transform:translateX(3px); }
+.quiz-option.correct { border-color:var(--green); background:rgba(63,185,80,0.08); color:var(--green); }
+.quiz-option.wrong { border-color:var(--red); background:rgba(248,81,73,0.08); color:var(--red); }
+.quiz-option:disabled { cursor:default; opacity:0.85; transform:none; }
+.quiz-result { margin-top:14px; padding:14px; border-radius:8px; display:none; font-size:0.88em; }
+.quiz-result.show { display:block; }
+.quiz-result.pass { background:rgba(63,185,80,0.1); border:1px solid var(--green); }
+.quiz-result.fail { background:rgba(248,81,73,0.1); border:1px solid var(--red); }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:10px 22px; border-radius:8px; border:none; cursor:pointer; font-size:0.9em; font-weight:600; transition:all 0.2s; }
+.btn:active { transform:scale(0.97); }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-primary:hover { background:#d05030; }
+.btn-secondary { background:var(--border); color:var(--text); }
+.btn-secondary:hover { background:#3a4a60; }
+.nav-btns { display:flex; justify-content:space-between; margin-top:28px; }
+.certificate { display:none; background:linear-gradient(135deg, rgba(232,96,64,0.08), rgba(64,168,224,0.05)); border:2px solid var(--accent2); border-radius:var(--radius); padding:44px 36px; text-align:center; margin:24px 0; }
+.certificate.show { display:block; animation:fadeIn 0.5s ease; }
+.certificate h2 { font-size:1.8em; color:var(--accent2); margin-bottom:6px; }
+.certificate .grade { font-size:2.5em; color:var(--accent); font-weight:800; margin:14px 0 6px; }
+.hl { color:var(--accent); font-weight:600; }
+.hl2 { color:var(--green); font-weight:600; }
+.hl3 { color:var(--yellow); font-weight:600; }
+@media(max-width:768px) {
+  .app { flex-direction:column; }
+  .sidebar { width:100%; height:auto; position:static; border-right:none; border-bottom:1px solid var(--border); }
+  .main { padding:20px 16px; }
+  .step-list { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">⚡</span> 最优化</div>
+  <div class="subtitle">资源配置的科学 · 模块四</div>
+  <a href="课程首页_数学与统计学.html" class="back-link">🏠 回到课程总览</a>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div id="navContainer"></div>
+  <div class="divider"></div>
+  <button class="btn btn-primary" style="width:100%" onclick="startFinalExam()">🏆 终极测验</button>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="var b=this;if(b.dataset.confirm){b.textContent='🔄 重置进度';delete b.dataset.confirm;b.style.background='var(--border)';resetAll()}else{b.textContent='⚠️ 确认重置？';b.dataset.confirm='1';b.style.background='var(--yellow)';setTimeout(function(){if(b.dataset.confirm){b.textContent='🔄 重置进度';delete b.dataset.confirm;b.style.background='var(--border)'}},3000)}">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+const modules = [
+  {
+    title: '⚡ 模块一：优化基础——从无约束到有约束',
+    lessons: [
+      {
+        id: 'why-optimization',
+        title: '为什么量化投资到处都是优化问题',
+        emoji: '⚡',
+        content: `
+<h3>量化投资的每个阶段都在求解一个优化问题</h3>
+
+<div class="deep">
+  <div class="label">⚡ 一条量化流水线 = 一串优化问题</div>
+  <p><strong>选股：</strong>max Sharpe Ratio = max(收益/风险)——最大化风险调整后收益<br>
+  <strong>因子组合：</strong>min 多重共线性——最小化因子间的冗余<br>
+  <strong>资金分配：</strong>max 期望收益 s.t. 风险预算——在风控约束下追求收益<br>
+  <strong>交易执行：</strong>min 冲击成本——最小化大单对市场的扰动</p>
+  <p style="margin-top:8px"><span class="hl">优化不是锦上添花，是量化策略的核心引擎——没有优化，选出来的股票只是一串名字，不是投资组合。</span></p>
+</div>
+
+<h3>优化问题的三要素</h3>
+
+<div class="step-list">
+  <div class="step-card"><div class="num">1</div><div class="title">目标函数</div><div class="desc">你想最大化/最小化什么？Sharpe Ratio、收益率、波动率</div></div>
+  <div class="step-card"><div class="num">2</div><div class="title">决策变量</div><div class="desc">你能调整什么？各股票权重 w₁,w₂,...,wₙ</div></div>
+  <div class="step-card"><div class="num">3</div><div class="title">约束条件</div><div class="desc">限制是什么？满仓、做空限制、行业上限、个股上限</div></div>
+</div>
+
+<h3>无约束优化——梯度下降的直觉</h3>
+
+<div class="deep">
+  <div class="label">⚡ 下山最快的路</div>
+  <p><strong>问题：</strong>你在山顶，雾很大，看不见山脚。怎么最快下山？<br>
+  <strong>答案：</strong>每一步都往最陡的方向走——这就是梯度下降。w_new = w_old − α·∇f(w)。</p>
+  <p><strong>α（学习率）：</strong>步长太大→可能冲过头（震荡）。太小→下山太慢。量化中α=换手率上限——每次调仓幅度多大。</p>
+  <p><strong>在量化中：</strong>梯度下降用于<strong>单因子参数扫描</strong>——找到最优的参数组合（如移动平均窗口长度）。但对于组合优化（有约束），梯度下降不够，需要拉格朗日+KKT。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">量化投资中，组合构建的优化目标通常是什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('why-optimization',0,0)">A. 最大化股票数量</button>
+  <button class="quiz-option" onclick="answerQuiz('why-optimization',0,1)">B. 最大化风险调整后收益（如Sharpe Ratio），在满仓、做空限制、行业上限等约束下</button>
+  <button class="quiz-option" onclick="answerQuiz('why-optimization',0,2)">C. 最小化手续费</button>
+  <button class="quiz-option" onclick="answerQuiz('why-optimization',0,3)">D. 最大化换手率</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'optimization-types',
+        title: '优化问题的分类——线性、二次、凸与非凸',
+        emoji: '🗺️',
+        content: `
+<h3>不是所有优化都一样——不同问题用不同工具</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>类型</th><th>形式</th><th>难度</th><th>量化例子</th><th>求解器</th></tr>
+  <tr><td><strong>线性规划(LP)</strong></td><td>目标+约束都是线性的</td><td class="hl2">★ 最简单</td><td>min 交易成本 s.t. 行业中性</td><td>单纯形法</td></tr>
+  <tr><td><strong>二次规划(QP)</strong></td><td>目标二次+约束线性</td><td class="hl2">★★ 标准</td><td><strong>Markowitz</strong>(目标=wᵀΣw)</td><td>cvxopt</td></tr>
+  <tr><td><strong>凸优化</strong></td><td>目标凸+约束凸</td><td class="hl3">★★★ 中</td><td>交易执行(冲击成本)</td><td>cvxpy</td></tr>
+  <tr><td><strong>非凸优化</strong></td><td>目标或约束非凸</td><td class="hl4">★★★★ 最难</td><td>选股（整数约束=选或不选）</td><td>启发式·遗传算法</td></tr>
+</table>
+</div>
+
+<div class="deep">
+  <div class="label">🗺️ 凸 vs 非凸——为什么这个区别生死攸关</div>
+  <p><strong>凸函数：</strong>只有一个「山谷」（全局最优）。梯度下降一定能找到它——不管你从哪出发。</p>
+  <p><strong>非凸函数：</strong>有多个「山谷」（局部最优）。梯度下降可能卡在浅谷里错过深谷。<span class="hl">组合优化加整数约束（wᵢ∈{0,1}）瞬间从凸变非凸——这就是为什么选股优化比权重优化难得多。</span></p>
+</div>
+
+<h3>📝 案例：三种组合——等权 vs 最小方差 vs 最大Sharpe</h3>
+
+<div class="deep">
+  <div class="label">💰 同样的五只股票，三种优化目标→三个完全不同的组合</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>方法</th><th>目标</th><th>优化类型</th><th>权重分布</th><th>年化σ</th><th>Sharpe</th></tr>
+    <tr><td>等权（基准）</td><td>无（各20%）</td><td>无优化</td><td>[20,20,20,20,20]%</td><td>18%</td><td>0.45</td></tr>
+    <tr><td>最小方差</td><td>min wᵀΣw</td><td class="hl2">QP</td><td>[35,28,15,12,10]%</td><td class="hl2">12%</td><td>0.52</td></tr>
+    <tr><td>最大Sharpe</td><td>max (wᵀμ)/√(wᵀΣw)</td><td class="hl4">非凸！</td><td>[12,18,38,22,10]%</td><td>22%</td><td class="hl2">0.68</td></tr>
+  </table>
+  </div>
+  <p><strong>洞察：</strong>最大Sharpe是非凸问题——你不能直接用QP求解。解法：对每个目标收益跑一次QP→画出有效前沿→选Sharpe最大的点。<span class="hl">这就是为什么有效前沿这么重要——它是解决非凸问题的间接路径。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">Markowitz组合优化属于哪类优化？为什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('optimization-types',0,0)">A. 线性规划——目标线性</button>
+  <button class="quiz-option" onclick="answerQuiz('optimization-types',0,1)">B. 二次规划(QP)——目标=wᵀΣw是二次型，约束(Σw=1,w≥0)都是线性的。这是QP求解器的标准输入</button>
+  <button class="quiz-option" onclick="answerQuiz('optimization-types',0,2)">C. 非凸优化</button>
+  <button class="quiz-option" onclick="answerQuiz('optimization-types',0,3)">D. 无分类</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'gradient-descent-detail',
+        title: '梯度下降——从山顶到山谷的每一步',
+        emoji: '🏔️',
+        content: `
+<h3>迭代公式——一条路走到黑</h3>
+
+<div class="formula">
+  w_{k+1} = w_k − α · ∇f(w_k)<br>
+  <span style="font-size:0.8em;color:var(--sub)">α=学习率（步长）· ∇f=梯度（最陡方向）</span>
+</div>
+
+<div class="deep">
+  <div class="label">🏔️ α太大 vs α太小——两种死法</div>
+  <p><strong>α太大（莽撞）：</strong>一步跨过山谷→下一次又跨回来→永远到不了底（震荡）<br>
+  <strong>α太小（胆小）：</strong>走了1000步还在半山腰→收敛太慢<br>
+  <strong>自适应α：</strong>Adam/RMSprop专治这个——前期大步快走，后期小步精调</p>
+  <p><strong>投资映射：</strong>α=换手率。α大=每次换半仓→组合震荡→交易成本吞收益。α小=每次微调→反应太慢→错过机会。<span class="hl">最优α=最优换手率。</span></p>
+</div>
+
+<h3>📝 案例：梯度下降拟合线性回归——从随机w到最优w</h3>
+
+<div class="deep">
+  <div class="label">📊 y=3x+2的真实关系，从w₀=[0,0]出发</div>
+  <p><strong>迭代过程（α=0.1）：</strong>w₀=[0,0]→w₁=[1.4,1.0]→w₂=[2.2,1.6]→w₃=[2.6,1.9]→收敛到[2.98, 2.01]≈真值[3,2]。</p>
+  <p><strong>量化对应：</strong>神经网络的训练就是梯度下降——只不过目标函数不是MSE，可能是IC的负数（最大化IC）。每个epoch都在做「向更优参数迈一小步」。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">梯度下降中学习率α太大导致「震荡」。在量化组合优化中对应什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('gradient-descent-detail',0,0)">A. 手续费太高</button>
+  <button class="quiz-option" onclick="answerQuiz('gradient-descent-detail',0,1)">B. 换手率太高——每次大幅调仓→组合权重剧烈变化→交易成本吞噬超额收益</button>
+  <button class="quiz-option" onclick="answerQuiz('gradient-descent-detail',0,2)">C. 模型太复杂</button>
+  <button class="quiz-option" onclick="answerQuiz('gradient-descent-detail',0,3)">D. 数据不够</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'lagrange',
+        title: '拉格朗日乘子——等式约束优化的标准方法',
+        emoji: 'λ',
+        content: `
+<h3>一个约束，一个λ</h3>
+
+<div class="formula">
+  L(w, λ) = f(w) + λ · g(w)<br>
+  <span style="font-size:0.8em;color:var(--sub)">f(w)=目标函数 · g(w)=约束（要求g(w)=0）· λ=拉格朗日乘子</span>
+</div>
+
+<div class="analogy">
+  <div class="label">🎈 拉格朗日乘子的直觉</div>
+  <p>你在一个房间里找离门最近的点——但前提是你必须站在墙边（约束）。拉格朗日乘子λ告诉你：<strong>把约束放松一点（离开墙1cm），你能离门再近多少？</strong></p>
+  <p style="margin-top:8px"><strong>投资映射：</strong>把「满仓约束（Σw=1）」放松到98%仓位→Sharpe能提高多少？λ就是「约束的影子价格」——放松单位约束的边际收益。</p>
+</div>
+
+<h3>📝 案例：两只股票的最优组合——手算拉格朗日</h3>
+
+<div class="deep">
+  <div class="label">💰 最小化风险，满足满仓约束</div>
+  <p><strong>问题：</strong>min ½(w₁²σ₁² + w₂²σ₂² + 2w₁w₂ρσ₁σ₂)，s.t. w₁+w₂=1。<br>
+  股票A σ₁=20%，股票B σ₂=30%，相关系数ρ=0.3。</p>
+  <p><strong>拉格朗日函数：</strong>L = ½(w₁²×0.04 + w₂²×0.09 + 2w₁w₂×0.3×0.2×0.3) + λ(1−w₁−w₂)</p>
+  <p><strong>求导求解：</strong>∂L/∂w₁=0, ∂L/∂w₂=0, ∂L/∂λ=0 →<strong> w₁≈0.68, w₂≈0.32</strong></p>
+  <p><strong>解读：</strong>A波动率低（20% vs 30%）→权重更大。但因为有正相关性，不完全all-in A。λ=0.008→<span class="hl">每放松1%仓位约束，方差增加0.008%——约束的边际代价。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">拉格朗日乘子λ的经济含义是什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('lagrange',0,0)">A. 无含义的数学工具</button>
+  <button class="quiz-option" onclick="answerQuiz('lagrange',0,1)">B. 约束的影子价格——放松单位约束，目标函数能改进多少。投资中=满仓约束的边际价值</button>
+  <button class="quiz-option" onclick="answerQuiz('lagrange',0,2)">C. 目标函数的值</button>
+  <button class="quiz-option" onclick="answerQuiz('lagrange',0,3)">D. 权重</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'lagrange-dual',
+        title: '拉格朗日对偶——原问题太难？看对偶问题',
+        emoji: '🪞',
+        content: `
+<h3>每个优化问题都有一个「镜像」——对偶问题</h3>
+
+<div class="analogy">
+  <div class="label">🪞 原问题 vs 对偶问题</div>
+  <p><strong>原问题（Primal）：</strong>min f(w) s.t. g(w)≤0。<br>
+  <strong>对偶问题（Dual）：</strong>max θ(λ,μ) s.t. λ≥0。变量从w变成乘子λ——从「选什么」变成「约束值多少钱」。</p>
+  <p style="margin-top:8px"><span class="hl">对偶问题总是凸的——即使原问题不是！</span>这给了我们一个重要工具：当原问题太难时，解对偶问题。</p>
+</div>
+
+<h3>对偶间隙——原问题和对偶问题的差</h3>
+
+<div class="deep">
+  <div class="label">🪞 强对偶 vs 弱对偶</div>
+  <p><strong>弱对偶：</strong>对偶最优值 ≤ 原问题最优值（永远成立）</p>
+  <p><strong>强对偶：</strong>对偶最优值 = 原问题最优值（需要凸+Slater条件）</p>
+  <p><strong>对偶间隙 = </strong>原问题值 − 对偶值。<span class="hl">如果间隙=0，解对偶就够了。如果间隙>0，说明原问题的解可能无法通过对偶得到。</span></p>
+  <p><strong>在组合优化中：</strong>Markowitz是凸的→强对偶成立→间隙=0→QP求解器可靠。加整数约束后→非凸→弱对偶→间隙>0→需要启发式方法。</p>
+</div>
+
+<h3>📝 案例：手算一个对偶——感受间隙如何产生</h3>
+
+<div class="deep">
+  <div class="label">🪞 min (w−2)² s.t. w≥3（凸→强对偶）</div>
+  <p><strong>原问题：</strong>min (w−2)² s.t. w≥3。解：w=3，最优值=1。</p>
+  <p><strong>拉格朗日：</strong>L(w,μ)=(w−2)²−μ(w−3)。对w求导：2(w−2)−μ=0→w=2+μ/2。</p>
+  <p><strong>对偶：</strong>θ(μ)=min L(w,μ)=−μ²/4+μ。对μ求导→μ=2。对偶值=1。<strong>间隙=0→强对偶成立。</strong></p>
+  <p><strong>如果再加 w 必须是整数：</strong>非凸→对偶不再完美→间隙产生。<span class="hl">整数规划比连续规划难的根本原因就在这。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">对偶问题最大的优势是什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('lagrange-dual',0,0)">A. 更简单</button>
+  <button class="quiz-option" onclick="answerQuiz('lagrange-dual',0,1)">B. 对偶问题总是凸的——即使原问题非凸。这为非凸优化提供了一条「下界」路径。Markowitz（凸）强对偶成立，QP求解可靠</button>
+  <button class="quiz-option" onclick="answerQuiz('lagrange-dual',0,2)">C. 不需要计算</button>
+  <button class="quiz-option" onclick="answerQuiz('lagrange-dual',0,3)">D. 结果相同</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'geometry-optimization',
+        title: '约束优化的几何直觉——可行域与目标等值线',
+        emoji: '📐',
+        content: `
+<h3>最优解要么在山谷底，要么在墙边</h3>
+
+<div class="analogy">
+  <div class="label">📐 带栅栏的滑雪</div>
+  <p><strong>无约束：</strong>找到最陡的下山路→滑到谷底→最优。<br>
+  <strong>有约束：</strong>谷底被栅栏围住了→你只能滑到栅栏边→最优解在边界上。<br>
+  <strong>约束起作用=最优在墙边，约束不起作用=最优恰好也在谷底。</strong></p>
+</div>
+
+<h3>两种约束——「绑定」vs「松弛」</h3>
+
+<div class="deep">
+  <div class="label">📐 绑定约束(binding) = 你被墙挡住了</div>
+  <p>• μ>0（KKT乘子>0）——墙在起作用<br>
+  • 投资中：个股权重被10%上限卡住→这个约束是binding的<br>
+  • 如果上限升高到12%→权重会变化→组合改善</p>
+</div>
+
+<div class="deep">
+  <div class="label">📐 松弛约束(non-binding) = 墙太远了你根本没碰</div>
+  <p>• μ=0（KKT乘子=0）——墙跟你没关系<br>
+  • 投资中：只持有5%的某股票，上限10%根本没碰到→这个约束不起作用</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">KKT乘子μ=0说明什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('geometry-optimization',0,0)">A. 约束违反</button>
+  <button class="quiz-option" onclick="answerQuiz('geometry-optimization',0,1)">B. 约束不起作用——最优解在可行域内部，没有碰到边界。如果放松这个约束，最优解不会改变</button>
+  <button class="quiz-option" onclick="answerQuiz('geometry-optimization',0,2)">C. 问题无解</button>
+  <button class="quiz-option" onclick="answerQuiz('geometry-optimization',0,3)">D. 必须增加约束</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '🔧 模块二：约束优化——从KKT到Markowitz',
+    lessons: [
+      {
+        id: 'kkt',
+        title: 'KKT条件——不等式约束的数学框架',
+        emoji: '🔧',
+        content: `
+<h3>拉格朗日只处理等式→KKT处理不等式</h3>
+
+<div class="deep">
+  <div class="label">🔧 量化中处处是不等式约束</div>
+  <p><strong>等式约束（拉格朗日）：</strong>Σwᵢ=1（满仓）——精确等式，能用拉格朗日。</p>
+  <p><strong>不等式约束（KKT）：</strong>wᵢ≥0（不能做空）、wᵢ≤10%（个股权重上限）、行业偏离≤5%——需要用KKT。</p>
+  <p style="margin-top:8px"><span class="hl">KKT是带约束优化的通用框架：等式+不等式全部统一处理。</span></p>
+</div>
+
+<h3>KKT条件的四部分——以做空限制为例</h3>
+
+<div class="deep">
+  <div class="label">🔧 wᵢ ≥ 0（不能做空）→ 重写为 −wᵢ ≤ 0</div>
+  <p><strong>1. 稳定性：</strong>∇f + μ·∇(−wᵢ) = 0 → 最优点的梯度被约束「拉住」了</p>
+  <p><strong>2. 原始可行性：</strong>−wᵢ ≤ 0 → wᵢ ≥ 0 → 解必须在可行域内</p>
+  <p><strong>3. 对偶可行性：</strong>μ ≥ 0 → 拉格朗日乘子非负（不等式约束的乘子≥0）</p>
+  <p><strong>4. 互补松弛：</strong>μ · (−wᵢ) = 0 → 要么约束生效(wᵢ=0)，要么乘子为0(μ=0)。<span class=\"hl\">约束不起作用时乘子自动归零。</span></p>
+</div>
+
+<h3>📝 案例：三只股票，做空限制怎么改变结果？</h3>
+
+<div class="deep">
+  <div class="label">💰 A(σ=20%) B(σ=30%) C(σ=40%)，满仓+不做空</div>
+  <p><strong>无做空限制（只满仓）：</strong>最优解可能是 w=[1.5, −0.3, −0.2]——做空B和C来加仓A。组合方差极低但不可实现。</p>
+  <p><strong>有做空限制（满仓+wi≥0）：</strong>KKT求解→w=[0.68, 0.32, 0]。C的权重被压到0——<span class=\"hl\">因为C波动率太大，优化器想「做空」它，但做空限制阻止了→最优策略是不持有C。</span></p>
+  <p><strong>再加个股权重上限wi≤40%：</strong>KKT再解→w=[0.40, 0.40, 0.20]。A和B被上限卡住→被迫持有C，组合方差增大。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">KKT的「互补松弛条件」μ·(−wᵢ)=0 意味着什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('kkt',0,0)">A. 约束永远生效</button>
+  <button class="quiz-option" onclick="answerQuiz('kkt',0,1)">B. 如果约束不紧（wᵢ>0），乘子μ自动=0——不起作用的约束不参与优化。只有紧约束（wᵢ=0）才产生非零乘子</button>
+  <button class="quiz-option" onclick="answerQuiz('kkt',0,2)">C. 约束可以忽略</button>
+  <button class="quiz-option" onclick="answerQuiz('kkt',0,3)">D. 公式错误</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'kkt-practice',
+        title: 'KKT实战——手算一个带做空限制的组合',
+        emoji: '✍️',
+        content: `
+<h3>2只股票，满仓+不做空，min wᵀΣw</h3>
+
+<div class="deep">
+  <div class="label">✍️ σ₁=20%, σ₂=30%, ρ=0.3</div>
+  <p><strong>无约束最优（只满仓）：</strong>w₁=0.69, w₂=0.31——A权重高因为波动率低。</p>
+  <p><strong>加做空限制w₂≥0：</strong>w₂=0.31≥0，约束不起作用（μ₂=0）→最优不变。但KKT条件确认了这一点。</p>
+  <p><strong>再加w₂≥0.5（B必须至少50%）：</strong>KKT\→μ₂>0→约束binding。<strong>w=[0.5,0.5]</strong>——被墙挡住了。</p>
+  <p><strong>再加w₂≤0.6（B最多60%）：</strong>w₂=0.5<0.6→松弛约束→μ₃=0。</p>
+  <p><span class="hl">KKT优雅地区分了哪些约束在卡你、哪些只是摆设。量化中每个持仓限制都对应一个KKT乘子。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">一个组合wᵢ≤10%，结果wᵢ=8%→这个上限约束的KKT乘子是多少？</div>
+  <button class="quiz-option" onclick="answerQuiz('kkt-practice',0,0)">A. 大于0</button>
+  <button class="quiz-option" onclick="answerQuiz('kkt-practice',0,1)">B. 等于0——约束松弛，互补松弛条件μ·(10%−8%)=μ×2%=0→μ=0</button>
+  <button class="quiz-option" onclick="answerQuiz('kkt-practice',0,2)">C. 小于0</button>
+  <button class="quiz-option" onclick="answerQuiz('kkt-practice',0,3)">D. 无法判断</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'markowitz',
+        title: 'Markowitz均值-方差——组合优化的起点',
+        emoji: '📊',
+        content: `
+<h3>量化组合构建的奠基之作（1952，诺贝尔奖）</h3>
+
+<div class="formula">
+  min ½wᵀΣw − λwᵀμ<br>
+  s.t. Σwᵢ = 1,  wᵢ ≥ 0<br>
+  <span style="font-size:0.8em;color:var(--sub)">Σ=协方差矩阵 · μ=期望收益向量 · λ=风险厌恶参数</span>
+</div>
+
+<div class="deep">
+  <div class="label">📊 Markowitz做了什么革命性的事？</div>
+  <p><strong>之前：</strong>选股只看个股——「这个股票好，买」。</p>
+  <p><strong>之后：</strong>看组合——两只股票的相关性决定组合风险。0.5相关的两只股，组合方差低于各自方差的加权平均——这就是<strong>分散化的数学本质</strong>。</p>
+</div>
+
+<h3>有效前沿——你不能同时要最高收益和最低风险</h3>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 780 240" xmlns="http://www.w3.org/2000/svg">
+  <line x1="80" y1="200" x2="700" y2="200" stroke="#253049" stroke-width="1"/>
+  <line x1="80" y1="200" x2="80" y2="20" stroke="#253049" stroke-width="1"/>
+  <text x="390" y="225" text-anchor="middle" fill="#7c8aa2" font-size="11">风险 σ</text>
+  <text x="20" y="115" fill="#7c8aa2" font-size="11" transform="rotate(-90,20,115)">收益 μ</text>
+  <!-- Efficient frontier -->
+  <path d="M140,170 Q250,100 400,55 Q550,35 680,28" fill="none" stroke="#e86040" stroke-width="3"/>
+  <text x="420" y="42" fill="#e86040" font-size="12" font-weight="600">有效前沿</text>
+  <!-- Inefficient dots -->
+  <circle cx="200" cy="140" r="4" fill="#f85149" opacity="0.6"/><circle cx="300" cy="130" r="4" fill="#f85149" opacity="0.6"/>
+  <text x="250" y="175" text-anchor="middle" fill="#f85149" font-size="10">无效组合（同风险下收益更低）</text>
+  <!-- MVP -->
+  <circle cx="140" cy="170" r="5" fill="#40a8e0"/>
+  <text x="140" y="160" text-anchor="middle" fill="#40a8e0" font-size="10">最小方差组合</text>
+</svg>
+</div>
+
+<p><strong>有效前沿上的每一点：</strong>在给定风险水平下，收益最高。在给定收益水平下，风险最低。前沿左边的点不存在，前沿右边的点是浪费。</p>
+
+<h3>📝 案例：三只股票的有效前沿——逐点扫描</h3>
+
+<div class="deep">
+  <div class="label">💰 消费(σ=18%μ=10%) 科技(σ=28%μ=15%) 银行(σ=22%μ=8%)</div>
+  <p><strong>方法：</strong>对μ*=8%,10%,12%,15%→各解一次min wᵀΣw s.t. wᵀμ=μ*→得到最小σ。</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>μ*</th><th>最小σ</th><th>配置</th><th>Sharpe(r=3%)</th></tr>
+    <tr><td>8.0%</td><td>11.2%</td><td>[55,10,35]%</td><td>0.45</td></tr>
+    <tr><td>10.0%</td><td>13.8%</td><td>[40,25,35]%</td><td>0.51</td></tr>
+    <tr><td class="hl2">12.5%</td><td class="hl2">16.2%</td><td class="hl2">[30,48,22]%</td><td class="hl2">0.59</td></tr>
+    <tr><td>15.0%</td><td>26.1%</td><td>[5,75,20]%</td><td>0.46</td></tr>
+  </table>
+  </div>
+  <p><strong>洞察：</strong>μ*从8%→12.5%，每+1%收益→σ+约1.2%。μ*从12.5%→15%，每+1%收益→σ+约3%。<span class="hl">前沿右上角越来越贵——需要承担指数级增长的风险才能挤出微量收益。</span>切线组合(12.5%/16.2%)Sharpe最高。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">Markowitz优化中，为什么两只相关0.5的股票组合方差比各自方差加权平均更低？</div>
+  <button class="quiz-option" onclick="answerQuiz('markowitz',0,0)">A. 计算错误</button>
+  <button class="quiz-option" onclick="answerQuiz('markowitz',0,1)">B. 组合方差=w₁²σ₁²+w₂²σ₂²+2w₁w₂ρσ₁σ₂。ρ<1时交叉项小于各自方差→组合方差被压低。这就是分散化的数学本质</button>
+  <button class="quiz-option" onclick="answerQuiz('markowitz',0,2)">C. 这是巧合</button>
+  <button class="quiz-option" onclick="answerQuiz('markowitz',0,3)">D. 没有降低</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'qp-solver',
+        title: 'QP求解器——从数学公式到最优权重',
+        emoji: '💻',
+        content: `
+<h3>Markowitz优化在Python中只需几行代码</h3>
+
+<div class="deep">
+  <div class="label">💻 标准QP形式</div>
+  <div class="formula">
+    min ½wᵀPw + qᵀw<br>
+    s.t. Gw ≤ h,  Aw = b<br>
+    <span style="font-size:0.8em;color:var(--sub)">P=2Σ(协方差矩阵×2) · q=−λμ(负收益) · G=不等式约束矩阵 · A=等式约束矩阵</span>
+  </div>
+  <p><strong>映射：</strong>P=2Σ（最小化风险），q=−λμ（最大化收益=最小化负收益），G包含w≥0的约束，A包含Σw=1。</p>
+  <p><strong>Python一行求解：</strong>cvxopt.solvers.qp(P, q, G, h, A, b)→直接输出最优权重w。</p>
+</div>
+
+<h3>📝 案例：用QP求解三只股票的组合</h3>
+
+<div class="deep">
+  <div class="label">💰 腾讯(μ=12%,σ=28%) 茅台(μ=15%,σ=25%) 宁德(μ=20%,σ=38%)</div>
+  <p><strong>协方差矩阵和期望收益：</strong></p>
+  <p>Σ=[0.078 0.024 0.032; 0.024 0.063 0.019; 0.032 0.019 0.144]<br>
+  μ=[0.12, 0.15, 0.20]</p>
+  <p><strong>约束：</strong>满仓(Σw=1)，不做空(w≥0)，个股权重上限40%。</p>
+  <p><strong>QP输出：</strong>w=[<strong>0.40, 0.40, 0.20</strong>]。腾讯和茅台被40%上限卡住→KKT乘子>0。宁德权重较低因为波动率大。</p>
+  <p><strong>无上限时：</strong>w=[0.25, 0.52, 0.23]→茅台独占一半，因为它在波动率和收益之间取得了最好平衡。个股权重上限把茅台从52%→40%。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">为什么Markowitz用QP而非梯度下降求解？</div>
+  <button class="quiz-option" onclick="answerQuiz('qp-solver',0,0)">A. QP更快</button>
+  <button class="quiz-option" onclick="answerQuiz('qp-solver',0,1)">B. Markowitz目标=wᵀΣw是二次型，约束都是线性的→天然是QP标准形式。QP求解器有闭式最优解（不像梯度下降需要迭代），对有约束问题效率极高</button>
+  <button class="quiz-option" onclick="answerQuiz('qp-solver',0,2)">C. 梯度下降不能用</button>
+  <button class="quiz-option" onclick="answerQuiz('qp-solver',0,3)">D. 没有区别</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '🛡️ 模块三：稳健优化——为什么Markowitz直接用会翻车',
+    lessons: [
+      {
+        id: 'markowitz-flaws',
+        title: 'Markowitz的致命缺陷——误差最大化器',
+        emoji: '⚠️',
+        content: `
+<h3>输入敏感——量化界最著名的警告</h3>
+
+<div class="warning">
+  <div class="label">⚠️ μ的微小误差→w的巨大变化</div>
+  <p><strong>实验：</strong>两只股票，μ从[10%, 8%]变成[11%, 8%]（A的预期收益从10%→11%，B不变）。</p>
+  <p><strong>结果：</strong>w_A从52%→78%——<span class=\"hl\">10%的μ估计误差，导致了50%的权重变化！</span></p>
+  <p><strong>这就是为什么Markowitz被称为「误差最大化器」——</strong>它对输入极其敏感，把自己最不确定的参数（μ的估计）放大为最大的决策变化。</p>
+</div>
+
+<h3>Markowitz的三大致命缺陷</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>缺陷</th><th>问题</th><th>量化中的表现</th></tr>
+  <tr><td><strong>μ估计误差</strong></td><td>期望收益率是金融中最难估计的参数</td><td>估计μ稍微偏一点→权重剧烈震荡→策略不稳定</td></tr>
+  <tr><td><strong>Σ维度灾难</strong></td><td>100只股票→需估计5050个协方差参数</td><td>n接近T时Σ可逆性差→优化器崩溃</td></tr>
+  <tr><td><strong>角落解</strong></td><td>无约束时权重极度集中——3-5只股票占了80%</td><td>「分散化」名存实亡</td></tr>
+</table>
+</div>
+
+<h3>📝 案例：100只股票的组合优化——看看角解有多极端</h3>
+
+<div class="deep">
+  <div class="label">💰 中证100成分股，等权基准每只1%</div>
+  <p><strong>无约束Markowitz（只满仓）：</strong>前3只股票权重=[28%, 22%, 18%]——3只占了68%。其余97只股票大部分权重<0.5%。</p>
+  <p><strong>加个股权重上限10%：</strong>前10只各10%——被上限卡住的约束在起作用。但剩下的90只仍然权重很低。</p>
+  <p><strong>再加行业偏离≤5%：</strong>权重分散得多——因为行业约束迫使优化器不能all-in单一行业。</p>
+  <p><span class="hl">每加一个约束，组合方差上升，但组合变得更「可投资」——约束是分散化的代价。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">Markowitz被称为「误差最大化器」的根本原因是什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('markowitz-flaws',0,0)">A. 公式错误</button>
+  <button class="quiz-option" onclick="answerQuiz('markowitz-flaws',0,1)">B. μ的微小估计误差→被优化器放大为w的巨大变化。10%的μ误差可以导致50%+的权重变化——因为优化器天然把资金集中在「看起来最好」的资产上</button>
+  <button class="quiz-option" onclick="answerQuiz('markowitz-flaws',0,2)">C. 计算太慢</button>
+  <button class="quiz-option" onclick="answerQuiz('markowitz-flaws',0,3)">D. 需要太多数据</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'covariance-estimation',
+        title: '协方差矩阵估计——为什么Σ比μ更难估计',
+        emoji: '🔢',
+        content: `
+<h3>100只股票→5050个协方差参数→数据永远不够</h3>
+
+<div class="warning">
+  <div class="label">⚠️ 维度灾难的协方差版本</div>
+  <p><strong>样本协方差的无偏估计：</strong>Σ̂ = (1/(T−1)) RᵀR。但T=250周、n=100只→需估计5050个参数从25000个数据点→充分统计量只有约5个/参数→极大不稳定。</p>
+  <p><strong>最极端的例子：</strong>n=100, T=150→需要估计5050个参数但只有15000个数据点→协方差矩阵不可逆（奇异）→Markowitz优化直接崩溃。</p>
+</div>
+
+<h3>三种协方差估计方法——从最差到最好</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>方法</th><th>思路</th><th>优点</th><th>缺点</th></tr>
+  <tr><td><strong>样本协方差</strong></td><td>Σ̂ = (1/T)RRᵀ</td><td>无偏·简单</td><td class="hl4">n>T时不可逆·极大方差</td></tr>
+  <tr><td><strong>指数加权(EWMA)</strong></td><td>近期数据权重大→Σₜ=λΣₜ₋₁+(1−λ)rₜrₜᵀ</td><td>自适应·捕捉结构变化</td><td>需要选λ·对极端敏感</td></tr>
+  <tr><td><strong>Ledoit-Wolf压缩</strong></td><td>Σ_shrink=δ·Σ_target+(1−δ)·Σ</td><td class="hl2">最优偏差-方差权衡</td><td>假设目标合理</td></tr>
+</table>
+</div>
+
+<h3>📝 案例：三种Σ估计下的组合差异</h3>
+
+<div class="deep">
+  <div class="label">💰 n=50只股票，T=200周</div>
+  <p><strong>样本Σ：</strong>最小特征值≈0.0001（几乎奇异）、条件数≈5000→极不稳定。最优权重剧烈震荡，换手率150%。</p>
+  <p><strong>EWMA(λ=0.94)：</strong>条件数降到≈800，自适应性强。但2020年3月疫情冲击后，Σ被拉偏了约2个月。</p>
+  <p><strong>Ledoit-Wolf：</strong>条件数≈200（最低）。权重最稳定，换手率40%。<span class="hl2">样本外Sharpe最高。</span></p>
+  <p><strong>结论：</strong><span class="hl">压缩估计不是锦上添花——当n/T>0.2时（50只/200周=0.25），不压缩的Σ输入优化器=灾难。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">为什么n=100、T=150时样本协方差矩阵不可逆？</div>
+  <button class="quiz-option" onclick="answerQuiz('covariance-estimation',0,0)">A. 数据质量问题</button>
+  <button class="quiz-option" onclick="answerQuiz('covariance-estimation',0,1)">B. T<n意味着数据矩阵的秩最多=T→100×100的协方差矩阵最多秩=150<100→不可逆。QP求解器求Σ⁻¹时会崩溃</button>
+  <button class="quiz-option" onclick="answerQuiz('covariance-estimation',0,2)">C. 计算错误</button>
+  <button class="quiz-option" onclick="answerQuiz('covariance-estimation',0,3)">D. 永远不可逆</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'turnover-constraint',
+        title: '换手率约束——交易成本是组合优化的隐形杀手',
+        emoji: '💸',
+        content: `
+<h3>优化器喜欢「大调仓」——但交易成本不让</h3>
+
+<div class="warning">
+  <div class="label">⚠️ Markowitz不知道交易成本的存在</div>
+  <p>优化器只看协方差和收益→觉得把A从20%调到5%→把B从5%调到20%=免费午餐。但现实是15%的调仓=交易成本≈15%×0.3%=<strong>4.5bp</strong>。每月调一次=年化54bp消失。</p>
+</div>
+
+<h3>换手率约束——让优化器也对成本敏感</h3>
+
+<div class="formula">
+  min ½wᵀΣw − λ·wᵀμ + <strong>κ·</strong>Σ<strong>|</strong>wᵢ − wᵢ_old<strong>|</strong><br>
+  <span style="font-size:0.8em;color:var(--sub)">κ=换手惩罚系数。|w−w_old|=每个股票调仓的绝对值。越大调仓→惩罚越重→优化器自动限制换手</span>
+</div>
+
+<h3>📝 案例：换手约束前后的组合对比</h3>
+
+<div class="deep">
+  <div class="label">💰 50只股票组合，月度调仓</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>方法</th><th>月换手率</th><th>年化收益(扣成本)</th><th>Sharpe</th></tr>
+    <tr><td>无换手限制</td><td class="hl4">68%</td><td>9.2%</td><td>0.48</td></tr>
+    <tr><td>换手上限50%</td><td>42%</td><td>10.8%</td><td>0.55</td></tr>
+    <tr><td>换手成本入目标</td><td class="hl2">28%</td><td class="hl2">11.5%</td><td class="hl2">0.62</td></tr>
+  </table>
+  </div>
+  <p><strong>洞察：</strong>把交易成本纳入目标函数→优化器自己学会了「少折腾」。<span class="hl">换手从68%降到28%→反而收益从9.2%升到11.5%——因为省下的手续费比多调仓带来的超额收益多。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">为什么换手越高不一定收益越高？</div>
+  <button class="quiz-option" onclick="answerQuiz('turnover-constraint',0,0)">A. 优化器有问题</button>
+  <button class="quiz-option" onclick="answerQuiz('turnover-constraint',0,1)">B. 交易成本（佣金+冲击成本+滑点）累积起来可能超过多调仓带来的超额收益——存在最优换手率而非越高越好</button>
+  <button class="quiz-option" onclick="answerQuiz('turnover-constraint',0,2)">C. 数据不足</button>
+  <button class="quiz-option" onclick="answerQuiz('turnover-constraint',0,3)">D. 只能降低不能增加</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'robust-optimization',
+        title: '稳健化路径——五个方法驯服Markowitz',
+        emoji: '🛡️',
+        content: `
+<h3>不让优化器成为误差放大器——五条稳健化路径</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>问题</th><th>解法</th><th>怎么做</th><th>前一课对应</th></tr>
+  <tr><td>μ估计不准</td><td><strong>Black-Litterman</strong></td><td>均衡收益（先验）+ 投资者观点（似然）→ 后验μ</td><td>第一课·贝叶斯</td></tr>
+  <tr><td>Σ不稳定</td><td><strong>压缩估计(Ledoit-Wolf)</strong></td><td>Σ_shrink = δ·Σ_target + (1−δ)·Σ_sample。向结构化目标「收缩」</td><td>第一课·MLE</td></tr>
+  <tr><td>权重集中</td><td><strong>熵约束</strong></td><td>−Σwᵢ·ln(wᵢ) ≥ c——强制分散。c越大越分散</td><td>—</td></tr>
+  <tr><td>过拟合</td><td><strong>重抽样优化</strong></td><td>从历史数据中bootstrap重抽样→每次抽样求解→结果取平均</td><td>第一课·大数定律</td></tr>
+  <tr><td>不可交易</td><td><strong>整数约束+流动性约束</strong></td><td>100股整数倍、日成交量约束、换手成本纳入目标函数</td><td>—</td></tr>
+</table>
+</div>
+
+<h3>压缩估计——协方差矩阵的「保险」</h3>
+
+<div class="formula">
+  Σ_shrink = δ·Σ_target + (1−δ)·Σ_sample<br>
+  <span style="font-size:0.8em;color:var(--sub)">δ=收缩强度(0~1)。δ=0=全信样本；δ=1=全信目标（如等相关矩阵）</span>
+</div>
+
+<div class="deep">
+  <div class="label">🛡️ 为什么压缩估计有效？</div>
+  <p><strong>样本协方差Σ_sample：</strong>无偏但方差大——n=100只股票，250周数据→5050个参数从25000个数据点估计→每个参数只有约5个有效数据点→极不稳定。</p>
+  <p><strong>结构化目标Σ_target：</strong>有偏但方差小——假设所有股票间相关系数=平均相关系数（一个参数）。偏差大，但极稳定。</p>
+  <p><strong>压缩估计=Ledoit-Wolf：</strong>用贝叶斯思想在两者之间取最优平衡。<span class=\"hl\">δ自动从数据中计算——样本协方差越不稳定→δ越大（更靠目标）。</span></p>
+</div>
+
+<h3>📝 案例：压缩前后的组合差异</h3>
+
+<div class="deep">
+  <div class="label">💰 50只A股消费板块，250周数据</div>
+  <p><strong>原始Markowitz（样本Σ）：</strong>前3只权重=[35%, 25%, 18%]，组合年化波动率（样本内）=8%，样本外=15%。<span class=\"hl4\">几乎翻倍——严重过拟合。</span></p>
+  <p><strong>压缩后Markowitz（Ledoit-Wolf Σ）：</strong>前3只权重=[18%, 14%, 12%]，权重更均匀。样本内波动率=11%，样本外=12.5%。<span class=\"hl2\">样本外仅比样本内高14%——大幅改善。</span></p>
+</div>
+
+<h3>📝 案例：朴素Markowitz vs BL稳健版——三年回测对比</h3>
+
+<div class="deep">
+  <div class="label">🔬 沪深300成分股，月度调仓，2019-2021滚动回测</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>方法</th><th>μ估计</th><th>年化收益</th><th>年化σ</th><th>Sharpe</th><th>换手率</th></tr>
+    <tr><td>朴素Markowitz</td><td>历史均值(60月)</td><td>8.2%</td><td>24.1%</td><td>0.34</td><td class="hl4">210%</td></tr>
+    <tr><td>BL仅均衡</td><td>CAPM隐含</td><td>10.5%</td><td>16.8%</td><td class="hl2">0.63</td><td class="hl2">45%</td></tr>
+    <tr><td>BL+压缩+约束</td><td>均衡+Ledoit-Wolf+行业上限</td><td>11.8%</td><td class="hl2">14.5%</td><td class="hl2">0.81</td><td class="hl2">38%</td></tr>
+  </table>
+  </div>
+  <p><strong>结论：</strong>朴素Markowitz换手率210%→交易成本吞噬超额收益。BL仅替换μ→Sharpe翻倍(0.34→0.63)。BL+压缩+约束→Sharpe 0.81+换手率38%→<span class="hl">这才是可投资的组合。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">压缩估计为什么能改善Markowitz的样本外表现？</div>
+  <button class="quiz-option" onclick="answerQuiz('robust-optimization',0,0)">A. 因为计算更快</button>
+  <button class="quiz-option" onclick="answerQuiz('robust-optimization',0,1)">B. 样本Σ在n大T小时极不稳定→压缩估计用贝叶斯思想在「不稳定的样本Σ」和「稳定但有偏的结构化Σ」之间取最优平衡→减少过拟合</button>
+  <button class="quiz-option" onclick="answerQuiz('robust-optimization',0,2)">C. 因为更简单</button>
+  <button class="quiz-option" onclick="answerQuiz('robust-optimization',0,3)">D. 没有改善</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'china-constraints',
+        title: 'A股实战约束清单——从理论到可交易组合',
+        emoji: '🇨🇳',
+        content: `
+<h3>一个可落地的A股组合优化——需要多少约束？</h3>
+
+<div class="deep">
+  <div class="label">🇨🇳 真实约束清单（全部来自实战）</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>约束类型</th><th>参数</th><th>理由</th><th>KKT效果</th></tr>
+    <tr><td>满仓</td><td>Σw=1</td><td>不能留现金（产品条款）</td><td>λ=影子利率</td></tr>
+    <tr><td>不做空</td><td>wᵢ≥0</td><td>A股不能做空（融券除外）</td><td>压低甚至剔除负α股</td></tr>
+    <tr><td>个股权重上限</td><td>wᵢ≤10%</td><td>单票集中度风控</td><td>被卡住的票=最佳候选被压制</td></tr>
+    <tr><td>行业偏离上限</td><td>∣w_industry−w_bench∣≤5%</td><td>相对基准的行业中性</td><td>防止all-in单一行业</td></tr>
+    <tr><td>换手率上限</td><td>Σ∣w−w_old∣≤50%</td><td>控制交易成本</td><td>减少不必要的调仓</td></tr>
+    <tr><td>跟踪误差上限</td><td>TE≤5%</td><td>不能偏离基准太远</td><td>隐性约束——通过目标函数实现</td></tr>
+  </table>
+  </div>
+  <p><strong>六个约束叠在一起→可行域大大缩小→优化器只能在有限空间里找最优。<span class="hl">组合的Sharpe比无约束低了约30%，但可投资性高得多——不会因为某只票爆雷而完蛋。</span></p>
+</div>
+
+<h3>📝 案例：从无约束到全约束——同一个选股池的命运</h3>
+
+<div class="deep">
+  <div class="label">💰 沪深300选50只。约束逐个加上去</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>约束累积</th><th>最大单票权重</th><th>有效持股数</th><th>预期Sharpe</th><th>可投吗？</th></tr>
+    <tr><td>1.只满仓</td><td class="hl4">38%</td><td>~8只</td><td>0.72</td><td>❌ 太集中</td></tr>
+    <tr><td>+不做空</td><td>35%</td><td>~10只</td><td>0.68</td><td>❌ 仍太集中</td></tr>
+    <tr><td>+权上限10%</td><td class="hl2">10%</td><td>~35只</td><td>0.58</td><td>⚠️ 半数权重仍在前10</td></tr>
+    <tr><td>+行业≤5%</td><td>10%</td><td>~42只</td><td>0.52</td><td class="hl2">✅ 可投资</td></tr>
+    <tr><td>+换手≤50%</td><td>10%</td><td>~42只</td><td class="hl2">0.55</td><td class="hl2">✅ 最优</td></tr>
+  </table>
+  </div>
+  <p><strong>每个约束都在「吃掉」Sharpe，但也在「保护」你——</strong><span class="hl">没有约束的最优组合在现实中往往是灾难。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">加约束后Sharpe下降，为什么要加？</div>
+  <button class="quiz-option" onclick="answerQuiz('china-constraints',0,0)">A. 为了好看</button>
+  <button class="quiz-option" onclick="answerQuiz('china-constraints',0,1)">B. 无约束最优在现实中不可行——过度集中·无法交易·样本外崩塌。约束换来的Sharpe虽然低但真实——这才是你能赚到的钱</button>
+  <button class="quiz-option" onclick="answerQuiz('china-constraints',0,2)">C. 监管要求</button>
+  <button class="quiz-option" onclick="answerQuiz('china-constraints',0,3)">D. 不需要加</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '📖 中英文术语对照表',
+    lessons: [
+      {
+        id: 'glossary',
+        title: '最优化理论核心术语 · 中英文速查',
+        emoji: '📖',
+        content: `
+<h3>本课所有核心术语——按模块分类，中英文对照</h3>
+<div style="margin-bottom:14px">
+  <input type="text" id="glossaryFilter" placeholder="🔍 搜索术语（中英文均可）…" style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.9em;font-family:inherit;outline:none" oninput="var q=this.value.toLowerCase();document.querySelectorAll('.gloss-row').forEach(r=>r.style.display=(!q||r.textContent.toLowerCase().includes(q)?'':'none'))">
+</div>
+<div class="table-wrap"><table>
+<tr><th>English</th><th>中文</th><th>定义</th><th>模块</th></tr>
+<tr class="gloss-row"><td><strong>Objective Function</strong></td><td>目标函数</td><td style="font-size:0.85em">你想最大化/最小化的量。量化中=Sharpe Ratio、收益率、波动率。f(w)叫目标函数，要找到让f(w)最优的w。</td><td><span style="background:rgba(232,96,64,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Gradient Descent</strong></td><td>梯度下降</td><td style="font-size:0.85em">w_new=w_old−α·∇f。沿负梯度方向走→最快下降。无约束优化的最基本方法。量化中用于神经网络训练、单因子参数扫描。</td><td><span style="background:rgba(232,96,64,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Lagrange Multiplier</strong></td><td>拉格朗日乘子</td><td style="font-size:0.85em">L(w,λ)=f(w)+λ·g(w)。λ=约束的影子价格——放松单位约束，目标能改进多少。投资中=满仓约束Σw=1的边际价值。</td><td><span style="background:rgba(232,96,64,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>KKT Conditions</strong></td><td>KKT条件</td><td style="font-size:0.85em">不等式约束优化的四个必要条件。互补松弛：μ·g(w)=0→紧约束乘子>0，松约束乘子=0。做空限制·行业上限·个股权重上限的基础。</td><td><span style="background:rgba(232,96,64,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>QP (Quadratic Programming)</strong></td><td>二次规划</td><td style="font-size:0.85em">min ½wᵀQw+cᵀw s.t. Aw≤b。Markowitz的标准求解框架。Python调用cvxopt/cvxpy。行业标准求解器。</td><td><span style="background:rgba(232,96,64,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>Markowitz M-V</strong></td><td>马科维茨均值-方差</td><td style="font-size:0.85em">min ½wᵀΣw−λwᵀμ。组合优化的奠基理论(1952诺贝尔奖)。核心创新：组合风险依赖于相关性，不只是个股风险。致命缺陷：输入敏感→误差最大化器。</td><td><span style="background:rgba(232,96,64,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>Efficient Frontier</strong></td><td>有效前沿</td><td style="font-size:0.85em">给定风险下收益最高(或给定收益下风险最低)的组合集合。前沿上的点=最优。前沿右边=浪费。前沿左边=不存在。</td><td><span style="background:rgba(232,96,64,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>Black-Litterman</strong></td><td>BL模型</td><td style="font-size:0.85em">均衡收益(先验)+投资者观点(似然)→后验最优μ。解决Markowitz输入敏感的根本方案。贝叶斯在组合管理最高光的应用。</td><td><span style="background:rgba(232,96,64,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>Ledoit-Wolf</strong></td><td>压缩估计</td><td style="font-size:0.85em">Σ_shrink=δ·Σ_target+(1−δ)·Σ_sample。在样本Σ(无偏高方差)和结构化Σ(有偏低方差)之间收缩。δ自动计算。n>T时必备。</td><td><span style="background:rgba(232,96,64,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+</table></div>
+<div style="text-align:center;padding:12px;color:var(--sub);font-size:0.82em">9 条术语</div>
+`
+      }
+    ]
+  }
+];
+
+const quizData = {
+  'why-optimization': [{ correct:1, explain:'正确。量化投资的每个环节（选股·因子·配置·交易）都是一个约束优化问题。没有优化，因子IC再好也只是信号不是组合。优化把「好想法」变成「可执行的权重」。' }],
+  'lagrange': [{ correct:1, explain:'正确。λ是约束的影子价格——每放松1单位约束，目标值改善λ单位。在组合优化中，满仓约束的λ=0.008→每允许1%的现金，方差降低0.008%。这就是「持有现金的机会成本」的精确量化。' }],
+  'kkt': [{ correct:1, explain:'正确。互补松弛是KKT最妙的性质——如果约束不紧（wᵢ>0），乘子自动归零，等于这个约束不存在。优化器只关心「卡住」的约束。在组合中，被个股权重上限卡住的股票产生非零乘子，其余乘子=0。' }],
+  'markowitz': [{ correct:1, explain:'正确。Var(w₁X₁+w₂X₂)=w₁²σ₁²+w₂²σ₂²+2w₁w₂ρσ₁σ₂。ρ<1时交叉项<w₁²σ₁²+w₂²σ₂²→组合方差<加权平均方差。ρ=−1时甚至可以压到0——两只完全负相关的股票构建无风险组合。' }],
+  'markowitz-flaws': [{ correct:1, explain:'正确。Markowitz的输入敏感性来自它的数学结构——二次优化天然把资金集中在「看起来最好」的资产上。你只要稍微高估一只股票的μ，优化器就会给它不成比例的高权重。Blac-Litterman通过贝叶斯先验压制了这个放大效应。' }],
+  'robust-optimization': [{ correct:1, explain:'正确。压缩估计=Ledoit-Wolf=贝叶斯收缩。样本Σ在n/T比率大时极不稳定（5050个参数从25000个数据点估=信息不足）。压缩估计向一个稳定目标收缩，牺牲一点偏差换取大幅方差降低。' }],
+  'gradient-descent-detail': [{ correct:1, explain:'正确。梯度下降的α=步长，组合优化的换手率=调仓幅度。α太大→震荡不收敛；换手太高→交易成本吃掉超额收益。两者的最优解都是「适度最快」而非「绝对最快」。' }],
+  'geometry-optimization': [{ correct:1, explain:'正确。互补松弛：μ·g(w)=0。约束不起作用(g(w)<0)→μ=0。放松它不会改善目标→最优解已经在可行域内部。量化中未被触及的个股权重上限=μ=0。' }],
+  'kkt-practice': [{ correct:1, explain:'正确。8%<10%的上限→差距2%>0→互补松弛：μ×2%=0→μ=0。只有被恰好卡在10%上限的股票(如完美公司但被上限抑制)，乘子才>0。' }],
+  'turnover-constraint': [{ correct:1, explain:'正确。每次调仓产生佣金+冲击成本≈0.3%。月换手68%→年化成本≈68%×12×0.3%=24.5%。多调仓的超额收益需要40%+才能覆盖→绝大多数策略做不到。这就是为什么最优换手率通常在20-40%。' }],
+  'china-constraints': [{ correct:1, explain:'正确。无约束Markowitz的Sharpe是「纸面Sharpe」——现实中不可复制（无法做空·无法集中38%单票·换手成本吞收益）。每加一个约束→可行域缩小→Sharpe下降→但变得可投资。真正的量化策略是在约束条件下追求最优，而非追求理论最优。' }],
+};
+
+const finalExam = [
+  { q:'量化投资中，组合构建本质上是一个什么数学问题？', opts:['统计推断','约束优化——在满仓、做空限制、行业上限等约束下最大化风险调整收益','回归分析','分类问题'], correct:1 },
+  { q:'拉格朗日乘子λ的经济含义是什么？', opts:['无意义','约束的影子价格——放松单位约束的边际收益','目标函数值','权重之和'], correct:1 },
+  { q:'KKT的互补松弛条件μ·g(w)=0意味着什么？', opts:['约束永远生效','松约束的乘子自动归零——只有紧约束参与优化','所有约束必须满足','公式错误'], correct:1 },
+  { q:'Markowitz组合方差比个股加权平均方差低的原因？', opts:['计算错误','ρ<1时交叉项2w₁w₂ρσ₁σ₂<各自方差→分散化通过低相关性降低组合风险','没有降低','巧合'], correct:1 },
+  { q:'Markowitz为什么被称为"误差最大化器"？', opts:['公式错误','μ微小估计误差→w巨大变化。优化器天然集中资金在"看起来最好"的资产上→对输入极其敏感','计算太慢','需要大数据'], correct:1 },
+  { q:'Ledoit-Wolf压缩估计的核心思想是什么？', opts:['只用样本数据','在样本Σ(无偏高方差)和结构化Σ(有偏低方差)之间取最优平衡→减少过拟合','完全忽略样本','增大样本'], correct:1 },
+  { q:'Black-Litterman如何解决Markowitz的μ估计问题？', opts:['用更大样本','均衡收益(先验)+观点(似然)→后验μ→不过度偏离市场均衡→稳健权重','忽略μ','随机选择'], correct:1 },
+  { q:'为什么组合优化中加入更多约束后组合方差通常上升？', opts:['优化器出错','每加一个约束缩小可行域→最优解只能在更小的空间里找→被迫接受次优→方差上升。约束=分散化的代价','约束不重要','方差不变'], correct:1 },
+];
+
+let completedLessons = new Set(JSON.parse(localStorage.getItem('opt_course_done') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem('opt_course_quiz') || '{}');
+let finalDone = false, currentSection = 'why-optimization';
+
+function save() {
+  localStorage.setItem('opt_course_done', JSON.stringify([...completedLessons]));
+  localStorage.setItem('opt_course_quiz', JSON.stringify(quizResults));
+}
+function updateUI() {
+  const total = modules.reduce((s,m)=>s+m.lessons.length,0);
+  const pct = Math.round(completedLessons.size/total*100);
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('progressBar').style.width = pct+'%';
+  let nav = '';
+  modules.forEach(m => {
+    nav += '<div class="nav-module"><div class="nav-module-title">'+m.title+'</div>';
+    m.lessons.forEach(l => {
+      const isA=l.id===currentSection, isD=completedLessons.has(l.id);
+      nav += '<div class="nav-item'+(isA?' active':'')+(isD?' done':'')+'" onclick="navigateTo(\''+l.id+'\')"><span class="check">'+(isD?'✅':'○')+'</span><span>'+l.emoji+' '+l.title+'</span></div>';
+    });
+    nav += '</div>';
+  });
+  nav += '<div class="nav-module"><div class="nav-module-title">🏆 考核</div><div class="nav-item'+(currentSection==='final'?' active':'')+'" onclick="navigateTo(\'final\')"><span class="check">'+(finalDone?'✅':'○')+'</span><span>终极测验</span></div></div>';
+  document.getElementById('navContainer').innerHTML = nav;
+}
+function navigateTo(id) {
+  currentSection=id; completedLessons.add(id);
+  if(id!=='final')save(); updateUI();
+  if(id==='final')renderFinalExam(); else renderContent(id);
+  window.scrollTo(0,0);
+}
+function renderContent(id) {
+  let lesson=null;
+  for(const m of modules){const f=m.lessons.find(l=>l.id===id);if(f){lesson=f;break;}}
+  if(!lesson)return;
+  let all=[]; modules.forEach(m=>all.push(...m.lessons));
+  const idx=all.findIndex(l=>l.id===id);
+  const prev=idx>0?all[idx-1]:null,next=idx<all.length-1?all[idx+1]:null;
+  let html='<div class="lesson-card"><h2><span class="emoji">'+lesson.emoji+'</span>'+lesson.title+'</h2>';
+  html+='<div class="meta">⚡ 最优化理论 · 第四课</div>'+lesson.content;
+  const qd=quizData[id];
+  if(qd){
+    html+='\n<script>\n(function(){const a='+JSON.stringify(qd)+';const u=quizResults[\''+id+'\']||[];a.forEach((x,qi)=>{if(u[qi]!==undefined){const c=document.querySelectorAll(\'.quiz-card\')[qi];if(!c)return;c.querySelectorAll(\'.quiz-option\').forEach((b,oi)=>{b.disabled=true;if(oi===x.correct)b.classList.add(\'correct\');if(oi===u[qi]&&oi!==x.correct)b.classList.add(\'wrong\')});const r=c.querySelector(\'.quiz-result\');if(r){r.innerHTML=\'<span class=\"ans\">✅ 正确！</span> \'+x.explain;r.classList.add(\'show\',u[qi]===x.correct?\'pass\':\'fail\')}}});})();\n<\\/script>\n';
+  }
+  html+='<div class="nav-btns">';
+  if(prev)html+='<button class="btn btn-secondary" onclick="navigateTo(\''+prev.id+'\')">⬅ '+prev.title+'</button>';
+  else html+='<span></span>';
+  if(next)html+='<button class="btn btn-primary" onclick="navigateTo(\''+next.id+'\')">'+next.title+' ➡</button>';
+  else html+='<button class="btn btn-primary" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>';
+  html+='</div></div>';
+  document.getElementById('mainContent').innerHTML=html;
+}
+function answerQuiz(lessonId,qi,oi){if(!quizResults[lessonId])quizResults[lessonId]=[];quizResults[lessonId][qi]=oi;save();renderContent(lessonId);}
+function startFinalExam(){navigateTo('final');}
+function renderFinalExam(){
+  let html='<div class="lesson-card"><h2>🏆 终极测验</h2><div class="meta">8道题 · 覆盖三大模块 · 70%及格</div>';
+  let allDone=true;
+  finalExam.forEach((q,qi)=>{
+    const ua=quizResults['final_'+qi];if(ua===undefined)allDone=false;
+    html+='<div class="quiz-card"><h3>📝 第'+(qi+1)+'题</h3><div class="quiz-question">'+q.q+'</div>';
+    q.opts.forEach((o,oi)=>{
+      let cls='quiz-option';
+      if(ua!==undefined&&oi===q.correct)cls+=' correct';
+      if(ua!==undefined&&oi===ua&&oi!==q.correct)cls+=' wrong';
+      html+='<button class="'+cls+'" onclick="answerFinal('+qi+','+oi+')" '+(ua!==undefined?'disabled':'')+'>'+['A','B','C','D'][oi]+'. '+o+'</button>';
+    });
+    html+='</div>';
+  });
+  html+='</div>';
+  if(allDone){
+    const score=finalExam.filter((q,i)=>quizResults['final_'+i]===q.correct).length;
+    const pct=Math.round(score/8*100),passed=pct>=70;
+    html+='<div class="certificate show"><div style="font-size:3em">'+(passed?'🎉':'💪')+'</div><h2>'+(passed?'恭喜毕业！':'再练练')+'</h2>';
+    html+='<div class="grade">'+score+'/8 ('+pct+'%)</div>';
+    html+='<p style="color:var(--sub)">'+(passed?'你已掌握最优化理论的核心。':'再看看薄弱环节。')+'</p>';
+    html+='<div class="btn-group" style="justify-content:center"><button class="btn btn-secondary" onclick="resetFinal()">🔄 重新测验</button></div></div>';
+  }
+  document.getElementById('mainContent').innerHTML=html;
+}
+function answerFinal(qi,oi){quizResults['final_'+qi]=oi;save();finalDone=finalExam.every((_,i)=>quizResults['final_'+i]!==undefined);if(finalDone)completedLessons.add('final');updateUI();renderFinalExam();}
+function resetFinal(){finalExam.forEach((_,i)=>delete quizResults['final_'+i]);completedLessons.delete('final');finalDone=false;save();updateUI();renderFinalExam();}
+function resetAll(){localStorage.removeItem('opt_course_done');localStorage.removeItem('opt_course_quiz');completedLessons=new Set();quizResults={};finalDone=false;currentSection='why-optimization';save();updateUI();renderContent('why-optimization');window.scrollTo(0,0);}
+window.resetAll=resetAll;
+
+(function(){currentSection='why-optimization';updateUI();renderContent('why-optimization');})();
+</script>
+</body>
+</html>

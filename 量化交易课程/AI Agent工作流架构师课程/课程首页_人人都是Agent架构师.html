@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人人都是Agent架构师</title>
+<style>
+:root {
+  --bg: #06080d; --card: #0e131f; --card2: #151c2b; --border: #253049;
+  --text: #e4eaf2; --sub: #7c8aa2;
+  --g1: #00b894; --g2: #00cec9; --g3: #e28413; --g4: #e86040;
+  --b1: #6c5ce7; --b2: #40a8e0; --b3: #a880e0; --b4: #40c880;
+  --radius: 18px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system,'SF Pro Display','PingFang SC',sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.7;
+  min-height:100vh; overflow-x:hidden;
+}
+
+/* Hero */
+.hero {
+  text-align:center; padding:72px 24px 56px;
+  background:linear-gradient(180deg, rgba(108,92,231,0.08) 0%, rgba(232,96,64,0.04) 50%, var(--bg) 100%);
+}
+.hero .badges { margin-bottom:16px; }
+.hero .badge { display:inline-block; padding:5px 16px; border-radius:20px; font-size:0.8em; margin:0 6px;
+  background:rgba(108,92,231,0.15); color:#a8a0e8; border:1px solid rgba(108,92,231,0.25);
+}
+.hero h1 { font-size:3em; font-weight:800; letter-spacing:-0.5px; margin-bottom:12px; }
+.hero h1 span.g1 { background:linear-gradient(135deg,#00b894,#00cec9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero h1 span.g2 { background:linear-gradient(135deg,#6c5ce7,#e86040); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero .subtitle { font-size:1.15em; color:var(--sub); max-width:640px; margin:0 auto 28px; }
+.hero .stats { display:flex; justify-content:center; gap:40px; margin-top:8px; }
+.hero .stat .n { font-size:1.6em; font-weight:800; }
+.hero .stat .l { font-size:0.82em; color:var(--sub); }
+
+/* Path */
+.path { max-width:1000px; margin:0 auto; padding:0 24px 56px; }
+.path h2 { text-align:center; font-size:1.5em; margin-bottom:36px; color:var(--sub); }
+
+.courses { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; max-width:1200px; margin:0 auto; padding:0 28px 48px; }
+.course-card {
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:28px 24px; cursor:pointer; transition:.25s; position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.course-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,0.4); }
+.course-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+}
+.course-card:nth-child(1)::before { background:linear-gradient(90deg,#00b894,#00cec9); }
+.course-card:nth-child(2)::before { background:linear-gradient(90deg,#6c5ce7,#a880e0); }
+.course-card:nth-child(3)::before { background:linear-gradient(90deg,#e28413,#fdcb6e); }
+.course-card:nth-child(4)::before { background:linear-gradient(90deg,#e86040,#40a8e0); }
+
+.course-card .level {
+  display:inline-block; padding:3px 12px; border-radius:12px; font-size:0.7em;
+  font-weight:700; margin-bottom:14px; letter-spacing:0.5px; width:fit-content;
+}
+.course-card:nth-child(1) .level { background:rgba(0,184,148,0.12); color:var(--g1); }
+.course-card:nth-child(2) .level { background:rgba(108,92,231,0.12); color:var(--b1); }
+.course-card:nth-child(3) .level { background:rgba(226,132,19,0.12); color:var(--g3); }
+.course-card:nth-child(4) .level { background:rgba(232,96,64,0.12); color:var(--g4); }
+
+.course-card .icon { font-size:2.4em; margin-bottom:10px; }
+.course-card h3 { font-size:1.15em; margin-bottom:6px; }
+.course-card .tagline { font-size:0.84em; color:var(--sub); margin-bottom:14px; line-height:1.5; }
+.course-card .meta { font-size:0.76em; color:var(--sub); margin-top:auto; padding-top:12px; border-top:1px solid var(--border); }
+
+.course-card:nth-child(1):hover { border-color:var(--g1); }
+.course-card:nth-child(2):hover { border-color:var(--b1); }
+.course-card:nth-child(3):hover { border-color:var(--g3); }
+.course-card:nth-child(4):hover { border-color:var(--g4); }
+
+/* Journey map */
+.journey { max-width:1000px; margin:0 auto 64px; padding:0 24px; }
+.journey h2 { text-align:center; font-size:1.5em; margin-bottom:36px; }
+.timeline { position:relative; padding-left:28px; }
+.timeline::before { content:''; position:absolute; left:12px; top:0; bottom:0; width:2px; background:linear-gradient(180deg,var(--g1),var(--b1),var(--g3),var(--g4)); }
+.tl-item { position:relative; margin-bottom:28px; padding-left:28px; }
+.tl-item::before { content:''; position:absolute; left:-20px; top:6px; width:18px; height:18px; border-radius:50%; border:3px solid; background:var(--bg); }
+.tl-item:nth-child(1)::before { border-color:var(--g1); }
+.tl-item:nth-child(2)::before { border-color:var(--b1); }
+.tl-item:nth-child(3)::before { border-color:var(--g3); }
+.tl-item:nth-child(4)::before { border-color:var(--g4); }
+.tl-item h4 { font-size:1em; margin-bottom:4px; }
+.tl-item p { font-size:0.84em; color:var(--sub); }
+
+/* Glossary Search */
+.glossary-search { max-width:900px; margin:0 auto 56px; padding:0 28px; }
+.glossary-search h2 { text-align:center; font-size:1.5em; margin-bottom:8px; }
+.glossary-search .search-hint { text-align:center; color:var(--sub); font-size:0.84em; margin-bottom:24px; }
+.search-box { position:relative; max-width:640px; margin:0 auto 20px; }
+.search-box input {
+  width:100%; padding:14px 48px 14px 20px; border-radius:14px;
+  background:var(--card); border:2px solid var(--border);
+  color:var(--text); font-size:1em; outline:none; transition:.25s;
+}
+.search-box input:focus { border-color:var(--b1); box-shadow:0 0 0 4px rgba(108,92,231,0.08); }
+.search-box input::placeholder { color:var(--sub); }
+.search-box .search-icon { position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:1.2em; color:var(--sub); pointer-events:none; }
+.search-box .clear-btn {
+  position:absolute; right:44px; top:50%; transform:translateY(-50%);
+  background:none; border:none; color:var(--sub); font-size:1.1em; cursor:pointer;
+  padding:4px 8px; border-radius:6px; display:none;
+}
+.search-box .clear-btn:hover { color:var(--text); background:var(--card2); }
+.search-box .clear-btn.show { display:block; }
+.search-stats { text-align:center; color:var(--sub); font-size:0.82em; margin-bottom:16px; }
+.glossary-results { display:flex; flex-direction:column; gap:10px; max-width:800px; margin:0 auto; max-height:60vh; overflow-y:auto; }
+.glossary-card {
+  background:var(--card); border:1px solid var(--border); border-radius:14px;
+  padding:18px 22px; transition:.2s;
+}
+.glossary-card:hover { border-color:var(--b1); background:var(--card2); }
+.glossary-card .term-row { display:flex; align-items:baseline; gap:10px; margin-bottom:6px; flex-wrap:wrap; }
+.glossary-card .term-cn { font-size:1.05em; font-weight:700; color:var(--text); }
+.glossary-card .term-en { font-size:0.88em; color:var(--accent2); font-family:'SF Mono','JetBrains Mono',monospace; }
+.glossary-card .term-badge {
+  display:inline-block; padding:2px 10px; border-radius:10px; font-size:0.7em;
+  font-weight:600; margin-left:auto;
+}
+.glossary-card .term-badge.l1 { background:rgba(0,184,148,0.12); color:var(--g1); }
+.glossary-card .term-badge.l2 { background:rgba(108,92,231,0.12); color:var(--b1); }
+.glossary-card .term-badge.l3 { background:rgba(226,132,19,0.12); color:var(--g3); }
+.glossary-card .term-badge.l4 { background:rgba(232,96,64,0.12); color:var(--g4); }
+.glossary-card .term-def { font-size:0.88em; color:var(--sub); line-height:1.6; }
+.glossary-card .term-link { font-size:0.78em; color:var(--accent2); margin-top:6px; cursor:pointer; display:inline-block; }
+.glossary-card .term-link:hover { text-decoration:underline; }
+.no-results { text-align:center; padding:40px 20px; color:var(--sub); font-size:0.95em; }
+.no-results .emoji { font-size:2.5em; display:block; margin-bottom:12px; }
+
+/* Footer */
+.footer { text-align:center; padding:40px 24px; color:var(--sub); font-size:0.82em; border-top:1px solid var(--border); }
+.footer strong { color:var(--text); }
+
+/* Overview table */
+.overview { max-width:1100px; margin:0 auto 56px; padding:0 28px; }
+.overview h2 { text-align:center; font-size:1.5em; margin-bottom:28px; }
+.ov-table { width:100%; border-collapse:collapse; font-size:0.9em; }
+.ov-table th { background:var(--border); padding:14px 16px; text-align:left; font-weight:600; font-size:0.85em; text-transform:uppercase; letter-spacing:1px; color:var(--sub); }
+.ov-table td { padding:14px 16px; border-bottom:1px solid var(--border); }
+.ov-table tr:hover td { background:rgba(255,255,255,0.02); }
+.ov-table .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; }
+.ov-table .dot.d1 { background:var(--g1); }
+.ov-table .dot.d2 { background:var(--b1); }
+.ov-table .dot.d3 { background:var(--g3); }
+.ov-table .dot.d4 { background:var(--g4); }
+
+@media(max-width:768px) {
+  .hero h1 { font-size:2em; }
+  .hero .stats { flex-wrap:wrap; gap:24px; }
+  .courses { grid-template-columns:1fr; }
+  .ov-table { font-size:0.78em; }
+  .ov-table th,.ov-table td { padding:10px 8px; }
+}
+/* Back Bar */
+.back-bar { position:sticky; top:0; z-index:100; background:rgba(14,19,31,0.85); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:10px 24px; display:flex; align-items:center; }
+.back-btn { display:inline-flex; align-items:center; gap:8px; color:var(--sub); text-decoration:none; font-size:0.85em; font-weight:600; padding:6px 16px; border-radius:10px; transition:.2s; border:1px solid transparent; }
+.back-btn:hover { color:var(--text); background:rgba(255,255,255,0.06); border-color:var(--border); }
+.back-btn .arr { font-size:1.1em; }
+.back-bar .crumb { font-size:0.78em; color:#555d6d; margin-left:8px; }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a href="../课程首页_量化交易实战系列课程.html" class="back-btn">
+    <span class="arr">←</span> 返回系列总首页
+  </a>
+  <span class="crumb">量化交易实战系列课程</span>
+</div>
+
+<div class="hero">
+  <div class="badges">
+    <span class="badge">🌏 中文</span>
+    <span class="badge">🤖 AI Native</span>
+    <span class="badge">🔓 开源课程</span>
+  </div>
+  <h1>
+    <span class="g1">人人都是</span><br>
+    <span class="g2">Agent 架构师</span>
+  </h1>
+  <p class="subtitle">
+    从「什么是Agent」到「企业级灾备审计合规」。<br>
+    零代码、零基础、五级递进、80+个核心术语——<br>
+    你唯一需要的 AI Agent 系统课程。
+  </p>
+  <div class="stats">
+    <div class="stat"><div class="n">5</div><div class="l">课程级别</div></div>
+    <div class="stat"><div class="n">89</div><div class="l">课程小节</div></div>
+    <div class="stat"><div class="n">74</div><div class="l">核心术语</div></div>
+    <div class="stat"><div class="n">40+</div><div class="l">互动测验</div></div>
+  </div>
+</div>
+
+<!-- 四个课程入口 -->
+<div class="courses">
+  <div class="course-card" onclick="window.open('01_从零到一_AI Agent工作流架构师.html','_blank')">
+    <div class="level">🟢 初级</div>
+    <div class="icon">🚲</div>
+    <h3>会用 Agent</h3>
+    <p class="tagline">什么叫工作流？什么叫Agent？MCP是什么？像学会开车一样学会使用Agent。</p>
+    <div class="meta">19节 · 17术语 · 零基础可学</div>
+  </div>
+  <div class="course-card" onclick="window.open('02_中级进阶_AI Agent架构师.html','_blank')">
+    <div class="level">🟡 中级</div>
+    <div class="icon">🚗</div>
+    <h3>理解 Agent</h3>
+    <p class="tagline">LLM怎么工作的？RAG是什么？多Agent怎么协作？深入原理，知道引擎怎么转。</p>
+    <div class="meta">21节 · 20术语 · 中学基础即可</div>
+  </div>
+  <div class="course-card" onclick="window.open('03_高级实战_AI Agent架构师.html','_blank')">
+    <div class="level">🟠 高级</div>
+    <div class="icon">🏎️</div>
+    <h3>搭建 Agent</h3>
+    <p class="tagline">系统设计、Dify精通、性能优化、安全合规。从无到有搭建可用的Agent系统。</p>
+    <div class="meta">22节 · 15术语 · 非理工科大学生</div>
+  </div>
+  <div class="course-card" onclick="window.open('04_专家级_AI Agent架构师.html','_blank')">
+    <div class="level">🔴 专家</div>
+    <div class="icon">🛩️</div>
+    <h3>决策 Agent</h3>
+    <p class="tagline">企业架构、技术选型、成本建模、合规治理。含 LangChain 核心知识 + Dify 实操精要。</p>
+    <div class="meta">27节 · 22术语 · 企业架构决策者</div>
+  </div>
+  <div class="course-card" onclick="window.open('05_量化投研Agent实战.html','_blank')">
+    <div class="level">🧠 实战</div>
+    <div class="icon">🏛️</div>
+    <h3>量化投研 Agent 实战</h3>
+    <p class="tagline">10位大师Agent董事会 · 知识库驱动 · 多空辩论 · 贝叶斯信号融合 · 每日自动化投研工作流</p>
+    <div class="meta">8节 · 10位Agent角色 · 17道测验 · 6张SVG · 结业课</div>
+  </div>
+</div>
+
+<!-- 学习路径时间线 -->
+<div class="journey">
+  <h2>🎯 你的学习路径</h2>
+  <div class="timeline">
+    <div class="tl-item">
+      <h4>🟢 第一阶段：会用（1-2小时）</h4>
+      <p>零基础上手。学会区分工作流和Agent、理解MCP、掌握5种设计模式。像学会开车一样学会用Agent。</p>
+    </div>
+    <div class="tl-item">
+      <h4>🟡 第二阶段：理解（2-3小时）</h4>
+      <p>深入原理。LLM、RAG、Function Calling、多Agent协作。知道发动机怎么转，才能修车。</p>
+    </div>
+    <div class="tl-item">
+      <h4>🟠 第三阶段：搭建（3-4小时）</h4>
+      <p>实战技能。系统设计、Dify精通、性能优化、安全合规。从0到1搭建可用的Agent系统。</p>
+    </div>
+    <div class="tl-item">
+      <h4>🔴 第四阶段：决策（3-5小时）</h4>
+      <p>架构思维。企业集成、技术选型、成本建模、合规治理、团队建设。不做执行者，做决策者。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 课程总览表 -->
+<div class="overview">
+  <h2>📋 课程体系一览</h2>
+  <table class="ov-table">
+    <tr>
+      <th>级别</th>
+      <th>核心问题</th>
+      <th>你会学到</th>
+      <th>适合谁</th>
+      <th>课时</th>
+    </tr>
+    <tr>
+      <td><span class="dot d1"></span>🟢 初级</td>
+      <td>Agent 是什么？能做什么？</td>
+      <td>工作流vs Agent · MCP协议 · 5种设计模式 · 人机协作</td>
+      <td>零基础、小学生可懂</td>
+      <td>19节</td>
+    </tr>
+    <tr>
+      <td><span class="dot d2"></span>🟡 中级</td>
+      <td>Agent 怎么工作的？</td>
+      <td>LLM原理 · RAG深入 · 提示词科学 · 多Agent · 部署</td>
+      <td>中学毕业生</td>
+      <td>21节</td>
+    </tr>
+    <tr>
+      <td><span class="dot d3"></span>🟠 高级</td>
+      <td>怎么搭建可靠系统？</td>
+      <td>系统设计 · Dify精通 · 结构化输出 · 性能优化 · 安全</td>
+      <td>非理工科大学生</td>
+      <td>22节</td>
+    </tr>
+    <tr>
+      <td><span class="dot d4"></span>🔴 专家</td>
+      <td>怎么选？怎么管？</td>
+      <td>企业架构 · 技术选型 · 中国模型对比 · LangChain · Dify · 成本建模</td>
+      <td>架构决策者</td>
+      <td>27节</td>
+    </tr>
+  </table>
+</div>
+
+<!-- 术语检索 -->
+<div class="glossary-search" id="glossarySearch">
+  <h2>🔍 术语检索</h2>
+  <p class="search-hint">输入中文或英文，快速查找 74 个核心术语的含义与学习章节</p>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="比如：MCP、工作流、RAG、Embedding…" autocomplete="off">
+    <button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
+    <span class="search-icon">🔍</span>
+  </div>
+  <div class="search-stats" id="searchStats"></div>
+  <div class="glossary-results" id="glossaryResults">
+    <div class="no-results"><span class="emoji">📖</span>输入关键词开始检索</div>
+  </div>
+</div>
+
+<div class="footer">
+  <p><strong>人人都是Agent架构师</strong> · 纯前端 · 无依赖 · 开源课程</p>
+  <p style="margin-top:6px">AI Agent 工作流架构师课程体系 · 创建于 2026-05-19</p>
+</div>
+
+<script>
+// ===== 全四级术语数据集（74条）=====
+const GLOSSARY = [
+  // 初级 (index.html) — 17 terms
+  {cn:'AI 智能体',en:'Agent',def:'能自主决定下一步做什么的AI系统，像自动驾驶汽车一样自己判断路线',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'工作流',en:'Workflow',def:'按预定步骤执行的AI流程，像遥控车一样按固定路线跑',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'大语言模型',en:'LLM (Large Language Model)',def:'能理解和生成文字的大型AI模型，比如ChatGPT、Claude',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'检索增强生成',en:'RAG (Retrieval-Augmented Generation)',def:'让AI先查资料再回答——不瞎编，有据可查',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'模型上下文协议',en:'MCP (Model Context Protocol)',def:'AI连接外部工具的USB接口——一个标准连接所有数据源',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'提示链',en:'Prompt Chaining',def:'把大任务拆成小步骤，像接力赛一样一棒一棒传下去',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'路由',en:'Routing',def:'根据问题类型自动分发给「对的专家」，像医院的分诊台',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'并行化',en:'Parallelization',def:'同时做多件互不依赖的事，像同时煮饭、炒菜、烧汤',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'编排器-工作者',en:'Orchestrator-Workers',def:'一个总指挥Agent分配任务、汇总结果，像交响乐团的指挥',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'评估优化器',en:'Evaluator-Optimizer',def:'生成→检查→修改→再检查的循环，像写完作业自己检查',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'提示词',en:'Prompt',def:'你给AI的指令——说什么、怎么说，决定了AI怎么回应',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'工具调用',en:'Tool Calling / Function Calling',def:'让AI能「使用」外部工具，比如查数据、发消息、写文件',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'上下文',en:'Context',def:'AI在对话中能「看到」的信息总量，包括历史对话和外部文档',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'幻觉',en:'Hallucination',def:'AI「一本正经地胡说八道」——编造不存在的事实或数据',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'词元',en:'Token',def:'AI处理文字的最小单位，中英文都会被切成Token再处理',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'微调',en:'Fine-tuning',def:'在已有模型基础上，用特定数据「再训练」，让它更擅长某类任务',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  {cn:'系统提示词',en:'System Prompt',def:'给AI设定的「人设」和规则，在整个对话中持续生效',lvl:'primary',page:'01_从零到一_AI Agent工作流架构师.html'},
+  // 中级 (intermediate.html) — 20 terms
+  {cn:'温度',en:'Temperature',def:'控制AI输出「创造性」的参数——0=严谨死板，1=天马行空',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'核采样',en:'Top-P Sampling',def:'限制AI只从概率最高的词中选——P越小越保守',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'上下文窗口',en:'Context Window',def:'AI一次能「记住」的Token上限，决定了能处理多长的文档',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'注意力机制',en:'Attention Mechanism',def:'AI自动判断「读这个词时应该注意哪些其他词」的核心技术',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'变换器架构',en:'Transformer',def:'当前所有主流大模型的底层架构，2017年由Google提出',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'少样本学习',en:'Few-Shot Learning',def:'给AI看2-3个例题，让它通过例子理解任务（比文字说明更有效）',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'零样本学习',en:'Zero-Shot Learning',def:'不给任何例子，直接让AI完成任务（适合简单任务）',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'思维链',en:'Chain-of-Thought (CoT)',def:'让AI「打草稿」——先逐步写出推理过程，再给最终答案',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'自洽性',en:'Self-Consistency',def:'对同一问题生成多次答案，取出现最多的——用「投票」提高可靠性',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'嵌入向量',en:'Embedding',def:'把文字变成一串数字，让计算机用数学方式衡量语义相似度',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'向量数据库',en:'Vector Database',def:'专门存储和搜索嵌入向量的数据库，是RAG系统的核心引擎',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'文本分块',en:'Chunking',def:'把长文档切成小块再喂给AI——像切牛排，太大嚼不烂、太小没味道',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'重叠窗口',en:'Overlap / Sliding Window',def:'相邻文本块之间保留部分重叠内容，防止关键信息被切断',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'函数调用',en:'Function Calling',def:'AI输出「我要调哪个函数+参数是什么」，由程序真正执行',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'多Agent系统',en:'Multi-Agent System',def:'多个AI智能体分工协作，像一支团队而不是一个人',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'红队测试',en:'Red Teaming',def:'故意用极端、刁钻的问题攻击Agent，找出安全漏洞——AI的碰撞测试',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'提示注入',en:'Prompt Injection',def:'攻击者把恶意指令藏在用户输入中，试图劫持Agent的行为',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'速率限制',en:'Rate Limiting',def:'限制单位时间内的请求次数，防止成本失控和服务崩溃',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'语义搜索',en:'Semantic Search',def:'按「意思相近」搜索，而非「字面匹配」——「营收增长」能找到「销售提升」',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  {cn:'JSON模式',en:'JSON Mode / Structured Output',def:'强制AI输出结构化数据（JSON格式），方便程序读取和处理',lvl:'intermediate',page:'02_中级进阶_AI Agent架构师.html'},
+  // 高级 (advanced.html) — 15 terms
+  {cn:'结构化输出',en:'Structured Output',def:'让AI输出预设格式的JSON，下游程序可直接读取——像填Excel模板',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'JSON Schema',en:'JSON Schema',def:'定义JSON格式的「模板」——描述有哪些字段、什么类型、必填还是可选',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'提示词模板',en:'Prompt Template',def:'参数化的提示词框架——换参数即可复用，支持版本管理',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'纵深防御',en:'Defense in Depth',def:'多层安全防线——一层被突破，还有下一层',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'角色漂移',en:'Role Drift',def:'Agent偏离自己被分配的角色，开始干别人的活',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'批处理',en:'Batch Processing',def:'把多个相似请求合并成一次处理——省钱但牺牲实时性',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'模型蒸馏',en:'Model Distillation',def:'用大模型的数据训练小模型——让便宜模型也能有好表现',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'流式输出',en:'Streaming',def:'AI边生成边输出，不等全部生成完——用户感觉更快',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'SDLC',en:'SDLC (Agent)',def:'Agent系统的完整生命周期：需求→设计→开发→测试→部署→运维',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'只读权限',en:'Read-Only Access',def:'Agent只能查数据，不能改/删——数据库Agent的安全底线',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'审计日志',en:'Audit Log',def:'记录Agent的所有操作——谁在什么时候做了什么，可追溯',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'A/B测试',en:'A/B Testing',def:'同一任务用两套提示词/架构跑，对比哪个效果更好',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'降级策略',en:'Graceful Degradation',def:'某个Agent失败时，优雅地降级——不崩、不丢数据、给出提示',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'死循环防御',en:'Loop Prevention',def:'设最大轮次限制，Agent之间循环调用时强制终止',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  {cn:'意图识别',en:'Intent Recognition',def:'判断用户输入属于哪种类型——是客服Agent路由的第一步',lvl:'advanced',page:'03_高级实战_AI Agent架构师.html'},
+  // 专家 (expert.html) — 16 terms
+  {cn:'包装器模式',en:'Wrapper Pattern',def:'Agent包裹已有系统做智能入口，不动原系统',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'事件驱动',en:'Event-Driven',def:'Agent监听消息队列异步处理——适合大批量',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'中台模式',en:'Platform Model',def:'能力平台化共享——适合大型多部门组织',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'断点续传',en:'Checkpoint / Resume',def:'记录进度，崩溃后从断点继续',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'模型路由',en:'Model Router',def:'按难度自动分给大小模型——降本核心',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'指数退避',en:'Exponential Backoff',def:'重试间隔2s→4s→8s递增，避免压垮故障服务',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'GDPR',en:'GDPR',def:'欧盟数据保护条例——全球最严隐私法之一',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'PIPL',en:'Personal Info Protection Law',def:'中国个人信息保护法——数据原则上境内存储',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'CCPA',en:'CCPA',def:'加州消费者隐私法——用户有权知道和删除',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'被遗忘权',en:'Right to be Forgotten',def:'用户有权要求删除其所有个人数据',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'数据残留',en:'Data Residency',def:'数据存储的地理位置限制——跨境合规核心',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'多模态',en:'Multimodal',def:'AI处理文字+图片+音频+视频多种输入',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'边缘计算',en:'Edge Computing',def:'在设备本地运行AI——快且保护隐私',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'技术债',en:'Technical Debt',def:'临时方案留下的隐患——以后要还的利息',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'审计追踪',en:'Audit Trail',def:'记录谁在何时做了什么——Agent的黑匣子',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'降级策略(专家)',en:'Graceful Degradation (Expert)',def:'故障时逐步减功能，不全崩——五层降级金字塔',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'LangChain',en:'LangChain',def:'LLM 应用开发框架，提供标准化组件（Chain/Agent/Memory）拼装 Agent 系统',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'Dify',en:'Dify',def:'开源可视化 LLM 应用平台，拖拽编排工作流、零代码搭建 AI 应用',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'思考模式',en:'Thinking Mode',def:'AI 输出答案前先内部推理再给结论，DeepSeek V4 系列支持开关切换',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'缓存命中',en:'Cache Hit',def:'相同输入复用已缓存的计算结果，Token 费用可降至 1/10',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'开源模型',en:'Open-Source Model',def:'模型权重公开可下载，支持自行部署和微调，不受 API 厂商绑定',lvl:'expert',page:'04_专家级_AI Agent架构师.html'},
+  {cn:'私有化部署',en:'On-Premises Deployment',def:'将模型部署在企业内部服务器运行，数据不出企业，满足合规要求',lvl:'expert',page:'04_专家级_AI Agent架构师.html'}
+];
+
+// 级别映射
+const LEVEL_MAP = {
+  primary:   {emoji:'🟢',name:'初级·会用',cls:'l1'},
+  intermediate:{emoji:'🟡',name:'中级·理解',cls:'l2'},
+  advanced:  {emoji:'🟠',name:'高级·搭建',cls:'l3'},
+  expert:    {emoji:'🔴',name:'专家·决策',cls:'l4'}
+};
+
+// 搜索
+const input = document.getElementById('searchInput');
+const results = document.getElementById('glossaryResults');
+const stats = document.getElementById('searchStats');
+const clearBtn = document.getElementById('clearBtn');
+
+function search(q) {
+  q = q.trim().toLowerCase();
+  if (!q) {
+    results.innerHTML = '<div class="no-results"><span class="emoji">📖</span>输入关键词开始检索</div>';
+    stats.textContent = '';
+    clearBtn.classList.remove('show');
+    return;
+  }
+  clearBtn.classList.add('show');
+  const hits = GLOSSARY.filter(t =>
+    t.cn.toLowerCase().includes(q) || t.en.toLowerCase().includes(q)
+  );
+  stats.textContent = `找到 ${hits.length} 条结果`;
+  if (hits.length === 0) {
+    results.innerHTML = '<div class="no-results"><span class="emoji">🔎</span>没找到匹配的术语，试试其他关键词</div>';
+    return;
+  }
+  results.innerHTML = hits.map(t => {
+    const lv = LEVEL_MAP[t.lvl];
+    return `<div class="glossary-card">
+      <div class="term-row">
+        <span class="term-cn">${t.cn}</span>
+        <span class="term-en">${t.en}</span>
+        <span class="term-badge ${lv.cls}">${lv.emoji} ${lv.name}</span>
+      </div>
+      <div class="term-def">${t.def}</div>
+      <a class="term-link" href="${t.page}" target="_blank">📖 前往学习章节 →</a>
+    </div>`;
+  }).join('');
+}
+
+function clearSearch() {
+  input.value = '';
+  search('');
+  input.focus();
+}
+
+input.addEventListener('input', () => search(input.value));
+</script>
+</body>
+</html>

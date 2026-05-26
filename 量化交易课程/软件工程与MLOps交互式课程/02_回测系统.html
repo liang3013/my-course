@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 学会回测：别让数字骗了你 · 零基础入门</title>
+<style>
+:root {
+  --bg: #0d1117; --card: #161b22; --card-hover: #1c2333; --border: #30363d;
+  --text: #e6edf3; --sub: #8b949e; --accent: #40c880; --accent2: #5ae09a;
+  --green: #3fb950; --red: #f85149; --yellow: #d2991d; --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(64,200,128,0.35); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+body {
+  font-family: -apple-system, 'SF Pro Display', 'PingFang SC', sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #0a2015 0%, var(--bg) 70%);
+  color: var(--text); line-height: 1.75; min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width: 280px; background: var(--card); border-right: 1px solid var(--border);
+  padding: 24px 16px; position: sticky; top:0; height:100vh;
+  overflow-y: auto; flex-shrink: 0;
+}
+.main { flex:1; padding: 32px 48px; max-width: 920px; }
+.logo { font-size: 1.2em; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.logo .icon { font-size: 1.4em; }
+.subtitle { color: var(--sub); font-size: 0.82em; margin-bottom: 20px; opacity: 0.8; }
+.progress-bar-wrap { background: var(--border); border-radius: 8px; height: 6px; margin-bottom: 22px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 8px; transition: width 0.6s; box-shadow: 0 0 12px rgba(64,200,128,0.25); }
+.progress-text { font-size: 0.78em; color: var(--sub); margin-bottom: 4px; }
+.nav-module { margin-bottom: 18px; }
+.nav-module-title { font-size: 0.72em; text-transform: uppercase; color: var(--sub); letter-spacing: 1.5px; margin-bottom: 8px; padding: 0 8px; opacity: 0.7; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 0.88em; color: var(--sub); border-left: 3px solid transparent; margin-bottom: 2px; }
+.nav-item:hover { background: var(--card-hover); color: var(--text); border-left-color: rgba(64,200,128,0.3); }
+.nav-item.active { background: rgba(64,200,128,0.12); color: var(--accent2); font-weight: 600; border-left-color: var(--accent2); }
+.nav-item.done { color: var(--green); }
+.nav-item .check { width: 20px; text-align: center; font-size: 0.8em; }
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.lesson-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 34px; margin-bottom: 24px; transition: border-color 0.25s; }
+.lesson-card:hover { border-color: rgba(64,200,128,0.2); box-shadow: 0 2px 20px rgba(64,200,128,0.06); }
+.lesson-card h2 { font-size: 1.5em; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.lesson-card .meta { color: var(--sub); font-size: 0.85em; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.lesson-card h3 { font-size: 1.1em; margin: 28px 0 14px; color: var(--accent2); position: relative; padding-left: 14px; }
+.lesson-card h3::before { content: ''; position: absolute; left: 0; top: 3px; bottom: 3px; width: 3px; border-radius: 2px; background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+.lesson-card p { margin-bottom: 14px; }
+.lesson-card ul, .lesson-card ol { padding-left: 24px; margin-bottom: 14px; }
+.lesson-card li { margin-bottom: 8px; }
+.lesson-card .hl { color: var(--accent2); font-weight: 600; }
+.lesson-card table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
+.lesson-card th { background: var(--border); padding: 10px 14px; text-align: left; font-size: 0.85em; color: var(--sub); }
+.lesson-card td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.lesson-card code { background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 4px; font-size: 0.9em; color: var(--accent2); font-family: 'SF Mono', 'JetBrains Mono', monospace; }
+.lesson-card pre { background: var(--card-hover); padding: 16px 20px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; margin: 16px 0; border: 1px solid var(--border); }
+.lesson-card pre code { background: none; padding: 0; }
+.analogy, .deep, .tip, .warn {
+  padding: 18px 20px; border-radius: 10px; margin: 18px 0; border-left: 4px solid;
+}
+.analogy { background: rgba(64,200,128,0.08); border-color: var(--accent); }
+.deep { background: rgba(64,200,128,0.10); border-color: var(--accent); }
+.tip { background: rgba(63,185,80,0.06); border-color: var(--green); }
+.warn { background: rgba(248,81,73,0.06); border-color: var(--red); }
+.analogy .label, .deep .label, .tip .label, .warn .label {
+  font-size: 0.8em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+}
+.analogy .label { color: var(--accent); }
+.deep .label { color: var(--accent2); }
+.tip .label { color: var(--green); }
+.warn .label { color: var(--red); }
+
+.quiz-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
+.quiz-question { font-weight: 600; margin-bottom: 14px; font-size: 1em; }
+.quiz-option {
+  display: block; width: 100%; text-align: left; padding: 11px 16px; margin-bottom: 8px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); cursor: pointer; transition: 0.2s; font-size: 0.92em;
+}
+.quiz-option:hover { border-color: var(--accent); background: rgba(64,200,128,0.06); }
+.quiz-option.correct { background: rgba(63,185,80,0.12); border-color: var(--green); color: var(--green); }
+.quiz-option.wrong { background: rgba(248,81,73,0.08); border-color: var(--red); color: var(--red); }
+.quiz-result { margin-top: 10px; padding: 12px 16px; background: rgba(64,200,128,0.04); border-radius: 8px; font-size: 0.9em; display: none; }
+.quiz-result.show { display: block; }
+.quiz-result.pass { border-left: 3px solid var(--green); }
+.quiz-result.fail { border-left: 3px solid var(--red); }
+.quiz-result strong { display: block; margin-bottom: 4px; }
+
+.btn { padding: 10px 22px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; font-size: 0.9em; transition: 0.2s; background: var(--card); color: var(--text); }
+.btn:hover { border-color: var(--accent); background: var(--card-hover); }
+.btn-primary { background: rgba(64,200,128,0.12); border-color: var(--accent); color: var(--accent2); }
+.btn-success { background: rgba(63,185,80,0.12); border-color: var(--green); color: var(--green); }
+.btn-secondary { background: var(--card); }
+.nav-btns { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+.trap-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.78em; font-weight: 700; margin-left: 6px; }
+.trap-badge.survivor { background: rgba(248,81,73,0.15); color: var(--red); }
+.trap-badge.foresight { background: rgba(210,153,29,0.15); color: var(--yellow); }
+.trap-badge.overfit { background: rgba(139,148,158,0.15); color: var(--sub); }
+.trap-badge.liquidity { background: rgba(63,185,80,0.15); color: var(--green); }
+.trap-badge.decay { background: rgba(64,200,128,0.15); color: var(--accent2); }
+
+@media(max-width:768px) {
+  .app { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: relative; }
+  .main { padding: 24px 18px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">📊</span> 学会回测</div>
+  <div class="subtitle">零基础友好 · 生活类比入门 · 别让数字骗了你</div>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <a href="课程首页_软件工程与MLOps.html" style="display:block;margin-bottom:12px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:0.82em;color:var(--sub);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--sub)'">🏠 回到课程总览</a>
+  <div id="navContainer"></div>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="resetAll()">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ===== DATA =====
+const finalExam = { questions: [
+  { q:'做完回测后发现年化收益+30%——你最应该先怀疑什么？', options:['自己是个天才','回测有问题——可能是数据偷看、过拟合或忽略了成本，先排除所有陷阱再考虑策略是否有效','数据不够','市场太弱'], correct:1 },
+  { q:'为什么事件驱动回测比向量化回测更可靠？', options:['速度更快','事件驱动按时间顺序逐件处理，能正确模拟"先发生什么→后发生什么"的因果链条——向量化只能看到静态结果','更简单','不需要数据'], correct:1 },
+  { q:'你在2024年做回测，回测池里只有"至今还活着的股票"——这犯了什么错误？', options:['前视偏差','幸存者偏差——退市和破产的公司被排除了，你只看到了"幸存者"的表现，大幅高估策略收益','过拟合','流动性幻觉'], correct:1 },
+  { q:'财报数据的前视偏差最容易出现在什么时候？', options:['年底','你回测时用的"报告期截止日"实际比你"能看到数据的公告日"早了好几个月——比如10月1日就用了Q3季报数据，但Q3数据要到10月底才公告','交易时段','开盘时'], correct:1 },
+  { q:'回测收益曲线像一条光滑的45度直线，几乎每天稳定盈利——这是什么信号？', options:['策略非常好','几乎一定是过拟合——真实市场不可能有这样的曲线。你找到了历史噪音里的"完美规律"，但样本外大概率失效','市场稳定','需要加杠杆'], correct:1 },
+  { q:'你自己的买单会把价格推高——如果回测里没考虑这一点，会犯什么错误？', options:['前视偏差','流动性幻觉——你以为能按当前价格买任意数量，但现实里大单会推高成交价、小盘股甚至可能买不到足够数量','信号衰减','幸存者偏差'], correct:1 },
+  { q:'一个选股因子半衰期只有3个月——这意味着什么？', options:['因子很稳定','因子的预测能力每3个月衰减一半——如果你不做定期更新，半年后这个因子基本就在扔骰子','需要加仓','可以用十年'], correct:1 },
+  { q:'策略年化+20%但R²（能被市场波动解释的比例）=85%，α（超额收益）在统计上不显著——这意味着什么？', options:['找到圣杯了','你赚的基本是市场给你的钱（Beta），并非你自己的本事（Alpha）。市场的"电梯"上升时你被带上去了——换个熊市可能亏得一样快','应该全仓','加杠杆'], correct:1 },
+  { q:'对抗验证的核心思想是什么？', options:['和对手竞争','如果AI模型能区分"训练数据"和"测试数据"——说明两个数据集的规律已经不同了，你的回测环境不能代表真实未来，过拟合警报已响','多跑几次回测','加大数据量'], correct:1 },
+  { q:'POC（渐进式样本外测试）为什么比"训练一次、测试一次"更严格？', options:['更快','POC每月重新训练、只用当月之前的数据预测下月——模拟了"你在每个月底只能看到截至当天的数据"的真实场景。36个月就是36次独立预测，没法蒙混过关','更简单','不需要代码'], correct:1 }
+]};
+
+const modules = [
+{
+  title: '🎮 零基础热身：回测到底是什么？',
+  lessons: [
+    {
+      id: 'warmup-simulator',
+      title: '你的投资模拟舱——为什么先别拿真钱试？',
+      emoji: '🎮',
+      content: `
+<p><span class="hl">假设你发明了一个炒股的"秘诀"——比如"每个月初买、月底卖"。</span>你怎么知道这个秘诀真能赚钱？你不能直接拿真金白银去试——万一亏了呢？你需要一个"模拟器"——就像飞行员在模拟舱里练飞行，摔了不心疼。回测系统，就是你的投资模拟舱。但注意：这个模拟舱如果造得不好，会给你虚假的安全感。</p>
+
+<div class="analogy">
+  <div class="label">🚗 类比：驾照科目二考场</div>
+  <p>还记得考驾照的科目二吗？倒车入库、侧方停车、坡道起步——你是在驾校的练车场里练的，不是在真实的马路上。</p>
+  <p><strong>教练为什么让你先在练车场练？</strong>三个原因：<br>
+  ① <strong>安全：</strong>练车场不会有大货车突然冲出来，撞了杆子最多赔50块钱<br>
+  ② <strong>可控：</strong>教练可以让你反复练同一个动作——倒车入库练100遍<br>
+  ③ <strong>省钱：</strong>开教练车撞了不用你修——真实马路上刮蹭一下就是几千块</p>
+  <p><span class="hl">回测系统就是你的"练车场"。你把历史数据（过去的行情）输入系统，让它模拟你的策略在过去会怎么表现——赚了还是亏了、最大亏损多少、什么行情下有效、什么行情下失效。全都不花一分真钱。</span></p>
+</div>
+
+<h3>回测的三个关键作用</h3>
+
+<div class="deep">
+  <div class="label">🎯 回测不是算命，是演练</div>
+  <p><strong>作用一：排除明显愚蠢的想法。</strong>比如"每天买涨停的股票"——跑一周回测你就知道了，涨停板你根本买不到。这种想法连模拟器都过不了，就别想实盘了。</p>
+  <p><strong>作用二：知道"最坏情况"。</strong>历史上最惨的时候，你的策略会亏多少？是亏10%还是亏50%？如果最坏情况你扛不住，那这个策略就不适合你——哪怕长期能赚钱。</p>
+  <p><strong>作用三：理解策略的"脾气"。</strong>你的策略在牛市表现好还是熊市？在震荡市频繁交易亏钱吗？对哪类股票有效？对哪类无效？——这些问题在模拟器里都能找到答案。</p>
+  <p><span class="hl">但关键是——模拟器必须造得对。如果模拟器本身有漏洞，它告诉你的"答案"全是错的。</span></p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 模拟舱的"破洞"——为什么多数回测结果不可信</div>
+  <p>就像练车场的坡道角度和真实马路不一样——你的科目二满分不代表你能上路。回测系统也有它的"破洞"：</p>
+  <ul>
+    <li><strong>破洞一：你只看了"活下来"的车。</strong>就像只统计没出过事故的司机——结论是"所有人开车都很安全"，但你漏掉了那些出事故已经不开车的人</li>
+    <li><strong>破洞二：你"提前知道了答案"。</strong>就像考试后看了标准答案，然后说"这些题我都会做"——但考试的时候你并不会</li>
+    <li><strong>破洞三：你把噪音当成了规律。</strong>就像盯着云看了一小时，你一定能找到"像龙"的云——但这些形状有意义吗？</li>
+    <li><strong>破洞四：你以为能随意买卖。</strong>就像你在网上看到一件商品标价100元，你以为买1万件也是100元一件——现实中下了大单价格会变</li>
+    <li><strong>破洞五：规律会过期。</strong>就像你发现了一条不堵车的捷径——但三个月后所有人都知道了，捷径变成了最堵的路</li>
+  </ul>
+  <p><span class="hl">这五个破洞就是本课程模块二要详细讲的"五大致命陷阱"。在学正式回测之前，先把这五个陷阱刻在脑子里——它们会让你的回测结果看起来比现实美10倍。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">你发明了一个选股方法，但不确定能不能赚钱——第一步应该做什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 直接用真钱小仓位试试</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 用回测系统在历史数据上模拟——不花一分真钱，先看过去的模拟表现</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 问朋友的意见</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 看财经新闻判断</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 回测是任何策略的第一道过滤器。用真钱试之前，先在历史数据里跑一遍——免费的"安全演练"。但前提是你的回测系统本身是靠谱的。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么说"回测结果好看不一定代表策略真好"？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 因为回测永远不准</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 因为回测系统可能有五大致命漏洞——比如只统计了存活的公司而漏掉了破产的、提前看到了未来的数据等等。这些漏洞会让回测收益虚高5-10倍</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 因为数据不够多</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 因为市场不会重复过去</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 一个"好看"的回测结果就像一张PS过的自拍——可能和真实的你差很远。要判断真假，你必须了解PS用了什么滤镜（即回测的五大致命陷阱）。</div>
+</div>
+      `
+    }
+  ]
+},
+{
+  title: '⚙️ 模块一：回测是怎么工作的？',
+  lessons: [
+    {
+      id: 'backtest-two-paradigms',
+      title: '两种"模拟舱"——为什么一种会骗你？',
+      emoji: '⚙️',
+      content: `
+<div class="analogy">
+  <div class="label">⚽ 类比：看比赛录像 vs 实时指挥</div>
+  <p><strong>方式一：看比赛录像（向量化回测）</strong><br>你坐在沙发上回看一场已经踢完的足球赛。你知道第60分钟有人进球、第80分钟有人受伤。你说"第60分钟应该换人"——但你在第60分钟时根本不知道第80分钟会有人受伤。这是<strong>上帝视角</strong>。</p>
+  <p><strong>方式二：实时指挥（事件驱动回测）</strong><br>你被蒙上眼睛参加比赛，每过一段时间有人告诉你当前比分。你在信息不完全的情况下做每一个决策——这才是真实的体验。这是<strong>第一人称视角</strong>。</p>
+  <p><span class="hl">回测中，上帝视角和第一人称视角的差距——就是你回测结果和实盘结果之间的差距。</span></p>
+</div>
+
+<h3>方式一：向量化回测——为什么不够？</h3>
+
+<div class="deep">
+  <div class="label">⚙️ 一次算完 ≠ 真实交易</div>
+  <p>向量化回测像一个计算器：你把所有历史数据喂进去，它"啪"一下算出整个时期的总收益。快，但不真实。</p>
+  <p><strong>三个致命缺陷：</strong></p>
+  <ol>
+    <li><strong>看不到"中间发生了什么"：</strong>比如你的规则是"跌5%就止损卖"。向量化回测只看每天收盘价——盘中跌到过-6%又拉回来了，它根本不知道。它以为你没触发止损，实际你的钱已经亏了。</li>
+    <li><strong>假设"想买就能买到"：</strong>向量化回测假设你按当天收盘价买到任何数量的股票。但现实中，涨停板你买不到，跌停板你卖不掉。</li>
+    <li><strong>忽略交易成本：</strong>现实中每一笔交易都有手续费（佣金）、税（印花税）、和"冲击成本"（你的买单本身会抬高价格）。向量化回测常常把这些统统忽略。</li>
+  </ol>
+</div>
+
+<h3>方式二：事件驱动回测——这才是真模拟</h3>
+
+<div class="deep">
+  <div class="label">⚙️ 像真实生活一样，按时间顺序一件事一件事处理</div>
+  <p>想象你的一天：闹钟响了→起床→刷牙→吃早饭→出门。每一件事都在特定的时间发生，后一件事依赖于前一件事。</p>
+  <p>事件驱动回测就是按这个逻辑运行：</p>
+  <ol>
+    <li><strong>早上9:30：</strong>市场开盘，新数据到达</li>
+    <li><strong>9:30:01：</strong>策略根据最新数据判断"买还是不买"</li>
+    <li><strong>9:30:02：</strong>如果决定买，生成订单——"买100股腾讯，限价350元"</li>
+    <li><strong>9:30:05：</strong>订单进入市场——"350元的买单，当前卖一价349.8元，能成交多少？"</li>
+    <li><strong>9:31:00：</strong>成交回报——"80股已成交@349.8，剩余20股挂单中"</li>
+  </ol>
+  <p><span class="hl">每一件事按实际发生的顺序逐一处理，后一件事只能用前一件事之后的信息。这和真实交易一模一样。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">策略规则是"盘中浮亏超过3%就止损卖出"。向量化回测用每天收盘价计算——它能准确模拟这个策略吗？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 能，收盘价也反映了当天的波动</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 不能——股票可能盘中跌到-5%触发止损、收盘又涨回-1%。向量化回测只看收盘价，完全不知道盘中发生了什么</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 用收盘前5分钟的价格就行</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 取决于数据精度</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 这是一个典型的"路径依赖"问题——决策依赖于过程中发生了什么，而不是只看终点。只有事件驱动回测能正确处理。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">事件驱动回测和真实交易最大的相似之处是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 算得更快</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 按时间顺序逐一处理——每个时刻只能看到"当时已经发生"的信息，不能提前偷看未来的数据。和你在真实交易中的处境一模一样</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 代码更少</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 界面更好看</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 信息的时间顺序是回测真实性的根本。能偷看未来的回测不是回测——是自欺欺人。</div>
+</div>
+      `
+    },
+    {
+      id: 'backtest-five-parts',
+      title: '拆开模拟舱——里面长什么样？',
+      emoji: '🔧',
+      content: `
+<div class="analogy">
+  <div class="label">🍳 类比：一个餐厅后厨</div>
+  <p>回测引擎像一个餐厅后厨——它由五个"工位"组成，每个工位负责一件事：</p>
+  <p><strong>工位一（市场数据台）= 采购员：</strong>源源不断地提供"食材"——历史行情数据，按真实的日期和时间顺序送进来<br>
+  <strong>工位二（策略台）= 主厨：</strong>拿到食材后决定"做什么菜"——当前该买还是该卖<br>
+  <strong>工位三（订单台）= 传菜员：</strong>主厨说"做一份红烧肉"→翻译成具体的采购单——买多少、什么价格、什么时候有效<br>
+  <strong>工位四（成交台）= 菜市场：</strong>模拟真实市场如何响应你的订单——能不能买到、花多少钱买到<br>
+  <strong>工位五（会计台）= 收银员：</strong>实时记账——目前持仓了什么、现金还剩多少、赚了多少亏了多少</p>
+  <p><span class="hl">每个工位独立工作、各司其职——就像真实的市场一样。</span></p>
+</div>
+
+<h3>五个工位逐一拆解</h3>
+
+<div class="deep">
+  <div class="label">🔧 工位一：市场数据（数据处理器）</div>
+  <p>这个工位只做一件事：<strong>按正确的顺序、正确的时间点，把历史行情数据"播放"出来。</strong></p>
+  <ul>
+    <li><strong>时间对齐：</strong>不能把2023年的数据播成2024年的。每一条数据到达的时间必须和当年真实发生的时间一致</li>
+    <li><strong>延迟模拟：</strong>数据不是实时产生的——收盘后要等几分钟数据商才处理完。回测要模拟这个延迟</li>
+    <li><strong>向前复权：</strong>股票分红送股后价格会"跳"——比如100元变50元（1拆2）。必须调整历史价格，让不同时期的价格可比较（这个过程叫"复权"）</li>
+  </ul>
+</div>
+
+<div class="deep">
+  <div class="label">🔧 工位二：策略（信号生成器）</div>
+  <p>这个工位只做一件事：<strong>根据当前能看到的全部信息，判断该买还是该卖。</strong></p>
+  <p>它不关心"能不能买到"、"要花多少手续费"——它只负责回答一个问题："此刻，这个股票值不值得买？"</p>
+  <p>就像一个主厨只负责判断"这个菜该不该做"——至于食材够不够、锅够不够大，那是其他工位的事。</p>
+  <p><span class="hl">策略和执行的分离，是回测设计的第一原则。好处是你可以单独改进策略而不影响执行，或反过来优化执行而不碰策略。</span></p>
+</div>
+
+<div class="deep">
+  <div class="label">🔧 工位三：订单（订单管理器）</div>
+  <p>这个工位做"翻译"工作：把策略的"买腾讯"翻译成具体的买卖指令。</p>
+  <ul>
+    <li><strong>买多少？</strong>你账上有100万，策略说"买腾讯"——买1万块还是全仓买？</li>
+    <li><strong>怎么买？</strong>市价单（按当前价格立刻买）还是限价单（指定一个价格，不到不买）？</li>
+    <li><strong>钱够吗？</strong>想买50万的腾讯但账上只有30万现金——买不了那么多</li>
+    <li><strong>超过限制了吗？</strong>你规定单只股票不超过总仓位的20%——超出部分自动截断</li>
+  </ul>
+</div>
+
+<div class="deep">
+  <div class="label">🔧 工位四：成交（成交模拟器）</div>
+  <p><strong>这是回测中最容易被"偷工减料"的环节。</strong></p>
+  <p>最简单的做法：假设你下的单全部按收盘价成交——永远100%成交、没有任何额外成本。这叫"最简模式"，所有新手都从这里开始，也都需要尽快离开。</p>
+  <p><strong>更真实的做法：</strong></p>
+  <ul>
+    <li><strong>成交量限制：</strong>一只股票全天成交额只有3000万，你想买1000万？可能只能成交一部分</li>
+    <li><strong>冲击成本：</strong>你自己的买单会推高价格——下单时的价格和最终成交价不一样</li>
+    <li><strong>限价单：</strong>你挂350元买单，全天最低价350.5元——没成交，排队等下一天</li>
+  </ul>
+</div>
+
+<div class="deep">
+  <div class="label">🔧 工位五：记账（组合会计）</div>
+  <p>这个工位实时追踪一切数字：</p>
+  <ul>
+    <li><strong>持仓：</strong>每只股票持有了多少、成本价多少、现在市值多少</li>
+    <li><strong>现金：</strong>可用余额、被限价单冻结的资金</li>
+    <li><strong>盈亏：</strong>已经卖掉的盈亏（已实现）+ 还在手里的盈亏（浮动盈亏）</li>
+    <li><strong>费用：</strong>佣金、印花税、过户费——每一分钱都记上</li>
+  </ul>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">策略工位（信号生成器）和订单工位（订单管理器）为什么要分离开？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 为了让代码更长</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 策略只负责"该不该买"，订单负责"怎么买"——把"判断"和"执行"分开后，你可以单独改进任何一个而不影响另一个，就像餐厅里主厨只管做菜，不管采购</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 因为电脑需要分开计算</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 为了让界面更好看</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 关注点分离是最基本的工程原则。就像你不会让厨师自己管收银——每个角色专注做一件事，系统才可靠、可维护。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">成交工位（成交模拟器）为什么最容易"偷工减料"？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 因为成交不重要</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 因为按"收盘价100%成交"实现起来最简单——但这是最不真实的假设。真实市场里大单会有冲击成本、小盘股可能根本买不到足够数量。忽略成交细节会让回测收益虚高</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 因为数据不够</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 因为每个人都知道成交价</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 成交模拟是回测和实盘差距最大的环节。就像在练车场上永远不会遇到堵车——真实市场里的成交约束（流动性和冲击成本）会让策略表现打不小的折扣。</div>
+</div>
+      `
+    },
+    {
+      id: 'simulation-fidelity',
+      title: '模拟舱的"逼真度"——从游戏到实战',
+      emoji: '🪜',
+      content: `
+<div class="analogy">
+  <div class="label">✈️ 类比：飞行模拟器的三个级别</div>
+  <p><strong>Level 1（手机游戏）：</strong>手指划屏幕控制飞机——没有重力感、没有仪表盘、坠机了重开就行。一架飞机撞了另一架？没关系。<br>
+  <strong>Level 2（专业模拟器）：</strong>有操纵杆和仪表盘——你需要看着速度、高度、油量表来操控。开始有"犯错成本"的感觉了。<br>
+  <strong>Level 3（全动模拟舱）：</strong>液压座舱会倾斜、震动——你感觉到G力、听到引擎声的变化、看到窗外天气变化。和真实飞行体验几乎一样。</p>
+  <p><span class="hl">回测系统同样有三个逼真度级别。每升一级，你的回测收益率会"缩水"3-5个百分点——不是策略变差了，而是你更接近真实了。</span></p>
+</div>
+
+<h3>Level 1：最简单的模拟（所有新手都从这里开始）</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 假设：按收盘价成交，零成本，想买多少买多少</div>
+  <p>这就像飞行模拟的手机游戏——好上手，但和真实飞行差了十万八千里。</p>
+  <p><strong>核心问题：</strong></p>
+  <ul>
+    <li>收盘价是全天最后一笔交易的价格——你不可能在收盘那一瞬间下出大单</li>
+    <li>零交易成本——现实中佣金加印花税就能吃掉你一截收益</li>
+    <li>忽略流动性——买500万和买5000万假设成交价一样，现实中不可能</li>
+  </ul>
+  <p><span class="hl">Level 1的回测收益可能高估10%到50%。</span>尤其是频繁交易（换手率高）的策略，成本会被严重低估。</p>
+</div>
+
+<h3>Level 2：加入成交量和成本的模拟（大部分机构用这一级）</h3>
+
+<div class="deep">
+  <div class="label">🪜 假设：按当日平均价成交，加入费用，加入成交量约束</div>
+  <p><strong>平均价（VWAP，成交量加权平均价）：</strong>不是收盘价——而是按照全天每个时间段的成交量和价格，算出一个加权平均价。你在开盘和收盘成交量大的时候买得多一些。</p>
+  <p><strong>加上真实费用：</strong>佣金（万分之几）+ 印花税（千分之一，卖出时收）+ 过户费。每一笔交易都扣。</p>
+  <p><strong>加上成交量约束：</strong>一只股票全天成交额5000万，你最多买其中的5%即250万。超过这个比例，假设买不到或成本大幅上升。</p>
+  <p><span class="hl">Level 2是最实用的级别——大部分量化机构的日常回测就在这一级。它比Level 1真实得多，又比Level 3简单得多。</span></p>
+</div>
+
+<h3>Level 3：最接近真实的模拟</h3>
+
+<div class="deep">
+  <div class="label">🪜 模拟每一笔订单如何影响市场价格</div>
+  <p>Level 3需要更精细的数据（每分钟的买卖盘口数据），模拟你的每一笔订单逐笔和市场上的买卖盘撮合。</p>
+  <p>这就像全动飞行模拟舱——最真实，但成本最高。适合资金量大的策略（你的交易本身就会影响价格）。</p>
+  <table>
+    <tr><th>特性</th><th>Level 1</th><th>Level 2</th><th>Level 3</th></tr>
+    <tr><td>成交价格</td><td>收盘价</td><td>当日均价</td><td>逐笔撮合模拟</td></tr>
+    <tr><td>能否全部成交</td><td>100%</td><td>受成交量限制</td><td>受盘口深度限制</td></tr>
+    <tr><td>交易成本</td><td>0</td><td>佣金+印花税</td><td>全部费用+冲击成本</td></tr>
+    <tr><td>适用资金规模</td><td>不限（不真实）</td><td>千万以内</td><td>任意规模</td></tr>
+    <tr><td>回测收益</td><td>最高（虚高）</td><td>中等（较真实）</td><td>最低（最真实）</td></tr>
+  </table>
+</div>
+
+<div class="tip">
+  <div class="label">💡 给你的建议</div>
+  <p>不要一上来就追求Level 3。先在Level 2跑通——如果Level 2下策略仍然有不错的收益，再考虑升级。如果Level 2就跑亏了钱，升级到Level 3只是更精确地确认你在亏钱。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">一个策略在Level 1回测年化+25%，升级到Level 2变成+15%——这意味着什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 策略质量下降了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 10%的"收益"来自不真实的假设（零成本+收盘价成交）——不是真正的赚钱能力。升级仿真去掉了虚假的部分，剩下的15%才更接近实盘表现</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 数据有问题</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 应该回去用Level 1</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 就像拍X光片——分辨率越高，你越能看到真实情况。Level 1的照片用了"美颜滤镜"，Level 2关掉了滤镜。升级后收益缩水是健康的。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">如果你的策略在Level 2就跑亏了钱，升级到Level 3会怎样？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 可能会转亏为盈</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 只会亏得更多——因为Level 3加入了更多真实约束（冲击成本、盘口限制）。升级仿真不会让亏钱策略变赚钱，只会让亏损更精确</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 结果不变</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 取决于品种</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 提高仿真度只能让结果更真实——不能改变策略本身的质量。如果一个运动员在平地上都跑不动，你给他加负重只会让他更慢。</div>
+</div>
+      `
+    }
+  ]
+},
+{
+  title: '🔥 模块二：五大致命陷阱 — 为什么多数回测结果都是假的？',
+  lessons: [
+    {
+      id: 'trap-survivorship',
+      title: '陷阱①：幸存者偏差 <span class="trap-badge survivor">致命</span>',
+      emoji: '💀',
+      content: `
+<div class="analogy">
+  <div class="label">💀 类比一：二战飞机的弹孔</div>
+  <p>二战时统计学家瓦尔德被请去分析返航飞机身上的弹孔。军方说：弹孔最多的地方加固装甲。<br>瓦尔德说：<strong>错。弹孔最多的地方不需要加固——那些被打中还能飞回来的地方不重要。应该加固弹孔最少的地方——因为被打中那里的飞机都坠毁了，没飞回来。</strong></p>
+  <p>你看到的数据（返航飞机）代表不了全部真相（所有参战飞机）。</p>
+</div>
+
+<div class="analogy">
+  <div class="label">🍜 类比二：倒闭的餐厅</div>
+  <p>你在美食街上观察：开的餐厅都门庭若市，家家赚钱。你得出结论：开餐厅很好赚。<br>但你没看到的是：这条街上过去三年倒闭了15家餐厅。你只看到了"活下来的"，没看到"死掉的"。<br><span class="hl">幸存者偏差：你只统计了活下来的样本——活下来的当然看起来都不错。</span></p>
+</div>
+
+<div class="analogy">
+  <div class="label">📚 类比三：成功学书籍</div>
+  <p>书店里全是"马云成功的10个习惯"、"巴菲特投资心法"——你看到的全是成功人士的故事。但如果把每年创业失败的那几百万人也写成书……你大概不会买。只读成功故事会让你以为"按这个套路做就能成功"——忽略了巨大的失败概率。</p>
+</div>
+
+<h3>幸存者偏差在回测中怎么坑你？</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 真实数据：差别有多大</div>
+  <p>假设你做一个选股策略，挑A股市场上"市盈率（PE，股价除以每股利润）最低的30只股票"，回测2005-2024年。</p>
+  <p><strong>如果用今天还活着的股票来回测：</strong>年化收益+15%。看起来很美。<br>
+  <strong>如果包含所有已经退市、破产的股票：</strong>年化收益可能降到+8%。几乎腰斩。</p>
+  <p><span class="hl">退市的公司——业绩暴雷的、财务造假的、行业崩塌的——它们被你从回测池里删掉了。你的策略如果当年选了它们，实际会亏得很惨。但你的回测"忘记"了这些亏损。</span></p>
+</div>
+
+<h3>怎么避免？</h3>
+
+<div class="deep">
+  <div class="label">💀 防御方法</div>
+  <p>① <strong>回测池（你选股票的候选名单）必须按历史时间动态更新。</strong>不是用"今天A股有哪些股票"来测试十年前——而是"十年前那个时间点，市场上实际有哪些股票"，包括后来退市的。<br>
+  ② <strong>如果用指数成分股（如沪深300），必须用历史成分股变更记录——</strong>指数每半年调整一次，当时纳入的股票后来可能已被剔除甚至退市。<br>
+  ③ <strong>如果只测个别优质公司（如腾讯、茅台），幸存者偏差影响较小——</strong>但一旦你做全市场选股策略，必须补齐退市股数据。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">做全A股选股策略回测，回测池的正确构建方式是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 取现在还在交易的A股就行</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 每个月份分别取"当时实际在交易的全部股票"——包含后来退市的，不排除任何曾经存在过的股票</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 只取市值最大的100只</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 取最近5年的新股票</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 正确的回测池是"动态快照"：2019年1月取2019年1月真实在市的全部股票，2020年1月取2020年1月真实在市的全部股票。退市的股票在它在市的月份里必须被包含。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">只统计"活下来的餐厅"和回测中的幸存者偏差——本质相同点是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 都是数据太少</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 都是排除了失败的样本——活下来的看起来都很成功，让你高估了成功概率。回测同理：排除了退市股，剩下的看起来都"涨得不错"</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 都是统计误差</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 都是运气问题</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 核心逻辑完全一样：样本选择存在系统性偏差——只保留了正面案例，丢弃了负面案例。结论自然偏乐观。</div>
+</div>
+      `
+    },
+    {
+      id: 'trap-lookahead',
+      title: '陷阱②：前视偏差 <span class="trap-badge foresight">隐蔽</span>',
+      emoji: '👁️',
+      content: `
+<div class="analogy">
+  <div class="label">📝 类比一：考完试看答案</div>
+  <p>考试后老师发了标准答案，你翻了一遍说："这些题我都会做啊！"<br>但考试当时——你并不知道答案。你是在<strong>已经知道答案之后</strong>才觉得"简单"。</p>
+  <p><span class="hl">回测中每天都在犯这个错误：用"考完试才知道的信息"来判断"考试当时的决策"。</span></p>
+</div>
+
+<div class="analogy">
+  <div class="label">🎰 类比二：买彩票后看号码</div>
+  <p>彩票开奖后，你看到中奖号码是"03 15 22 31 42 07"。你说："我平时就喜欢选这些数字！"<br>但如果让你在开奖前写出你要选的数字——你大概率不是这个组合。开奖后你知道答案了，就"觉得"自己本来也会这么选。</p>
+</div>
+
+<div class="analogy">
+  <div class="label">🏠 类比三：房价涨了才"预见"</div>
+  <p>2015年深圳房价暴涨后，无数人说"我早就知道要涨"。但2014年这些人买了吗？大部分没有。<br>事后知道因果很容易——事前判断才见真功夫。回测中用了事后才知道的数据，就像拿着2024年的房价数据去"预测"2015年该不该买房。</p>
+</div>
+
+<h3>前视偏差的重灾区：财务数据</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 三个时间点——每一个都差着好几个月</div>
+  <table>
+    <tr><th>时间点</th><th>含义</th><th>例子（Q3季报）</th></tr>
+    <tr><td><strong>报告期截止日</strong></td><td>数据"产生"的日期</td><td>2023年9月30日</td></tr>
+    <tr><td><strong>公告日</strong></td><td>公司正式发布的日期</td><td>2023年10月28日</td></tr>
+    <tr><td><strong>可得日</strong></td><td>数据库更新、你能查到的日期</td><td>2023年10月30日或更晚</td></tr>
+  </table>
+  <p><span class="hl">如果你在回测中"10月1日"就用了Q3的每股利润（EPS，公司每股赚多少钱）——你提前了将近一个月看到了未来。这一一个月的"预知能力"能制造出虚假的超额收益。</span></p>
+</div>
+
+<h3>前视偏差还会出现在哪些地方？</h3>
+
+<div class="deep">
+  <div class="label">👁️ 四个容易忽略的场景</div>
+  <p>① <strong>指数成分股调整：</strong>沪深300在12月初宣布调整名单→12月第二个周五收盘后才生效。你在12月就用新成分股回测→提前用了还没生效的信息<br>
+  ② <strong>新股（IPO）：</strong>一只新股上市第一天就有PE（市盈率）数据——但这个PE用的是上市前的业绩。上市后业绩可能完全不同<br>
+  ③ <strong>数据被"回头改"过：</strong>某公司2020年改了会计政策，数据库把所有历史数据按新口径重新算了一遍。回测必须用当年的原始数据，不能用后来"修正"的版本<br>
+  ④ <strong>分析师预期数据：</strong>华尔街分析师对某公司2023年利润的预测——数据库里的"最终版本"可能是在2023年底修正过的，但回测中每个月应该只能用"当月已有"的预测</p>
+</div>
+
+<h3>怎么防御？</h3>
+
+<div class="tip">
+  <div class="label">💡 逐股逐日检查"信息可得性"</div>
+  <p>核心原则：<strong>在回测的每一个时间点，你只能"看到"当时已经公开发布的数据。</strong></p>
+  <p>具体做法：维护一个"信息可得时间表"——每只股票每期财报的公告日、每次指数调仓的生效日。在回测的每一天，检查"今天我能看到哪些数据"。<br>
+  季报在10月28日公告→10月27日及之前的回测日期不能用Q3数据→只能用Q2数据。以此类推。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">2023年11月做回测，选股用了"2023年Q3的净利润"——有前视偏差吗？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 没有，Q3已经过了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 看具体日期——如果回测日是10月25日而季报10月28日才公告，就有前视偏差。但如果回测日是11月5日且大多数公司已公告，基本没问题。不能一概而论，必须逐股逐日核对</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 肯定有偏差</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 肯定没问题</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 前视偏差的判断是逐日、逐股的精细活。每家公司季报公告日期不同——茅台可能10月20日就公告了，某小公司可能拖到10月31日。公告日对齐需要精确到每家公司的实际公告日。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">你在数据库里查到某公司2020年EPS=3.5元——直接用于2015年的回测可以吗？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 可以，只要数据准确</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 绝对不可以——2020年的数据在2015年还不存在，你在用"未来才知道的信息"做"过去的决策"。2015年回测只能用2015年之前已经公告的财务数据</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 如果公司没变过就可以</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 取决于行业</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 时间是一切信息的基础约束。2020年的数据在2015年不存在——用它来做2015年的决策就是穿越者在作弊。回测必须严格按照时间顺序，未来数据永远不可见。</div>
+</div>
+      `
+    },
+    {
+      id: 'trap-overfitting',
+      title: '陷阱③：过拟合 <span class="trap-badge overfit">默认</span>',
+      emoji: '🎭',
+      content: `
+<div class="analogy">
+  <div class="label">☁️ 类比一：看云猜形状</div>
+  <p>你盯着天上的云看了一小时——你一定能找到"像龙"的云、"像马"的云、"像心形"的云。但这些形状真的有意义吗？还是你大脑的模式识别在随机噪声中强找规律？</p>
+  <p><span class="hl">金融数据的信噪比极低（大部分是随机噪声，少数是真实信号）。你盯着历史K线图看一小时，一定能找到"完美的买卖点"——但这些买卖点在样本外是否仍然有效？大概率不。</span></p>
+</div>
+
+<div class="analogy">
+  <div class="label">📖 类比二：背答案 vs 学会知识</div>
+  <p>期末考试前，你花了一晚把往年真题的答案全背了下来。考试时题目完全一样——你考了满分。<br>然后学校用了新出题组——题目全换了。你一个字都写不出来。</p>
+  <p><span class="hl">过拟合就是"背答案"——你记住了历史数据中的每一个细节（包括噪声），但没有学到真正可复用的规律。一旦换一组数据，策略立刻崩溃。</span></p>
+</div>
+
+<div class="analogy">
+  <div class="label">🗺️ 类比三：记路不认路</div>
+  <p>你每天上班走同一条路——"先左转，过三个红绿灯，右转，第一个路口再右转"。你记住了这条路线。<br>有一天前两个路口封路——你慌了。因为你记住的只是"步骤"，没真正理解城市路网的结构。</p>
+  <p><span class="hl">过拟合的策略就像死记硬背的导航——在训练数据（你走过的路）上完美，在陌生环境（新数据）里迷路。</span></p>
+</div>
+
+<h3>怎么识别过拟合？四个危险信号</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 出现任何一个信号——你的回测就不可信</div>
+  <p>① <strong>可调参数太多：</strong>策略有5个以上可手动调节的数字（如选股数量、持仓天数、止损比例、买入阈值、卖出阈值……）——参数越多，过拟合越严重。你把历史数据"雕刻"成了你的策略形状。</p>
+  <p>② <strong>收益曲线太光滑：</strong>真实市场的收益曲线一定有起伏波动。如果你的回测曲线像一把尺子画出的45度直线，几乎每天赚一点——这几乎100%是过拟合。真实世界不是这样的。</p>
+  <p>③ <strong>换个时间段就崩：</strong>2018-2021年表现完美，换到2022-2024就亏钱——说明你找到的规律只是2018-2021那段时间特有的噪声，不是普适的信号。</p>
+  <p>④ <strong>参数稍微动一动就大变化：</strong>把选股数量从20只改成18只——收益从+15%掉到+3%？这是过拟合的典型症状。你"最优"的参数组合恰恰是噪声中的一个尖峰。</p>
+</div>
+
+<h3>三大防御武器</h3>
+
+<div class="deep">
+  <div class="label">🛡️ 武器一：分段验证（别一次全训练）</div>
+  <p>不把全部历史数据用来"找规律"。把数据分成几段：前70%用来找规律（训练），后30%用来验证规律是否还在（测试）。</p>
+  <p>训练段收益+20%、测试段收益+3%？→ 过拟合。<br>训练段收益+12%、测试段收益+10%？→ 规律可能比较稳定。</p>
+  <p><span class="hl">在分段之间还要空出一段缓冲期——因为相邻时间段的数据会"传染"（今天和昨天的股价高度相关），需要隔开防止信息泄漏。</span></p>
+</div>
+
+<div class="deep">
+  <div class="label">🛡️ 武器二：对抗验证</div>
+  <p><strong>核心思想很简单：</strong>让你的模型来做一道判断题——"这段数据是训练数据还是测试数据？"</p>
+  <p>如果模型能轻易判断出来（正确率>70%），说明训练数据和测试数据的规律已经不同了。你的回测环境代表不了真实未来。</p>
+  <p><span class="hl">这就像检查两个班级是不是同一张试卷——如果一眼就能分辨，那它们考的不是同一份卷子。</span></p>
+</div>
+
+<div class="deep">
+  <div class="label">🛡️ 武器三：滚动前进（POC，渐进式样本外测试）</div>
+  <p>不是"训练一次→验证一次"。而是模拟你每个月底的处境：</p>
+  <p>1月：用截至1月底的全部数据训练→预测2月<br>
+  2月：用截至2月底的全部数据重新训练→预测3月<br>
+  3月：用截至3月底的全部数据重新训练→预测4月<br>
+  ……如此每月推进。共36个月就是36次独立预测。</p>
+  <p><span class="hl">一个策略要连续36次独立预测都不翻车才叫真正可靠。一次蒙对很容易，连续36次蒙对极难。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">策略有12个可调参数，回测结果年化+35%——你最应该怀疑什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 这是个好策略</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 几乎一定是过拟合——12个参数配合就像12个旋钮，你可以把历史数据"调"出任何你想要的结果。参数越多，你的"规律"越可能是历史噪声的巧合</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 市场效率低</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 需要更多参数</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 参数越多，过拟合越严重。每多一个参数，你就在多一个维度上"雕刻"历史数据。一个优秀的策略通常只有2-3个核心参数，且参数变动10%以内策略表现不应剧烈变化。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">训练期IC（因子预测力）=0.18，测试期IC=0.03——这是什么问题？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 测试期数据有问题</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 严重过拟合——"IC"是衡量预测准确度的指标，训练期看起来很强（0.18），但一旦换成没见过的新数据，预测力暴跌到0.03。说明训练期找到的"规律"在新数据上几乎是噪声</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 需要更多训练数据</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 需要调参数让测试期变好</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 训练-测试IC的巨大落差是过拟合最经典的信号。此时候不应该"调参数让测试期变好"——那是第二轮过拟合。正确的做法是减少参数、减少特征数量、用更简单的策略。</div>
+</div>
+      `
+    },
+    {
+      id: 'trap-liquidity',
+      title: '陷阱④：流动性幻觉 <span class="trap-badge liquidity">沉默</span>',
+      emoji: '💧',
+      content: `
+<div class="analogy">
+  <div class="label">🏊 类比一：游泳池 vs 海洋</div>
+  <p>你在游泳池里划水——水是静止的，你轻轻动一下就能漂很远。<br>你在海洋里游泳——海浪、暗流、水的阻力都不同。同样的动作，在海里游一米的力气够在泳池里游十米。</p>
+  <p><span class="hl">回测中的流动性幻觉就是"你在游泳池里测试，实盘在海洋里游泳"。你的每一笔买单在现实中都会推高价格——但在回测里它毫无影响。</span></p>
+</div>
+
+<div class="analogy">
+  <div class="label">🛒 类比二：团购的幻觉</div>
+  <p>你在网上看到一台电视标价3000元。你想买100台——总价30万。但当你真的去下单100台时：商家说库存只有5台，而且批发价要3300元/台。<br>标价3000元是基于"买1台"的假设——"买100台"是完全不同的交易。</p>
+  <p><span class="hl">回测中你以为能按"当前价格"买到任意数量——就像以为3000元能买100台电视。现实中大单会改变价格，也可能根本买不到足够数量。</span></p>
+</div>
+
+<div class="analogy">
+  <div class="label">🍜 类比三：网红餐厅排队</div>
+  <p>大众点评上人均100元的网红餐厅——你一个人去，等位30分钟，花了100元吃上了。<br>你突然说要订100人的团餐——老板说做不到，厨房产能不够，而且团餐价格至少150元/人。</p>
+  <p><span class="hl">流动性就是"市场能在不显著改变价格的情况下，消化多少买卖量"——小资金像一个人吃饭（流动性充足），大资金像100人团餐（流动性不够）。</span></p>
+</div>
+
+<h3>流动性约束的三个维度</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 维度一：成交量——你能买多少？</div>
+  <p>一只股票日均成交额（全天所有买卖的总金额）=3000万。你想一天之内买入500万——占全天成交的17%。</p>
+  <p>这意味着什么？你的买单会成为当天市场上最大的单一买家之一。你的买入行为本身就会推高价格——因为卖家看到大买盘后会抬高报价。</p>
+  <p><strong>经验法则：</strong>单只股票的单日订单量最好不超过日均成交额的5%。超过10%，冲击成本（你推高的价格部分）会急剧增加。</p>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 维度二：冲击成本——你的买卖行为本身会改变价格</div>
+  <p><strong>冲击成本不是"市场下跌了所以你亏了"——是你自己买得太急把价格推高了。</strong></p>
+  <table>
+    <tr><th>你的订单占日成交额的比例</th><th>预估额外成本</th><th>对策略的影响</th></tr>
+    <tr><td>不到1%</td><td>几乎可以忽略</td><td>没影响</td></tr>
+    <tr><td>1%到5%</td><td>小幅增加</td><td>年化影响约1-3%</td></tr>
+    <tr><td>5%到10%</td><td>明显增加</td><td>中等收益策略可能无利可图</td></tr>
+    <tr><td>超过10%</td><td>大幅增加</td><td>大多数策略变得不可行</td></tr>
+  </table>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 维度三：容量上限——策略能管多少钱？</div>
+  <p>每个策略都有一个"最大可管理资金上限"。超过这个上限，收益会迅速归零甚至转负。因为：</p>
+  <ul>
+    <li>资金越大→每笔交易量越大→冲击成本越高</li>
+    <li>小盘股策略容量小（小盘股本身成交量就小）</li>
+    <li>频繁换手的策略容量小（每一笔换手都产生冲击成本，快速累积）</li>
+  </ul>
+  <p><span class="hl">你应该在回测报告中标注："本策略在资金<500万时效果最好；500-1000万时收益减半；>1000万时不可行。"</span></p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 大盘股vs小盘股的流动性天差地别</div>
+  <ul>
+    <li><strong>腾讯：</strong>日均成交额约50亿港币——单日买卖一两千万几乎没影响。大资金友好</li>
+    <li><strong>某小盘股：</strong>日均成交额可能只有几百万——你买50万就能占到日成交的10%以上。回测中假设能买100万是在自欺欺人</li>
+    <li><strong>结论：</strong>大盘股流动性好，不太需要担心；小盘股必须在回测中加入成交量约束和冲击成本计算</li>
+  </ul>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">某小盘股日均成交额300万，你的策略每天买入50万——现实中可行吗？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 完全可行</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 有很大风险——50万/300万=17%的成交占比，你的买入会显著推高价格。如果策略本来的年化超额只有5%，冲击成本能直接吃掉一大半</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 只要分散到多天就行</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 取决于市场行情</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 17%的日成交占比是非常大的——在真实市场中，这么大的买单很难不引起价格明显变化。要么接受更高的成交价，要么分散到多天小批量买入。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">回测中假设"全部按收盘价成交"，这和流动性幻觉有什么关系？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 没有关系</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 这恰恰是流动性幻觉的典型表现——假设你想买多少都能按同一个价格成交，完全忽略了"你的买单本身会改变价格"这个基本事实。你的回测结果中那些"漂亮的成交价"可能是现实中永远达不到的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 收盘价最准确</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 大家都用收盘价</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 收盘价成交假设是流动性幻觉的根源——它默认了"无限流动性"，即市场可以无限量按当前价格吸收你的订单。去掉这个假设后，很多看似赚钱的策略会现出原形。</div>
+</div>
+      `
+    },
+    {
+      id: 'trap-signal-decay',
+      title: '陷阱⑤：信号衰减 <span class="trap-badge decay">渐变</span>',
+      emoji: '⏳',
+      content: `
+<div class="analogy">
+  <div class="label">☢️ 类比一：放射性半衰期</div>
+  <p>放射性物质每隔固定时间，放射性减半。你今天发现了一个"赚钱规律"（在量化里叫"因子"或"Alpha信号"），它的预测能力同样会随时间衰减——这叫"信号衰减"或者"因子半衰期"。</p>
+  <p><span class="hl">你今天发现的Alpha，6个月后可能只剩一半，12个月后只剩四分之一，最终归零。所有赚钱规律都会过期——问题是它过期得有多快。</span></p>
+</div>
+
+<div class="analogy">
+  <div class="label">💊 类比二：热门减肥法</div>
+  <p>每隔几年就有一个"神奇减肥法"火起来——哥本哈根减肥法、生酮饮食、间歇性断食……一开始效果惊人，人人推荐。<br>但过两年就没人提了——要么被证明有副作用，要么效果被夸大了，要么新的"更神奇"的方法取代了它。</p>
+  <p><span class="hl">投资因子也一样——一个新发现的赚钱规律一开始效果显著（因为没人用），随着越来越多人发现并模仿，它的超额收益被不断压缩，最终消失。</span></p>
+</div>
+
+<div class="analogy">
+  <div class="label">🚗 类比三：堵车捷径</div>
+  <p>你发现了一条不堵车的小路——每天早上省了20分钟。你把这个秘密告诉了最好的朋友……<br>三个月后，这条路堵得比主路还厉害。因为所有人都知道了这条捷径，全涌过来了。</p>
+  <p><span class="hl">一个因子被发现并被广泛使用后——它就不再是"秘密通道"了，而是"最堵的路"。这叫拥挤交易——太多人用了同一个策略，超额收益被交易成本吃完。</span></p>
+</div>
+
+<h3>信号衰减的三种方式</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 为什么你的赚钱规律会失效</div>
+  <p><strong>① 拥挤交易：</strong>越来越多人发现并使用同一个因子→大家都按同样的信号买卖→超额收益被竞争吞噬→因子看起来失效了（其实是被用"废"了）</p>
+  <p><strong>② 市场结构变化：</strong>因子背后依赖的经济关系变了。比如"低PE（市盈率）"在利率下降周期有效，利率上升后可能失效——因为便宜的股票在加息环境下不一定便宜了</p>
+  <p><strong>③ 数据修正：</strong>因子用到的数据事后被修正过——回测用的是修正后的漂亮数据，但现实中你在当时只能看到修正前的粗糙版本</p>
+</div>
+
+<h3>怎么测量？——IC半衰期</h3>
+
+<div class="deep">
+  <div class="label">⏳ 半衰期的实际含义</div>
+  <p><strong>IC（信息系数，Information Coefficient）</strong>是衡量因子预测能力的指标——简单说就是"因子的预测和实际结果有多吻合"。</p>
+  <p>假设你发现了一个因子，初始IC=0.12（预测能力还不错）：</p>
+  <ul>
+    <li><strong>半衰期>24个月：</strong>因子很稳定，可以长期使用。每两年重检一次即可</li>
+    <li><strong>半衰期6-24个月：</strong>需要定期监控，可能每6个月就需要用新数据更新一次</li>
+    <li><strong>半衰期<6个月：</strong>因子衰减很快，必须每月更新——不适合中长期策略</li>
+  </ul>
+</div>
+
+<div class="warn">
+  <div class="label">⚠️ 回测中的信号衰减陷阱</div>
+  <p><strong>你的回测期可能恰好是因子"最年轻"的时候——</strong>还没有被市场广泛发现，信号纯净、表现极好。但当这个因子被写进公开研报、被量化基金大量使用——它的表现会断崖式下跌。</p>
+  <p><span class="hl">你回测的是"因子未被定价"的时期，但实盘交易的是"因子已被定价"的时期——两者表现可能天差地别。</span></p>
+  <p>解决办法：跟踪因子的IC随时间的变化——如果IC在持续下降（每个月比上个月低一点），说明信号在衰减。预估衰减速度，对未来预期收益打折扣。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">一个因子IC半衰期=3个月，你打算用它做月频选股策略——应该怎么做？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 正常用就行</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 每个月用最新数据重新计算因子——不能用一个每3个月就衰减一半的静态因子。必须让因子保持"新鲜"，否则2-3个月后你的选股信号基本是噪声</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 放弃这个因子</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 加大权重使用</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 半衰期短的因子像新鲜蔬菜——必须不断更换。静态使用的话，信号很快就变成噪声。量化系统需要自动重训练（定期用新数据更新模型）的机制来应对这个问题。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么"发现了一个赚钱规律"之后必须考虑信号衰减？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 因为规律都是假的</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 因为市场会学习——你发现的规律一旦被使用就会开始"自我毁灭"。其他人也会发现并用它赚钱，竞争会吃掉超额利润。就像你发现了一条不堵的捷径——三个月后所有人都知道了，捷径堵成了主路</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 因为数据会变化</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 因为不可持续</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 市场的"学习效应"是信号衰减的根本原因。套利行为本身会消灭套利机会——这正是市场有效性的体现。你的因子回测期如果在"被广泛发现之前"，实盘表现会大打折扣。</div>
+</div>
+      `
+    }
+  ]
+},
+{
+  title: '📈 模块三：看穿回测数字——你的钱到底是怎么赚的？',
+  lessons: [
+    {
+      id: 'analysis-beyond-sharpe',
+      title: '超越夏普比率——别只看一个数字',
+      emoji: '📈',
+      content: `
+<div class="analogy">
+  <div class="label">🩺 类比：体检报告</div>
+  <p>你拿到体检报告，只看"总评：健康"就把报告放下了。但你不知道：尿酸偏高（痛风风险）、肝功能轻度异常（需要复查）、低密度胆固醇临界（需要调整饮食）。</p>
+  <p><strong>夏普比率（Sharpe Ratio）就相当于体检报告的"总评"。</strong>它是衡量"每承担一单位风险能获得多少超额收益"的指标——越高越好。但只看夏普就像只看总评——你漏掉了太多重要信息。</p>
+  <p><span class="hl">夏普比率=必要的入口指标。但真正判断策略质量的，是那些"明细项"。</span></p>
+</div>
+
+<h3>六个维度全面评估</h3>
+
+<div class="deep">
+  <div class="label">📈 第一维：收益质量——赚的钱"扎实"吗？</div>
+  <table>
+    <tr><th>指标</th><th>通俗解释</th><th>好策略的标准</th></tr>
+    <tr><td><strong>夏普比率</strong></td><td>每冒一分风险赚多少超额回报</td><td>>1.0=还行; >2.0=很好</td></tr>
+    <tr><td><strong>卡玛比率（Calmar，年化收益除以最大回撤）</strong></td><td>赚钱能力和最大亏损的比值——赚的钱够不够覆盖"最惨时刻"的亏损</td><td>>1.0=合理; >2.0=优秀</td></tr>
+    <tr><td><strong>盈亏比</strong></td><td>平均每次赚钱赚多少 ÷ 平均每次亏钱亏多少</td><td>>1.5才有正期望</td></tr>
+    <tr><td><strong>胜率</strong></td><td>盈利交易次数占总交易次数的比例</td><td>>50%较好，但低胜率+高盈亏比也可以</td></tr>
+  </table>
+  <p><span class="hl">夏普高但卡玛低→赚钱主要靠"频繁小赚+偶尔大亏"，尾部风险极高。夏普低但卡玛高→赚钱靠"偶尔大赚+严格控回撤"，更稳。</span></p>
+</div>
+
+<div class="deep">
+  <div class="label">📈 第二维：交易行为——你赚的是什么钱？</div>
+  <table>
+    <tr><th>指标</th><th>含义</th><th>为什么重要</th></tr>
+    <tr><td><strong>换手率</strong></td><td>每个周期买卖了多少</td><td>换手越高→交易成本越高→信号衰减越快</td></tr>
+    <tr><td><strong>平均持仓天数</strong></td><td>持有多久才卖</td><td>太短→高频成本侵蚀; 太长→可能只是被动持有了市场Beta</td></tr>
+    <tr><td><strong>持仓集中度</strong></td><td>前10大持仓占总仓位的比例</td><td>>50%→过度集中（一把赌错就完蛋）;<10%→过度分散（不如买指数基金）</td></tr>
+    <tr><td><strong>容量上限</strong></td><td>策略最多管多少钱</td><td>超过容量→收益归零</td></tr>
+  </table>
+</div>
+
+<div class="deep">
+  <div class="label">📈 第三维：参数敏感性——稍微动一下就崩？</div>
+  <p>把策略的关键参数上下调整10%——结果变化多少？</p>
+  <ul>
+    <li>变化<5%→参数稳健 ✅</li>
+    <li>变化5-20%→中等敏感，需定期检查</li>
+    <li>变化>20%→极度敏感 ❌ 很可能是过拟合——你的"最优参数"就是噪声的峰值</li>
+  </ul>
+  <p><span class="hl">一个稳健的策略不应该像积木塔一样——碰一下就倒。</span></p>
+</div>
+
+<div class="deep">
+  <div class="label">📈 第四维：极端行情——大灾大难扛得住吗？</div>
+  <p>专门挑"最惨"的时期单独测试：</p>
+  <ul>
+    <li><strong>2008年金融危机：</strong>策略最大亏损多少？</li>
+    <li><strong>2015年股灾：</strong>市场几乎无法交易时，策略表现如何？</li>
+    <li><strong>2020年3月暴跌：</strong>波动率飙升时信号是否失灵？</li>
+  </ul>
+  <p><span class="hl">"只有在退潮时，才知道谁在裸泳。"——巴菲特。一个平时年化+20%却在下行市亏了60%的策略，不值得用。</span></p>
+</div>
+
+<div class="deep">
+  <div class="label">📈 第五维：牛熊表现——只会在牛市赚钱？</div>
+  <p>把回测期拆成牛市、熊市、震荡市分别看：</p>
+  <table>
+    <tr><th>市场状态</th><th>策略年化收益</th><th>市场平均收益</th></tr>
+    <tr><td>牛市（如2019-2020）</td><td>+35%</td><td>+22%</td></tr>
+    <tr><td>震荡市（如2021）</td><td>+8%</td><td>+2%</td></tr>
+    <tr><td>熊市（如2022）</td><td>-5%</td><td>-18%</td></tr>
+  </table>
+  <p>如果策略只在牛市中跑赢、熊市中跟着跌——可能不是真Alpha，只是"加杠杆的市场Beta"。</p>
+</div>
+
+<div class="deep">
+  <div class="label">📈 第六维：行业/风格偏好——你只是押对了赛道？</div>
+  <p>拆开看你的收益有多少来自特定行业（比如重仓了白酒或新能源）、有多少来自特定风格（比如全买了大蓝筹或全买了小盘股）。</p>
+  <p><span class="hl">如果策略收益的80%来自"押对了白酒行业"——这不是策略好，这是运气好。一旦白酒行业转冷，你的策略会和它赚得一样快地亏回去。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">夏普比率=2.5但最大回撤=55%——这个策略能用吗？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 夏普很高，可以用</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 不能用——55%的回撤意味着你随时可能亏掉一半以上本金。夏普高回撤大=大概率是"频繁小赚+偶尔暴亏"的模式，尾部风险极大。真正的稳健策略需要夏普和回撤同时健康</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 加杠杆用就行</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 取决于策略类型</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 夏普和卡玛比率必须一起看——夏普看"平均"，卡玛看"最坏"。就像一个人的平均血压正常，但偶尔飙升到200——不是健康人。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">策略回测年化+22%，但把选股数量从30只改成25只后收益掉到+5%——说明什么问题？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 30只是最优数量</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 参数极度敏感——这种"稍微一动就崩"的表现是过拟合的强烈信号。你的"最优参数"恰好卡在历史噪声的一个尖峰上。稳健的策略参数应该在合理范围内都不敏感</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 数据有问题</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 应该用25只</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 参数敏感性测试是过拟合的"照妖镜"。真正的规律应该有一定弹性——就像物理定律，稍微改变测量条件结论仍然成立。只在某个精确参数下才"好"的规律，大概率是巧合。</div>
+</div>
+      `
+    },
+    {
+      id: 'analysis-attribution',
+      title: '归因分析——你的钱是"市场给的"还是"自己赚的"？',
+      emoji: '🔍',
+      content: `
+<div class="analogy">
+  <div class="label">🛗 类比：坐电梯 vs 爬楼梯</div>
+  <p><strong>Beta（市场给的）= 坐电梯</strong>——电梯往上升你就跟着升，电梯往下掉你就跟着掉。你什么都没做，但你在移动。这是市场大环境带给你的收益。</p>
+  <p><strong>Alpha（自己赚的）= 爬楼梯</strong>——不管电梯在上升还是下降，你用自己的腿往上爬。这是你自己创造的超越市场的收益。</p>
+  <p><span class="hl">如果策略90%的收益来自坐电梯（Beta）——牛市赚得多，熊市亏得狠——那你就只是一个被动跟随市场的投资者，并没有证明自己的选股能力。</span></p>
+</div>
+
+<h3>三层归因——一步步拆解你的收益</h3>
+
+<div class="deep">
+  <div class="label">🔍 第一层：最简单的拆解——多少是市场给的？</div>
+  <p><strong>公式：你的策略收益 = 市场给的（Beta） + 自己赚的（Alpha） + 随机噪音</strong></p>
+  <p><strong>Beta：</strong>策略对市场涨跌的敏感度。Beta=1→和市场完全同步（市场涨10%你也涨10%）。Beta=0.5→涨跌幅度减半。Beta=1.5→放大器（市场涨10%你涨15%，但市场跌10%你也跌15%）。</p>
+  <p><strong>Alpha：</strong>扣除市场影响后剩下来的"纯净收益"——这就是你的真本事。<br>
+  <strong>R²（可决系数）：</strong>你的策略收益有多大比例能被市场涨跌解释。R²>0.8→高度依赖市场，自己的贡献很小。</p>
+</div>
+
+<div class="deep">
+  <div class="label">🔍 第二层：多因子拆解——不只市场，还有风格</div>
+  <p>市场Beta太粗糙了。现代金融研究发现，除了"整个市场涨跌"，还有几个经典因素（因子）在驱动股票收益：</p>
+  <ul>
+    <li><strong>规模因子：</strong>小盘股长期跑赢大盘股——你的收益有多少来自"买了小公司"？</li>
+    <li><strong>价值因子：</strong>便宜股票（低PE/PB）长期跑赢贵的——你的收益有多少来自"买了便宜货"？</li>
+    <li><strong>动量因子：</strong>过去涨得好的股票继续涨——你的收益有多少来自"追涨"？</li>
+    <li><strong>质量因子：</strong>盈利质量好的公司长期跑赢差的——你的收益有多少来自"选了好公司"？</li>
+  </ul>
+  <p><span class="hl">扣除所有这些经典因子之后剩下的Alpha——才是你的策略真正的独特价值。如果经典因子已经解释了90%的收益，你创造的新增价值只有10%。</span></p>
+</div>
+
+<div class="deep">
+  <div class="label">🔍 第三层：行业拆解——你只是押对了行业？</div>
+  <p>把超额收益拆成两个来源：</p>
+  <ul>
+    <li><strong>行业配置贡献：</strong>你超配了白酒行业，而白酒行业跑赢了整体市场→这部分收益来自行业押注</li>
+    <li><strong>选股贡献：</strong>在白酒行业内部，你选的茅台跑赢了白酒行业整体→这部分收益来自选股能力</li>
+  </ul>
+  <p><span class="hl">如果行业配置贡献=80%、选股贡献=20%——你的策略本质是"赌赛道"，不是选股。赛道判断一旦错了，策略就废了。</span></p>
+</div>
+
+<h3>最严格的检验：滚动预测</h3>
+
+<div class="deep">
+  <div class="label">🔍 POC（渐进式样本外测试）——模拟你每个月真实面对的处境</div>
+  <p><strong>不是"训练一次模型→验证一次"。</strong>而是每月滚动推进——模拟你每个月用截至当月底的全部历史训练模型，预测下个月：</p>
+  <ul>
+    <li><strong>2021年1月：</strong>用2016-2020的数据训练→预测2021年1月</li>
+    <li><strong>2021年2月：</strong>用2016-2021年1月的数据训练→预测2021年2月</li>
+    <li><strong>……如此每月推进，共36个月</strong></li>
+  </ul>
+  <p><span class="hl">POC是最接近实盘的测试——每个预测月都只能用"当时已知的数据"。36个月就是36次独立考验，没办法蒙混过关。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card">
+  <div class="quiz-question">归因分析显示策略Beta（对市场的敏感度）=0.95，Alpha=每年1.2%且统计上不显著，R²=0.87——这个策略有价值吗？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 有正Alpha就有价值</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 几乎没价值——Alpha"不显著"意味着那1.2%可能只是运气。Beta≈1+R²=0.87说明87%的收益波动就是跟着市场走。本质是一个"加了轻微随机扰动的指数跟踪器"——不如直接买指数基金省钱</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 应该加大仓位</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 可以替代指数基金</button>
+  <div class="quiz-result"><strong>答案：B。</strong> "统计显著"是Alpha判断的硬门槛——意思是你需要足够多的证据证明这1.2%不是瞎猫碰到死耗子。不显著的Alpha=运气；显著的Alpha=本事。R²=0.87说明你并没有创造独立于市场的价值。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">多因子归因显示策略80%的收益可以被市场、规模、价值三个经典因子解释——这意味着什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 策略完全没用</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 策略80%在"吃老本"——赚的是几百年前就被发现并公开的经典因子的钱，不是你独创的。剩下20%如果统计显著且稳定，那才是你的独特Alpha</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 策略还需要更多因子</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 经典因子过时了</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 归因的价值在于区分"运气好"和"能力强"。经典因子能解释的80%说明你的策略大部分是在搭顺风车——在经典因子有利的时候表现好。那20%的残差如果持续且显著，才是你真正创造的价值。</div>
+</div>
+      `
+    },
+    {
+      id: 'analysis-put-together',
+      title: '综合测验：模块三实战',
+      emoji: '🧪',
+      quiz: {
+        questions: [
+          { q:'以下哪个回测结果组合最可疑（很可能过拟合）？', options:['夏普=1.2, 卡玛=1.0, 换手率=30%','夏普=3.5, 卡玛=8.0, 参数变动10%→收益暴跌50%, 收益曲线像一把尺子画出来的','夏普=1.0, 卡玛=0.8, 参数略有波动','夏普=1.5, 卡玛=1.2, 极端行情中回撤=35%'], correct:1, explain:'夏普3.5+收益曲线直线+参数极度敏感=三项过拟合标志同时出现。真实市场不可能产出像尺子画出来的收益曲线。参数稍动就崩说明"最优参数"恰好是噪声尖峰。' },
+          { q:'策略在2022年熊市只亏5%而市场跌了18%——第一时间应该怎么归因？', options:['策略很好','先检查——是否恰好超配了2022年表现好的行业（如煤炭、石油）？如果行业配置解释了大部分超额，选股能力可能并没有你想象的强','加大仓位','继续持有'], correct:1, explain:'熊市中跑赢往往来自防御性配置（躲进低波动行业）而非选股Alpha。拆开行业贡献和选股贡献才能看到真相。' },
+          { q:'POC（渐进滚动测试）比"训练一次、测试一次"严格在哪？', options:['更快','POC模拟真实处境——每个月的预测都只能用"截至上个月的数据"训练。36个月就是36次独立的重新学习和预测，一次蒙对容易，36次全蒙对不可能','更简单','需要的代码更少'], correct:1, explain:'POC把回测变成了循环考试——每个月都要"重学、再考"。这杜绝了一次性过拟合。你无法靠"赌"来通过36次独立考试。' }
+        ]
+      }
+    }
+  ]
+},
+{
+    title: '📖 中英文术语对照表',
+    lessons: [
+      {
+        id: 'glossary',
+        title: '回测系统术语·双语速查',
+        emoji: '📖',
+        content: `
+<h3>回测是说谎大师——用精确的术语识破它</h3>
+
+<div class="tip">
+  <div class="label">💡 为什么需要中英对照</div>
+  <p>回测框架（Backtrader、Zipline、QuantConnect）的文档、参数、错误信息全是英文。量化论文中所有回测指标也都是英文缩写。掌握术语 = 不会把Look-Ahead Bias当成Alpha。</p>
+</div>
+
+<h3>一、回测基础</h3>
+<div class="table-wrap">
+<table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>回测</td><td>Backtesting</td><td>用历史数据模拟交易</td></tr>
+  <tr><td>样本外测试</td><td>Out-of-Sample Testing</td><td>OOS</td></tr>
+  <tr><td>交叉验证</td><td>Cross-Validation</td><td>CV</td></tr>
+  <tr><td>基准</td><td>Benchmark</td><td>对比的标尺</td></tr>
+  <tr><td>滚动窗口</td><td>Rolling Window</td><td>滑动训练/测试</td></tr>
+</table>
+</div>
+
+<h3>二、回测陷阱（致命四兄弟）</h3>
+<div class="table-wrap">
+<table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>前视偏差</td><td>Look-Ahead Bias</td><td>用了当时不存在的信息</td></tr>
+  <tr><td>幸存者偏差</td><td>Survivorship Bias</td><td>只回测活下来的股票</td></tr>
+  <tr><td>数据挖掘偏差</td><td>Data-Snooping Bias</td><td>试太多找到噪声规律</td></tr>
+  <tr><td>过拟合</td><td>Overfitting</td><td>拟合噪声而非信号</td></tr>
+</table>
+</div>
+
+<h3>三、交易成本模型</h3>
+<div class="table-wrap">
+<table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>滑点</td><td>Slippage</td><td>下单价 ≠ 成交价</td></tr>
+  <tr><td>交易成本</td><td>Transaction Costs</td><td>佣金+印花税+杂费</td></tr>
+  <tr><td>冲击成本</td><td>Market Impact Cost</td><td>大单推高价格</td></tr>
+</table>
+</div>
+
+<h3>四、收益与风险指标</h3>
+<div class="table-wrap">
+<table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>年化收益率</td><td>Annualized Return</td><td>CAGR</td></tr>
+  <tr><td>最大回撤</td><td>Maximum Drawdown (MDD)</td><td>MDD</td></tr>
+  <tr><td>夏普比率</td><td>Sharpe Ratio</td><td>每单位风险的超额收益</td></tr>
+  <tr><td>索提诺比率</td><td>Sortino Ratio</td><td>仅用下行波动率</td></tr>
+  <tr><td>卡玛比率</td><td>Calmar Ratio</td><td>年化收益/MDD</td></tr>
+  <tr><td>胜率</td><td>Win Rate</td><td>盈利次数/总次数</td></tr>
+  <tr><td>盈亏比</td><td>Profit-Loss Ratio</td><td>平均盈利/平均亏损</td></tr>
+  <tr><td>信息比率</td><td>Information Ratio</td><td>超额收益/跟踪误差</td></tr>
+</table>
+</div>
+
+<div class="analogy">
+  <div class="label">🧠 记忆技巧</div>
+  <p><strong>Look-Ahead Bias</strong> = 穿越回2010年用2020年的财报选股——最常见的回测自杀方式。<br>
+  <strong>Survivorship Bias</strong> = 现在的标普500不包含已退市的公司，回测时补上才有意义。<br>
+  <strong>Sharpe vs Sortino</strong>：Sharpe惩罚所有波动，Sortino只惩罚下跌——做多策略用Sortino更合理。<br>
+  <strong>过拟合=在噪声中找到了完美规律</strong>——参数稍动就崩=过拟合实锤。</p>
+</div>
+`
+      }
+    ]
+  }
+];
+
+// ===== APP STATE =====
+const PREFIX = 'se_mlops_';
+let completedLessons = new Set(JSON.parse(localStorage.getItem(PREFIX + 'course_completed') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem(PREFIX + 'quiz_results') || '{}');
+let currentSection = null;
+let finalExamDone = finalExam.questions.every((_,i) => quizResults['final_' + i] !== undefined);
+
+function save() {
+  localStorage.setItem(PREFIX + 'course_completed', JSON.stringify([...completedLessons]));
+  localStorage.setItem(PREFIX + 'quiz_results', JSON.stringify(quizResults));
+}
+
+function quickQuiz(btn, correctChoice) {
+  const card = btn.closest('.quiz-card');
+  if (card.dataset.answered) return;
+  card.dataset.answered = 'true';
+  const options = card.querySelectorAll('.quiz-option');
+  options.forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    if (i === correctChoice) o.classList.add('correct');
+    else o.classList.add('wrong');
+  });
+  const result = card.querySelector('.quiz-result');
+  if (result) { result.classList.add('show'); }
+}
+
+function calcProgress() {
+  let total = 0;
+  modules.forEach(m => { total += m.lessons.length; });
+  total += finalExam.questions.length;
+  let done = completedLessons.size;
+  for (let i = 0; i < finalExam.questions.length; i++) {
+    if (quizResults['final_' + i] !== undefined) done++;
+  }
+  return Math.round((done / total) * 100);
+}
+
+function updateUI() {
+  const pct = calcProgress();
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+  const nav = document.getElementById('navContainer');
+  let html = '';
+  modules.forEach((mod) => {
+    html += '<div class="nav-module-title">' + mod.title + '</div>';
+    mod.lessons.forEach((lesson) => {
+      const id = lesson.id;
+      const done = completedLessons.has(id);
+      const active = currentSection === id;
+      html += '<div class="nav-item' + (active ? ' active' : '') + (done ? ' done' : '') + '" onclick="navigateTo(\'' + id + '\')">';
+      html += '<span class="check">' + (done ? '✅' : lesson.emoji || '📖') + '</span>';
+      html += lesson.title + '</div>';
+    });
+  });
+  html += '<div class="nav-item' + (currentSection === 'final' ? ' active' : '') + (finalExamDone ? ' done' : '') + '" onclick="navigateTo(\'final\')">';
+  html += '<span class="check">' + (finalExamDone ? '✅' : '🏆') + '</span> 终极测验</div>';
+  nav.innerHTML = html;
+}
+
+function navigateTo(id) {
+  currentSection = id;
+  updateUI();
+  renderContent(id);
+  window.scrollTo(0, 0);
+}
+
+function renderContent(id) {
+  const main = document.getElementById('mainContent');
+  if (id === 'final') { renderFinalExam(main); return; }
+  let lesson = null, modIndex = -1, lesIndex = -1;
+  for (let mi = 0; mi < modules.length; mi++) {
+    for (let li = 0; li < modules[mi].lessons.length; li++) {
+      if (modules[mi].lessons[li].id === id) {
+        lesson = modules[mi].lessons[li]; modIndex = mi; lesIndex = li; break;
+      }
+    }
+    if (lesson) break;
+  }
+  if (!lesson) { main.innerHTML = '<p>课程未找到</p>'; return; }
+  let html = '';
+  if (lesson.quiz) {
+    const savedAnswers = quizResults[id] || [];
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">共' + lesson.quiz.questions.length + '题</div>';
+    lesson.quiz.questions.forEach((q, qi) => {
+      const ua = savedAnswers[qi];
+      const answered = ua !== undefined;
+      const isCorrect = answered && ua === q.correct;
+      html += '<div class="quiz-card"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+      html += '<div class="quiz-question">' + q.q + '</div>';
+      q.options.forEach((opt, oi) => {
+        let cls = 'quiz-option';
+        if (answered && oi === q.correct) cls += ' correct';
+        if (answered && oi === ua && oi !== q.correct) cls += ' wrong';
+        html += '<button class="' + cls + '" onclick="answerQuiz(\'' + id + '\', ' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+      });
+      if (answered) {
+        html += '<div class="quiz-result show ' + (isCorrect ? 'pass' : 'fail') + '">';
+        html += '<strong>' + (isCorrect ? '✅ 正确！' : '❌ 不太对') + '</strong><p>' + (q.explain || '') + '</p></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">' + modules[modIndex].title.replace(/^[^\s]+\s/, '') + '</div>';
+    html += lesson.content;
+    html += '</div>';
+    markComplete(id);
+  }
+  html += '<div class="nav-btns">';
+  let prevId = null;
+  if (lesIndex > 0) prevId = modules[modIndex].lessons[lesIndex - 1].id;
+  else if (modIndex > 0) { const pm = modules[modIndex - 1]; prevId = pm.lessons[pm.lessons.length - 1].id; }
+  if (prevId) html += '<button class="btn btn-secondary" onclick="navigateTo(\'' + prevId + '\')">⬅ 上一节</button>';
+  else html += '<div></div>';
+  let nextId = null;
+  if (lesIndex < modules[modIndex].lessons.length - 1) nextId = modules[modIndex].lessons[lesIndex + 1].id;
+  else if (modIndex < modules.length - 1) nextId = modules[modIndex + 1].lessons[0].id;
+  if (nextId) html += '<button class="btn btn-primary" onclick="navigateTo(\'' + nextId + '\')">下一节 ➡</button>';
+  else html += '<button class="btn btn-success" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>';
+  html += '</div>';
+  main.innerHTML = html;
+}
+
+function answerQuiz(lessonId, qi, choice) {
+  if (!quizResults[lessonId]) quizResults[lessonId] = [];
+  quizResults[lessonId][qi] = choice;
+  save();
+  const lesson = modules.flatMap(m => m.lessons).find(l => l.id === lessonId);
+  if (lesson && lesson.quiz && quizResults[lessonId].length === lesson.quiz.questions.length) {
+    const allAnswered = quizResults[lessonId].every(v => v !== undefined);
+    if (allAnswered) markComplete(lessonId);
+  }
+  renderContent(lessonId);
+}
+
+function markComplete(id) {
+  if (!completedLessons.has(id)) {
+    completedLessons.add(id);
+    save();
+    updateUI();
+  }
+}
+
+function renderFinalExam(main) {
+  let html = '<div class="lesson-card"><h2>🏆 终极测验</h2><div class="meta">共' + finalExam.questions.length + '题 — 检验你对回测系统的全面理解</div>';
+  finalExam.questions.forEach((q, qi) => {
+    const ua = quizResults['final_' + qi];
+    const answered = ua !== undefined;
+    const isCorrect = answered && ua === q.correct;
+    html += '<div class="quiz-card"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+    html += '<div class="quiz-question">' + q.q + '</div>';
+    q.options.forEach((opt, oi) => {
+      let cls = 'quiz-option';
+      if (answered && oi === q.correct) cls += ' correct';
+      if (answered && oi === ua && oi !== q.correct) cls += ' wrong';
+      html += '<button class="' + cls + '" onclick="answerFinalExam(' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+    });
+    html += '</div>';
+  });
+  if (finalExamDone) {
+    const score = finalExam.questions.filter((q, i) => quizResults['final_' + i] === q.correct).length;
+    const total = finalExam.questions.length;
+    const passed = score / total >= 0.6;
+    html += '<div class="lesson-card" style="text-align:center"><h2>' + (passed ? '🎉 恭喜通过！' : '📚 还需要再练练') + '</h2>';
+    html += '<p style="font-size:2em;margin:20px 0">' + score + ' / ' + total + '</p>';
+    html += '<p>' + (passed ? '你已经理解了回测系统的核心——五大致命陷阱和结果分析方法。下次看回测报告时，你不再是"只看数字"的人了！' : '建议复习薄弱环节，重点关注五大致命陷阱。') + '</p>';
+    if (!passed) {
+      const wrong = finalExam.questions.map((q, i) => ({ q, i })).filter(x => quizResults['final_' + x.i] !== x.q.correct);
+      html += '<div style="margin-top: 16px; text-align: left;"><p style="color: var(--accent);">需要复习的题目：</p>';
+      wrong.forEach(w => { html += '<p style="color:var(--sub);font-size:0.9em">• ' + w.q.q.substring(0, 80) + '…</p>'; });
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  main.innerHTML = html;
+}
+
+function answerFinalExam(qi, choice) {
+  quizResults['final_' + qi] = choice;
+  if (finalExam.questions.every((_, i) => quizResults['final_' + i] !== undefined)) finalExamDone = true;
+  save();
+  updateUI();
+  renderFinalExam(document.getElementById('mainContent'));
+}
+
+function resetAll() {
+  localStorage.removeItem(PREFIX + 'course_completed');
+  localStorage.removeItem(PREFIX + 'quiz_results');
+  location.reload();
+}
+
+// ===== INIT =====
+(function init() {
+  currentSection = 'warmup-simulator';
+  updateUI();
+  renderContent('warmup-simulator');
+})();
+</script>
+</body>
+</html>

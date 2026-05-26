@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎲 概率论与数理统计 · 量化金融专家课程</title>
+<style>
+:root {
+  --bg: #06080d; --card: #0e131f; --card-hover: #151c2b; --border: #253049;
+  --text: #e4eaf2; --sub: #7c8aa2;
+  --accent: #00b894; --accent2: #00cec9;
+  --green: #3fb950; --red: #f85149; --yellow: #d2991d; --orange: #e28413;
+  --radius: 14px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(0,184,148,0.3); color: #fff; }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+body {
+  font-family: -apple-system,'SF Pro Display','PingFang SC',sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #051210 0%, var(--bg) 70%);
+  color: var(--text); line-height: 1.75; min-height:100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width:280px; background:var(--card); border-right:1px solid var(--border);
+  padding:24px 16px; position:sticky; top:0; height:100vh; overflow-y:auto; flex-shrink:0;
+}
+.main { flex:1; padding:32px 48px; max-width:920px; }
+
+.logo { font-size:1.2em; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+.logo .icon { font-size:1.4em; }
+.subtitle { color:var(--sub); font-size:0.82em; margin-bottom:10px; opacity:0.8; }
+
+.back-link { display:block; margin-bottom:14px; padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:8px; font-size:0.82em; color:var(--sub); text-decoration:none; text-align:center; transition:all 0.15s; }
+.back-link:hover { border-color:var(--accent); color:var(--accent); }
+
+.progress-text { font-size:0.78em; color:var(--sub); margin-bottom:4px; }
+.progress-bar-wrap { background:var(--border); border-radius:8px; height:6px; margin-bottom:18px; overflow:hidden; }
+.progress-bar { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:8px; transition:width 0.5s; box-shadow:0 0 12px rgba(0,184,148,0.2); }
+
+.nav-module { margin-bottom:16px; }
+.nav-module-title { font-size:0.7em; text-transform:uppercase; color:var(--sub); letter-spacing:1.5px; margin-bottom:6px; padding:0 8px; opacity:0.7; }
+.nav-item { display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:8px; cursor:pointer; transition:all 0.2s; font-size:0.86em; color:var(--sub); border-left:3px solid transparent; margin-bottom:2px; }
+.nav-item:hover { background:var(--card-hover); color:var(--text); border-left-color:rgba(0,184,148,0.3); }
+.nav-item.active { background:rgba(0,184,148,0.1); color:var(--accent); font-weight:600; border-left-color:var(--accent); }
+.nav-item.done { color:var(--green); }
+.nav-item .check { width:20px; text-align:center; font-size:0.8em; }
+
+.divider { border-top:1px solid var(--border); margin:14px 0; }
+
+.section { display:none; }
+.section.active { display:block; animation:fadeIn 0.3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+.lesson-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:32px 34px; margin-bottom:24px; transition:border-color 0.25s; }
+.lesson-card:hover { border-color:rgba(0,184,148,0.2); }
+.lesson-card h2 { font-size:1.45em; margin-bottom:6px; display:flex; align-items:center; gap:10px; }
+.lesson-card h2 .emoji { font-size:1.2em; }
+.lesson-card .meta { color:var(--sub); font-size:0.85em; margin-bottom:22px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.lesson-card h3 { font-size:1.1em; margin:26px 0 12px; color:var(--accent); position:relative; padding-left:14px; }
+.lesson-card h3::before { content:''; position:absolute; left:0; top:3px; bottom:3px; width:3px; border-radius:2px; background:linear-gradient(180deg,var(--accent),var(--accent2)); }
+.lesson-card p { margin-bottom:14px; }
+.lesson-card ul,.lesson-card ol { padding-left:24px; margin-bottom:14px; }
+.lesson-card li { margin-bottom:8px; }
+
+.analogy { background:linear-gradient(135deg, rgba(0,184,148,0.05), rgba(0,206,201,0.05)); border:1px solid rgba(0,184,148,0.15); border-left:3px solid var(--accent); border-radius:var(--radius); padding:18px 22px; margin:18px 0; }
+.analogy .label { font-size:0.78em; color:var(--accent); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; font-weight:600; display:flex; align-items:center; gap:6px; }
+
+.diagram-svg { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px 12px; margin:18px 0; text-align:center; overflow-x:auto; }
+.diagram-svg svg { max-width:100%; height:auto; display:block; margin:0 auto; }
+.diagram-svg text { font-family:inherit; }
+
+.tip,.warning,.deep { border-radius:var(--radius); padding:18px 22px; margin:18px 0; }
+.tip { background:rgba(63,185,80,0.06); border:1px solid rgba(63,185,80,0.2); border-left:3px solid var(--green); }
+.warning { background:rgba(248,81,73,0.06); border:1px solid rgba(248,81,73,0.2); border-left:3px solid var(--red); }
+.deep { background:rgba(0,184,148,0.05); border:1px solid rgba(0,184,148,0.12); border-left:3px solid var(--accent); }
+.tip .label,.warning .label,.deep .label { font-weight:700; margin-bottom:6px; font-size:0.85em; display:flex; align-items:center; gap:6px; }
+.tip .label { color:var(--green); }
+.warning .label { color:var(--red); }
+.deep .label { color:var(--accent); }
+
+.formula { background:rgba(0,184,148,0.06); border:1px solid rgba(0,184,148,0.15); border-radius:8px; padding:14px 20px; margin:14px 0; text-align:center; font-family:'SF Mono','Menlo',monospace; font-size:0.95em; }
+
+.step-list { display:flex; gap:12px; flex-wrap:wrap; margin:16px 0; }
+.step-card { flex:1; min-width:160px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:18px 14px; text-align:center; transition:all 0.2s; }
+.step-card:hover { border-color:rgba(0,184,148,0.3); transform:translateY(-2px); }
+.step-card .num { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#0d9488); color:#000; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-weight:700; font-size:0.85em; }
+.step-card .title { font-weight:600; margin-bottom:4px; font-size:0.9em; }
+.step-card .desc { font-size:0.8em; color:var(--sub); line-height:1.5; }
+
+.table-wrap { overflow-x:auto; margin:16px 0; border-radius:var(--radius); border:1px solid var(--border); }
+table { width:100%; border-collapse:collapse; font-size:0.86em; }
+th { background:rgba(0,184,148,0.07); padding:11px 14px; text-align:left; font-weight:600; color:var(--accent); font-size:0.8em; text-transform:uppercase; letter-spacing:0.5px; }
+td { padding:11px 14px; border-bottom:1px solid var(--border); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(0,184,148,0.03); }
+
+.quiz-card { background:var(--card); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:var(--radius); padding:26px 28px; margin:24px 0; transition:border-color 0.25s; }
+.quiz-card:hover { border-color:rgba(0,184,148,0.3); }
+.quiz-card h3 { font-size:1.1em; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+.quiz-question { margin:16px 0 8px; font-weight:600; font-size:0.93em; }
+.quiz-option { display:block; width:100%; text-align:left; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin:7px 0; cursor:pointer; color:var(--text); font-size:0.9em; transition:all 0.2s; }
+.quiz-option:hover { border-color:var(--accent); background:var(--card-hover); transform:translateX(3px); }
+.quiz-option.correct { border-color:var(--green); background:rgba(63,185,80,0.08); color:var(--green); }
+.quiz-option.wrong { border-color:var(--red); background:rgba(248,81,73,0.08); color:var(--red); }
+.quiz-option:disabled { cursor:default; opacity:0.85; transform:none; }
+.quiz-result { margin-top:14px; padding:14px; border-radius:8px; display:none; font-size:0.88em; }
+.quiz-result.show { display:block; }
+.quiz-result.pass { background:rgba(63,185,80,0.1); border:1px solid var(--green); }
+.quiz-result.fail { background:rgba(248,81,73,0.1); border:1px solid var(--red); }
+.quiz-result .ans { color:var(--green); font-weight:600; }
+
+.calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+.calc-input { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px; }
+.calc-input label { display:block; font-size:0.8em; color:var(--sub); margin-bottom:4px; }
+.calc-input input,.calc-input select { width:100%; background:var(--card); border:1px solid var(--border); border-radius:6px; padding:8px 10px; color:var(--text); font-size:0.9em; font-family:'SF Mono','Menlo',monospace; }
+.calc-input input:focus,.calc-input select:focus { outline:none; border-color:var(--accent); }
+.calc-result { grid-column:1/-1; background:linear-gradient(135deg, rgba(0,184,148,0.08), rgba(0,206,201,0.06)); border:1px solid var(--accent2); border-radius:var(--radius); padding:18px; text-align:center; }
+.calc-result .clabel { font-size:0.82em; color:var(--sub); }
+.calc-result .cval { font-size:1.8em; font-weight:700; color:var(--accent); margin:6px 0; }
+.calc-result .csub { font-size:0.8em; color:var(--sub); }
+
+.btn { display:inline-flex; align-items:center; gap:6px; padding:10px 22px; border-radius:8px; border:none; cursor:pointer; font-size:0.9em; font-weight:600; transition:all 0.2s; letter-spacing:0.3px; }
+.btn:active { transform:scale(0.97); }
+.btn-primary { background:var(--accent); color:#000; box-shadow:0 2px 8px rgba(0,184,148,0.25); }
+.btn-primary:hover { background:#00a884; }
+.btn-secondary { background:var(--border); color:var(--text); }
+.btn-secondary:hover { background:#3a4a60; }
+.btn-group { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.nav-btns { display:flex; justify-content:space-between; margin-top:28px; }
+
+.certificate { display:none; background:linear-gradient(135deg, rgba(0,184,148,0.08), rgba(0,206,201,0.05)); border:2px solid var(--accent2); border-radius:var(--radius); padding:44px 36px; text-align:center; margin:24px 0; box-shadow:0 4px 32px rgba(0,206,201,0.06); }
+.certificate.show { display:block; animation:fadeIn 0.5s ease; }
+.certificate h2 { font-size:1.8em; color:var(--accent2); margin-bottom:6px; }
+.certificate .grade { font-size:2.5em; color:var(--accent); font-weight:800; margin:14px 0 6px; }
+
+.hl { color:var(--accent); font-weight:600; }
+.hl2 { color:var(--green); font-weight:600; }
+.hl3 { color:var(--yellow); font-weight:600; }
+
+@media(max-width:768px) {
+  .app { flex-direction:column; }
+  .sidebar { width:100%; height:auto; position:static; border-right:none; border-bottom:1px solid var(--border); }
+  .main { padding:20px 16px; }
+  .step-list { flex-direction:column; }
+  .calc-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">🎲</span> 概率与统计</div>
+  <div class="subtitle">量化不确定性的艺术 · 模块一</div>
+  <a href="课程首页_数学与统计学.html" class="back-link">🏠 回到课程总览</a>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <div id="navContainer"></div>
+  <div class="divider"></div>
+  <button class="btn btn-primary" style="width:100%" onclick="startFinalExam()">🏆 终极测验</button>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="var b=this;if(b.dataset.confirm){b.textContent='🔄 重置进度';delete b.dataset.confirm;b.style.background='var(--border)';resetAll()}else{b.textContent='⚠️ 确认重置？';b.dataset.confirm='1';b.style.background='var(--yellow)';setTimeout(function(){if(b.dataset.confirm){b.textContent='🔄 重置进度';delete b.dataset.confirm;b.style.background='var(--border)'}},3000)}">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ===== COURSE DATA =====
+const modules = [
+  {
+    title: '🎲 模块一：概率思维——量化投资的母语',
+    lessons: [
+      {
+        id: 'why-probability',
+        title: '为什么量化投资用概率说话',
+        emoji: '🎲',
+        content: `
+<h3>从「我觉得」到「数据显示」</h3>
+
+<div class="analogy">
+  <div class="label">🏥 医生 vs 占卜师</div>
+  <p><strong>占卜师说：</strong>「这只股票会涨。」<br>
+  <strong>医生说：</strong>「根据5000例临床数据，这个治疗方案的有效率是78%（95%CI: 72%-83%）。」</p>
+  <p style="margin-top:8px"><span class="hl">量化投资 = 用量化医生的方式做决策，不是用量化占卜师的方式。</span></p>
+</div>
+
+<p>量化投资的全部工作可以浓缩为一句话：<strong>把「我觉得这公司好」转化为「这个因子的Rank IC均值=0.12，年化ICIR=0.68，20日Rank IC显著不为零的概率>99%」。</strong></p>
+
+<h3>概率思维的三个核心转变</h3>
+
+<div class="step-list">
+  <div class="step-card">
+    <div class="num">1</div>
+    <div class="title">从「对/错」到「概率」</div>
+    <div class="desc">不判断「这个因子好不好」，而是问「这个因子有效的概率是多少？」</div>
+  </div>
+  <div class="step-card">
+    <div class="num">2</div>
+    <div class="title">从「一个数字」到「一个分布」</div>
+    <div class="desc">不输出「内在价值=500元」，而是输出「内在价值在350-720之间的概率=90%」</div>
+  </div>
+  <div class="step-card">
+    <div class="num">3</div>
+    <div class="title">从「静止」到「更新」</div>
+    <div class="desc">不是把结论定死，而是每次看到新数据就更新信念——贝叶斯式的持续学习</div>
+  </div>
+</div>
+
+<div class="deep">
+  <div class="label">🎲 这门课你会学到什么</div>
+  <p>• 用概率分布描述不确定性——不再给出虚假的精确答案<br>
+  • 用贝叶斯法则更新信念——先验（经验）+ 似然（数据）→ 后验（新信念）<br>
+  • 用统计推断区分信号和噪声——这个因子是真的有效还是运气？<br>
+  • 用IC分析量化因子预测力——量化策略的核心性能指标</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">量化投资的「概率思维」与传统基本面分析的「判断思维」最本质的区别是什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('why-probability',0,0)">A. 量化投资用更多数据</button>
+  <button class="quiz-option" onclick="answerQuiz('why-probability',0,1)">B. 量化投资把观点表达为概率分布而非二元判断——「因子有效的概率>99%」替代「这个因子好」</button>
+  <button class="quiz-option" onclick="answerQuiz('why-probability',0,2)">C. 量化投资使用计算机</button>
+  <button class="quiz-option" onclick="answerQuiz('why-probability',0,3)">D. 量化投资更复杂</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'distributions-basics',
+        title: '概率分布：描述不确定性的语言',
+        emoji: '📊',
+        content: `
+<h3>为什么金融数据不能用正态分布？</h3>
+
+<div class="analogy">
+  <div class="label">🌡️ 正态分布——物理世界的规律</div>
+  <p>人的身高：大多数在170±10cm，几乎不可能有3米的人。<br>
+  工厂零件：公差范围内集中，极端偏差极罕见。</p>
+  <p style="margin-top:8px"><strong>但金融市场不是这样的。</strong></p>
+</div>
+
+<h3>正态 vs 真实：1987年黑色星期一说了一切</h3>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 780 280" xmlns="http://www.w3.org/2000/svg">
+  <!-- Normal curve -->
+  <path d="M40,230 C120,230 200,40 390,40 C580,40 660,230 740,230" fill="none" stroke="#00b894" stroke-width="2.5" stroke-dasharray="8,4"/>
+  <text x="390" y="28" text-anchor="middle" fill="#00b894" font-size="13" font-weight="600">正态分布预测：日跌>5%的概率≈0.00003%</text>
+
+  <!-- Fat tail curve -->
+  <path d="M40,235 C120,235 200,60 300,90 C350,100 390,40 480,90 C530,100 580,60 660,235 700,240 740,235" fill="none" stroke="#e28413" stroke-width="2.5"/>
+  <text x="390" y="160" text-anchor="middle" fill="#e28413" font-size="13" font-weight="600">真实分布（肥尾）：日跌>5%的概率≈0.5%</text>
+
+  <!-- Extreme event marker -->
+  <circle cx="390" cy="90" r="6" fill="#f85149"/>
+  <text x="390" y="112" text-anchor="middle" fill="#f85149" font-size="11">黑色星期一：日跌20%</text>
+  <text x="390" y="128" text-anchor="middle" fill="#f85149" font-size="10">正态分布预测概率：10⁻¹⁸⁰（不可能）</text>
+  <text x="390" y="144" text-anchor="middle" fill="#f85149" font-size="10">实际：每10-20年发生一次</text>
+</svg>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ 金融数据三大特征</div>
+  <p><strong>1. 肥尾（Fat Tail）：</strong>极端事件比正态预测的多10-100倍——1987一天跌20%，按正态分布几十亿年才发生一次<br>
+  <strong>2. 波动率聚集（Volatility Clustering）：</strong>大波动后面跟着大波动，小波动后面跟着小波动——不是随机的<br>
+  <strong>3. 尾部依赖（Tail Dependence）：</strong>崩盘时所有资产的相关性突然飙升——平时分散的资产，危机时一起跳水</p>
+</div>
+
+<h3>量化投资中最重要的三种分布</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>分布</th><th>特征</th><th>量化应用</th></tr>
+  <tr><td><strong>t分布</strong></td><td>比正态「肥尾」——自由度ν越小，尾部越肥</td><td>风险建模（VaR用t分布比正态安全）</td></tr>
+  <tr><td><strong>帕累托分布</strong></td><td>幂律——80/20法则的数学基础</td><td>极端损失建模、财富分布</td></tr>
+  <tr><td><strong>对数正态</strong></td><td>价格不能为负——ln(价格)~正态</td><td>Black-Scholes底层假设（但有局限）</td></tr>
+</table>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">金融收益的分布与正态分布相比，最关键的差异是什么？</div>
+  <button class="quiz-option" onclick="answerQuiz('distributions-basics',0,0)">A. 金融收益分布更集中</button>
+  <button class="quiz-option" onclick="answerQuiz('distributions-basics',0,1)">B. 肥尾——极端事件的发生概率比正态预测高10-100倍，且存在波动率聚集</button>
+  <button class="quiz-option" onclick="answerQuiz('distributions-basics',0,2)">C. 金融收益分布完全随机</button>
+  <button class="quiz-option" onclick="answerQuiz('distributions-basics',0,3)">D. 两者没有差别</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'law-large-numbers',
+        title: '大数定律与中心极限定理——为什么样本量是一切',
+        emoji: '🎯',
+        content: `
+<h3>两个定理，量化投资的底层逻辑</h3>
+
+<div class="deep">
+  <div class="label">🎯 大数定律（LLN）——「样本越多，均值越准」</div>
+  <p><strong>弱大数定律：</strong>当样本量 n→∞ 时，样本均值 X̄ 依概率收敛于总体均值 μ。</p>
+  <p><strong>投资含义：</strong>你用一个因子回测了10周→IC=0.20→别激动。回测了250周→IC=0.12→这可能是真的。大数定律在告诉你：<span class="hl">小样本的漂亮结果大概率是运气，大样本的平淡结果才可能是真相。</span></p>
+</div>
+
+<div class="deep">
+  <div class="label">🎯 中心极限定理（CLT）——「不管原始分布长什么样，均值的分布趋近正态」</div>
+  <p><strong>核心：</strong>从任何分布（哪怕极度偏态）中抽样，样本量>30时，样本均值的分布近似正态。均值 X̄ ~ N(μ, σ²/n)。</p>
+  <p><strong>这就是为什么置信区间公式有效：</strong>X̄ ± z × σ/√n ——不管原始数据多肥尾，只要n够大，均值就服从正态。这就是量化中大量使用n>50/100/250周回测的数学理由。</p>
+</div>
+
+<h3>两个定理在量化中的实战应用</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>场景</th><th>应用哪个定理</th><th>实战含义</th></tr>
+  <tr><td>因子IC估计</td><td>LLN + CLT</td><td>n=10周→IC估计极不稳定；n=250周→IC的95%CI窄到可以决策</td></tr>
+  <tr><td>回测收益评估</td><td>LLN</td><td>3个月回测年化30%=大概率过拟合；3年回测年化12%=可能真实</td></tr>
+  <tr><td>蒙特卡洛模拟</td><td>LLN</td><td>100次模拟→结果极不稳定；10000次→分布收敛到真值</td></tr>
+  <tr><td>组合VaR</td><td>CLT</td><td>组合收益近似正态（即使个股非正态）→VaR用正态估计有据可依</td></tr>
+</table>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ CLT的陷阱——什么时候不能用正态近似</div>
+  <p><strong>1. 样本量不够：</strong>n=5, CLT不适用 → 别用正态分布做5个样本的推断<br>
+  <strong>2. 分布没有有限方差：</strong>帕累托分布α<2 → 方差无穷 → CLT的前提不满足<br>
+  <strong>3. 尾部概率：</strong>CLT告诉了你均值的分布，但不告诉你极端值的分布 → VaR(99%)不能用CLT</p>
+  <p style="margin-top:8px"><span class="hl">CLT是均值的定理，不是个体的定理。用它估计均值OK，用它估计极端风险=大错。</span></p>
+</div>
+
+<h3>📝 实战例题：抛硬币——从直觉到数学验证</h3>
+
+<div class="deep">
+  <div class="label">🪙 例题：验证大数定律</div>
+  <p><strong>场景：</strong>抛一枚公平硬币（正面概率 p=0.5）。抛10次可能得到7个正面（70%），抛1000次几乎不可能偏离50%超过5%。</p>
+  <p><strong>计算：</strong>每次抛硬币结果的方差 σ² = p(1-p) = 0.25。n次抛掷后，正面比例的方差 = 0.25/n。</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>抛掷次数 n</th><th>均值的标准误 σ/√n</th><th>95%置信区间</th><th>结论</th></tr>
+    <tr><td>10次</td><td>√(0.25/10) ≈ 0.158</td><td>[19%, 81%]</td><td class="hl4">几乎无法区分 50% 和 70%</td></tr>
+    <tr><td>100次</td><td>√(0.25/100) = 0.05</td><td>[40%, 60%]</td><td class="hl3">有一定区分力</td></tr>
+    <tr><td>1000次</td><td>√(0.25/1000) ≈ 0.0158</td><td>[46.9%, 53.1%]</td><td class="hl2">非常精确</td></tr>
+  </table>
+  </div>
+  <p><strong>投资映射：</strong>一个因子回测10周，你根本无法区分「IC=0.10（好因子）」和「IC=0（无效）」。回测250周后，这两者就泾渭分明了。这就是为什么量化策略的样本外验证至少需要3-5年。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">一个因子的10周回测IC=0.25，但250周回测IC=0.06。用大数定律解释，哪个更可能是真值？</div>
+  <button class="quiz-option" onclick="answerQuiz('law-large-numbers',0,0)">A. IC=0.25——10周的结果更新鲜</button>
+  <button class="quiz-option" onclick="answerQuiz('law-large-numbers',0,1)">B. IC=0.06——大数定律：n=250时样本均值更接近真值，n=10时方差巨大，0.25很可能是运气</button>
+  <button class="quiz-option" onclick="answerQuiz('law-large-numbers',0,2)">C. 取平均IC=0.15</button>
+  <button class="quiz-option" onclick="answerQuiz('law-large-numbers',0,3)">D. 两者都不准</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '🧠 模块二：贝叶斯法则——Agent信念更新的数学引擎',
+    lessons: [
+      {
+        id: 'bayes-theorem',
+        title: '贝叶斯公式：三个概率的舞蹈',
+        emoji: '🧮',
+        content: `
+<h3>投资中最优雅的数学公式</h3>
+
+<div class="formula">
+  P(θ | D) = P(D | θ) · P(θ) / P(D)
+</div>
+
+<div class="deep">
+  <div class="label">🧠 三个概率——用投资的直觉来理解</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>符号</th><th>名称</th><th>投资中的含义</th><th>例子</th></tr>
+    <tr><td><strong>P(θ)</strong></td><td>先验概率</td><td>看到新数据前，你对某个想法的初始信念</td><td>「消费行业ROE长期均值~15%」——这是你读了20年财报后的经验</td></tr>
+    <tr><td><strong>P(D|θ)</strong></td><td>似然</td><td>如果想法是对的，看到这个数据的概率</td><td>「如果ROE真的是15%，今年出现12%的概率是多少？」</td></tr>
+    <tr><td><strong>P(θ|D)</strong></td><td>后验概率</td><td>看完数据后，你更新过的信念</td><td>「看完今年数据后，我认为ROE更可能是13%」</td></tr>
+  </table>
+  </div>
+</div>
+
+<div class="analogy">
+  <div class="label">🏥 医疗诊断类比——贝叶斯定理最直观的案例</div>
+  <p>假设某种疾病在人群中的发病率是<strong>1%</strong>（先验）。<br>
+  检测准确率<strong>95%</strong>（有病的人95%测出阳性）。<br>
+  你测出阳性——你觉得自己得病的概率是多少？</p>
+  <p style="margin-top:8px"><strong>直觉：</strong>95%？<br>
+  <strong>贝叶斯计算：</strong>大约<strong>16%</strong>。</p>
+  <p>为什么差距这么大？因为<span class="hl">先验概率（1%）至关重要</span>——1000人中只有10个真病人，但检测会产生约50个假阳性。10个真阳性/(10+50) ≈ 16%。</p>
+  <p style="margin-top:8px"><strong>投资映射：</strong>当回测显示一个因子IC=0.14时，如果这个领域已知有效因子很少（低先验），这个IC很可能只是运气。</p>
+</div>
+
+<h3>🎛️ 互动计算器：感受先验的力量</h3>
+<div class="calc-grid">
+  <div class="calc-input"><label>先验概率 P(θ) %</label><input type="number" id="bayes-prior" value="1" min="0" max="100" oninput="calcBayes()"></div>
+  <div class="calc-input"><label>似然（灵敏度）%</label><input type="number" id="bayes-sens" value="95" min="0" max="100" oninput="calcBayes()"></div>
+  <div class="calc-input"><label>假阳性率 %</label><input type="number" id="bayes-fpr" value="5" min="0" max="100" oninput="calcBayes()"></div>
+  <div class="calc-result" id="bayesResult">
+    <div class="clabel">后验概率 P(θ|阳性)</div>
+    <div class="cval" id="bayesVal">16.1%</div>
+    <div class="csub" id="bayesSub">这就是为什么先验很重要</div>
+  </div>
+</div>
+
+<h3>📝 实战例题：分析师预测——贝叶斯引擎怎么运转</h3>
+
+<div class="deep">
+  <div class="label">🤖 例题：一个AI分析师的贝叶斯更新</div>
+  <p><strong>场景：</strong>一个AI模型预测某行业「未来一个季度跑赢大盘」的准确率是70%（似然）。历史上该行业跑赢大盘的先验概率是40%（长期平均）。现在模型发出了买入信号。</p>
+  <p><strong>手算贝叶斯：</strong></p>
+  <div class="formula">
+    P(跑赢|信号) = (0.70 × 0.40) / [0.70 × 0.40 + 0.30 × 0.60] = 0.28 / 0.46 ≈ 0.609
+  </div>
+  <p><strong>解读：</strong>模型信号将跑赢概率从40%提升到60.9%。提高了20个百分点——有价值，但不是「确定会跑赢」。<span class="hl">如果模型准确率从70%提升到90%，后验概率=85.7%。这就是为什么持续改进模型精度比增加因子数量更重要。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">一个量化策略回测显示IC=0.12，看起来不错。但你查阅文献发现：这个领域历史上95%的因子IC<0.05且不显著。用贝叶斯思维，你该怎么看这个结果？</div>
+  <button class="quiz-option" onclick="answerQuiz('bayes-theorem',0,0)">A. IC=0.12>0.05，这个因子有效，立即使用</button>
+  <button class="quiz-option" onclick="answerQuiz('bayes-theorem',0,1)">B. 先验概率极低（95%因子无效）+似然中等→后验概率可能仍然很低，需要额外验证</button>
+  <button class="quiz-option" onclick="answerQuiz('bayes-theorem',0,2)">C. 回测结果决定一切，不用管先验</button>
+  <button class="quiz-option" onclick="answerQuiz('bayes-theorem',0,3)">D. IC>0.1就是好因子，直接上线</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'bayes-quant',
+        title: '贝叶斯在量化投资中的三级应用',
+        emoji: '🔗',
+        content: `
+<h3>一级：单因子IC的贝叶斯更新</h3>
+
+<div class="deep">
+  <div class="label">🔗 先验IC + 新数据似然 → 后验IC</div>
+  <p><strong>场景：</strong>你有一个价值因子，过去5年的Rank IC均值=0.10（先验）。最新一个季度的IC=0.15（似然）。</p>
+  <p><strong>贝叶斯融合：</strong>不是简单平均(0.125)，也不是只看最新数据(0.15)——而是基于各自精度加权融合。先验的样本量大（5年=~250周），精度高→权重更大。新数据样本小（1季度=~13周），精度低→权重较小。</p>
+  <p><strong>后验IC ≈ 0.11~0.12</strong>——既吸收了新信息，又不被短期波动牵着走。</p>
+</div>
+
+<h3>二级：多Agent辩论的贝叶斯融合</h3>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 780 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Prior agents -->
+  <rect x="30" y="50" width="180" height="50" rx="8" fill="rgba(0,184,148,0.08)" stroke="#00b894" stroke-width="1.5"/>
+  <text x="120" y="70" text-anchor="middle" fill="#00b894" font-size="12" font-weight="600">宏观Agent（先验）</text>
+  <text x="120" y="88" text-anchor="middle" fill="#7c8aa2" font-size="11">「滞胀概率60%」· 历史准确率75%</text>
+
+  <rect x="260" y="50" width="180" height="50" rx="8" fill="rgba(108,92,231,0.08)" stroke="#6c5ce7" stroke-width="1.5"/>
+  <text x="350" y="70" text-anchor="middle" fill="#6c5ce7" font-size="12" font-weight="600">行业Agent（先验）</text>
+  <text x="350" y="88" text-anchor="middle" fill="#7c8aa2" font-size="11">「复苏概率80%」· 历史准确率68%</text>
+
+  <!-- Fusion -->
+  <text x="500" y="78" text-anchor="middle" fill="#e28413" font-size="22">→</text>
+
+  <rect x="530" y="50" width="220" height="50" rx="8" fill="rgba(226,132,19,0.08)" stroke="#e28413" stroke-width="1.5"/>
+  <text x="640" y="70" text-anchor="middle" fill="#e28413" font-size="12" font-weight="600">董事长Agent（后验）</text>
+  <text x="640" y="88" text-anchor="middle" fill="#7c8aa2" font-size="11">加权融合 → 「衰退概率35%」</text>
+</svg>
+</div>
+
+<p style="margin-top:12px">每个Agent的输出不是二元判断，是概率分布。董事长Agent用贝叶斯公式融合：<span class="hl">先验 = 市场均衡权重，Agent观点 = 似然，后验 = 最优组合。</span></p>
+
+<h3>三级：Black-Litterman——贝叶斯在组合管理中最著名的应用</h3>
+
+<div class="deep">
+  <div class="label">🔗 解决Markowitz的最大痛点</div>
+  <p><strong>问题：</strong>Markowitz均值-方差优化对输入极其敏感——期望收益率μ的微小估计误差→权重w的巨大变化→「误差最大化器」。</p>
+  <p><strong>BL解法：</strong>不直接用历史均值作为μ。而是：</p>
+  <p>1. <strong>先验 = 市场均衡收益率（CAPM隐含）</strong>——如果市场是有效的，当前市值权重已经反映了最优组合</p>
+  <p>2. <strong>似然 = 投资者的观点</strong>——「我认为消费股会比市场高3%」（且我对此观点的信心程度）</p>
+  <p>3. <strong>后验 = BL最优权重</strong>——在均衡权重基础上，按观点置信度微调</p>
+</div>
+
+<div class="formula">
+  E(R) = [(τΣ)⁻¹ + PᵀΩ⁻¹P]⁻¹ · [(τΣ)⁻¹Π + PᵀΩ⁻¹Q]<br>
+  <span style="font-size:0.8em;color:var(--sub)">Π=均衡收益(先验) · Q=投资者观点(似然) · Ω=观点置信度 · τ=先验不确定性</span>
+</div>
+
+<div class="tip">
+  <div class="label">💡 BL的核心洞察</div>
+  <p>如果你对自己的观点毫无信心（Ω→∞）→后验=均衡（跟随市场）。<br>
+  如果你对自己的观点极度确信（Ω→0）→后验=你的观点（押注判断）。<br>
+  <span class="hl">BL让量化系统在「跟随市场」和「押注判断」之间优雅地取得平衡。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">Black-Litterman模型为什么要用市场均衡权重作为先验，而不直接用历史均值？</div>
+  <button class="quiz-option" onclick="answerQuiz('bayes-quant',0,0)">A. 因为历史数据不可用</button>
+  <button class="quiz-option" onclick="answerQuiz('bayes-quant',0,1)">B. 因为历史均值的微小估计误差会导致权重剧烈变化（误差最大化器），均衡权重作为先验提供了稳健的起点</button>
+  <button class="quiz-option" onclick="answerQuiz('bayes-quant',0,2)">C. 因为均衡权重计算更简单</button>
+  <button class="quiz-option" onclick="answerQuiz('bayes-quant',0,3)">D. 没有特别原因，只是一种习惯</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'mle-estimation',
+        title: '极大似然估计(MLE)——频率派最强大的武器',
+        emoji: '🔍',
+        content: `
+<h3>MLE：频率派统计的核心引擎</h3>
+
+<div class="formula">
+  θ̂<sub>MLE</sub> = argmax Π f(x<sub>i</sub> | θ)<br>
+  <span style="font-size:0.8em;color:var(--sub)">「找到让观测数据最可能出现的参数值」</span>
+</div>
+
+<div class="analogy">
+  <div class="label">🎯 一个直觉化的理解</div>
+  <p>假设你看到一只股票连续5天涨了3%、2%、4%、1%、5%。<br>
+  <strong>问题：</strong>这只股票的「真实日均涨幅」最可能是多少？<br>
+  <strong>MLE答案：</strong>(3+2+4+1+5)/5 = 3%——就是算术平均（正态分布的MLE恰好是均值）。<br>
+  <strong>但别忘了：</strong>如果收益服从的是t分布而非正态，MLE就不等于简单平均了——MLE会自动选择最能解释数据的参数。</p>
+</div>
+
+<h3>MLE vs 贝叶斯——两种统计哲学的对决</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>维度</th><th>MLE（频率派）</th><th>贝叶斯</th></tr>
+  <tr><td><strong>参数本质</strong></td><td>未知的固定常数</td><td>随机变量（有分布）</td></tr>
+  <tr><td><strong>输出</strong></td><td>一个点估计 + 标准误</td><td>整个后验分布</td></tr>
+  <tr><td><strong>先验信息</strong></td><td>不能用</td><td>可以纳入</td></tr>
+  <tr><td><strong>小样本</strong></td><td>不可靠</td><td>有先验兜底 → 更稳健</td></tr>
+  <tr><td><strong>大样本</strong></td><td>两者趋同（先验被淹没）</td><td>同左</td></tr>
+  <tr><td><strong>量化应用</strong></td><td>GARCH参数估计·因子载荷β</td><td>Black-Litterman·Agent信念更新</td></tr>
+</table>
+</div>
+
+<h3>MLE在量化中的三个核心应用</h3>
+
+<div class="deep">
+  <div class="label">🔍 MLE无处不在——只是你以为没在用</div>
+  <p><strong>1. GARCH参数估计：</strong>GARCH(1,1): σ²ₜ = ω + αε²ₜ₋₁ + βσ²ₜ₋₁。ω、α、β怎么来的？→ MLE。模型自动找到最能解释历史波动率聚簇的参数组合。</p>
+  <p><strong>2. 因子载荷估计（线性回归=正态MLE的特例）：</strong>当残差~正态时，OLS = MLE。你每次跑回归估计β，就在用MLE。</p>
+  <p><strong>3. 协方差矩阵估计：</strong>样本协方差矩阵是多元正态的MLE——这也是为什么协方差估计不稳定（n不够大时MLE方差大），需要压缩估计（Ledoit-Wolf）来补救。</p>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ MLE的陷阱——何时不能用</div>
+  <p><strong>1. 模型假设错误：</strong>你假设收益服从正态→MLE给你的均值/方差再「优」也是错的。分布假设比估计方法更重要。<br>
+  <strong>2. 小样本偏倚：</strong>MLE在大样本下是最优的（渐近有效），但小样本可能有偏。方差估计的MLE是σ̂²=Σ(x-μ)²/n（有偏），正确是Σ(x-μ)²/(n-1)。<br>
+  <strong>3. 局部最优：</strong>复杂模型的似然函数可能有多个峰值→MLE可能找到局部最大而非全局最大。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">GARCH(1,1)模型的参数(ω,α,β)通常用什么方法估计？</div>
+  <button class="quiz-option" onclick="answerQuiz('mle-estimation',0,0)">A. 手动试错</button>
+  <button class="quiz-option" onclick="answerQuiz('mle-estimation',0,1)">B. MLE——找到最能解释历史波动率聚簇现象的参数组合</button>
+  <button class="quiz-option" onclick="answerQuiz('mle-estimation',0,2)">C. 贝叶斯方法</button>
+  <button class="quiz-option" onclick="answerQuiz('mle-estimation',0,3)">D. 直接查表</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '📐 模块三：统计推断——区分信号和噪声',
+    lessons: [
+      {
+        id: 'estimation',
+        title: '点估计与区间估计——从「一个数字」到「一个范围」',
+        emoji: '🎯',
+        content: `
+<h3>为什么量化投资只用区间估计？</h3>
+
+<div class="analogy">
+  <div class="label">🎯 狙击手 vs 霰弹枪</div>
+  <p><strong>点估计（Point Estimate）：</strong>「内在价值 = 500元」——像狙击手声称能击中1cm靶心。<br>
+  <strong>区间估计（Interval Estimate）：</strong>「内在价值的95%置信区间 = 350-720元」——像霰弹枪诚实地告诉你命中范围。</p>
+  <p style="margin-top:8px"><span class="hl">在金融世界，拿狙击枪的人是骗子。霰弹枪才诚实。</span></p>
+</div>
+
+<h3>置信区间——量化决策的核心语言</h3>
+
+<div class="formula">
+  95% CI = μ̂ ± t(0.025, n-1) × s / √n<br>
+  <span style="font-size:0.8em;color:var(--sub)">μ̂=样本均值 · s=样本标准差 · n=样本量 · t=学生t分布临界值</span>
+</div>
+
+<div class="deep">
+  <div class="label">🎯 置信区间的三个关键洞察</div>
+  <p><strong>1. n越大→区间越窄：</strong>样本量=信息的量。用10周数据估计IC的区间极宽（毫无用处），用250周数据就窄了（可以决策）。</p>
+  <p><strong>2. 95%CI不包含0→因子显著：</strong>如果IC的95%置信区间是[0.03, 0.17]——可以确信IC>0。如果是[-0.08, 0.14]——不能确信。</p>
+  <p><strong>3. 区间宽度=不确定性：</strong>窄区间→高精度→高置信度。宽区间→低精度→这因子可能有用也可能没用。</p>
+</div>
+
+<h3>🎛️ 互动计算器：置信区间与样本量</h3>
+<div class="calc-grid">
+  <div class="calc-input"><label>样本均值（比如因子IC）</label><input type="number" id="ci-mean" value="0.10" step="0.01" oninput="calcCI()"></div>
+  <div class="calc-input"><label>样本标准差</label><input type="number" id="ci-sd" value="0.15" step="0.01" oninput="calcCI()"></div>
+  <div class="calc-input"><label>样本量 n（周数）</label><input type="number" id="ci-n" value="50" min="5" oninput="calcCI()"></div>
+  <div class="calc-input"><label>置信水平 %</label><select id="ci-level" onchange="calcCI()"><option value="90">90%</option><option value="95" selected>95%</option><option value="99">99%</option></select></div>
+  <div class="calc-result" id="ciResult">
+    <div class="clabel">置信区间</div>
+    <div class="cval" id="ciVal">[0.057, 0.143]</div>
+    <div class="csub" id="ciSub">区间不包含0 → 因子显著</div>
+  </div>
+</div>
+
+<h3>📝 实战例题：因子IC是否显著——手算一个置信区间</h3>
+
+<div class="deep">
+  <div class="label">📊 例题：bps_growth因子的IC显著性检验</div>
+  <p><strong>已知数据：</strong>bps_growth因子的20日Rank IC，过去300周：均值=0.279，标准差=0.31。</p>
+  <p><strong>问题：</strong>这个IC是真正的预测能力，还是运气？</p>
+  <div class="formula">
+    标准误 SE = 0.31 / √300 = 0.31 / 17.32 ≈ 0.0179<br>
+    95% CI = 0.279 ± 1.96 × 0.0179 = [0.244, 0.314]
+  </div>
+  <p><strong>判断：</strong></p>
+  <p>• 95%CI完全在0之上 → <span class="hl2">显著 ✅</span><br>
+  • CI宽度仅0.07，非常窄 → 高精度、高置信度<br>
+  • 即使最低估计IC=0.244，年化ICIR≈2.72 → 因子有持续预测力</p>
+  <p><strong>对比：</strong>另一个因子IC均值=0.12，标准差=0.40，同样n=300：<br>
+  <span class="hl4">95%CI = [-0.033, 0.273]——包含0 → 不显著。根本不敢上线。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">一个因子的IC均值=0.08，标准差=0.20，样本量n=25周。95%CI大约是[-0.003, 0.163]。这个因子显著吗？</div>
+  <button class="quiz-option" onclick="answerQuiz('estimation',0,0)">A. 显著——均值0.08>0</button>
+  <button class="quiz-option" onclick="answerQuiz('estimation',0,1)">B. 不显著——95%CI包含0，样本量太小，无法确信IC真>0</button>
+  <button class="quiz-option" onclick="answerQuiz('estimation',0,2)">C. 显著——样本量够大</button>
+  <button class="quiz-option" onclick="answerQuiz('estimation',0,3)">D. 看标准差再说</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'ic-analysis',
+        title: '因子IC分析——量化策略的核心性能指标',
+        emoji: '📈',
+        content: `
+<h3>Spearman Rank IC：最诚实的因子评价指标</h3>
+
+<div class="formula">
+  ρ = 1 − 6 · Σdᵢ² / [n(n² − 1)]
+</div>
+
+<div class="deep">
+  <div class="label">📈 为什么用Rank IC而不是Pearson IC？</div>
+  <p><strong>Pearson IC：</strong>因子值与下期收益的线性相关性。问题：一只股票涨了500%会完全主导相关性计算→一个异常值毁掉整个分析。</p>
+  <p><strong>Spearman Rank IC：</strong>只看排名关系——「因子排名最高的股票，收益排名也高吗？」。抗异常值。量化投资的行业标准。</p>
+</div>
+
+<h3>Alpha检验三层体系（从快到慢，从严到宽）</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>层级</th><th>检验方法</th><th>做什么</th><th>门槛</th><th>速度</th></tr>
+  <tr><td><strong>第一层</strong></td><td>Rank IC分析</td><td>因子值排名与下期收益排名的相关性</td><td>IC均值>0.03且95%CI不含0</td><td class="hl2">⚡ 最快</td></tr>
+  <tr><td><strong>第二层</strong></td><td>分组回测</td><td>按因子值分5组→看各组收益是否单调递增</td><td>最高组-最低组收益差>0且单调</td><td>中等</td></tr>
+  <tr><td><strong>第三层</strong></td><td>Fama-MacBeth</td><td>控制其他因子→测「纯溢价」</td><td>经Newey-West调整的t>2.0</td><td>最慢</td></tr>
+</table>
+</div>
+
+<div class="tip">
+  <div class="label">💡 实战数据（bps_growth因子）</div>
+  <p>Rank IC_20d = <strong>0.279</strong>（n≈300周）<br>
+  95% CI ≈ [0.18, 0.38]——远离0 → 第一层通过 ✅<br>
+  分组回测：最高组-最低组年化收益差≈8%且单调 → 第二层通过 ✅<br>
+  Fama-MacBeth：待验证</p>
+</div>
+
+<h3>多重检验校正——你检验了1000个因子，一定会找到几个「显著」的</h3>
+
+<div class="warning">
+  <div class="label">⚠️ p值陷阱</div>
+  <p>p<0.05意味着「如果因子真的无效，你看到这个结果的概率<5%」。<br>
+  <strong>但如果你检验了1000个因子：</strong>即使全部无效，在α=0.05水平下，预期会有<strong>50个</strong>「显著」的结果——纯运气。这就是为什么你需要Bonferroni校正或FDR(BH)控制。</p>
+</div>
+
+<div class="formula">
+  Bonferroni校正：α' = α / m<br>
+  <span style="font-size:0.8em;color:var(--sub)">检验1000个因子→只接受p < 0.05/1000 = 0.00005的结果</span>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">你测试了500个因子，发现8个的p<0.01。用Bonferroni校正（α=0.05），这8个因子中有几个可以认为是真信号？</div>
+  <button class="quiz-option" onclick="answerQuiz('ic-analysis',0,0)">A. 全部8个</button>
+  <button class="quiz-option" onclick="answerQuiz('ic-analysis',0,1)">B. 只接受p < 0.05/500 = 0.0001的——8个中可能只有0-1个是真信号，其余是多重检验的假阳性</button>
+  <button class="quiz-option" onclick="answerQuiz('ic-analysis',0,2)">C. 前4个</button>
+  <button class="quiz-option" onclick="answerQuiz('ic-analysis',0,3)">D. 后4个</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'icir',
+        title: 'ICIR——因子质量的终极指标',
+        emoji: '🏅',
+        content: `
+<h3>IC只看均值→ICIR还看稳定性</h3>
+
+<div class="formula">
+  ICIR = IC均值 / IC标准差 · √频率
+</div>
+
+<div class="deep">
+  <div class="label">🏅 两个IC均值=0.10的因子——ICIR天差地别</div>
+  <div class="table-wrap"><table>
+    <tr><th>因子</th><th>IC均值</th><th>IC标准差</th><th>ICIR</th><th>年化ICIR</th></tr>
+    <tr><td>A(稳定)</td><td>0.10</td><td>0.08</td><td>1.25</td><td class="hl2">4.33</td></tr>
+    <tr><td>B(波动)</td><td>0.10</td><td>0.25</td><td>0.40</td><td>1.39</td></tr>
+  </table></div>
+  <p><strong>年化ICIR>2.0→强。1.0-2.0→中。<1.0→弱。</strong><span class="hl">IC只看均值，ICIR看稳定性——量化选因子看ICIR。</span></p>
+</div>
+
+<div class="quiz-card"><h3>🧩 随堂测验</h3>
+  <div class="quiz-question">同IC=0.10，σ=0.08 vs σ=0.25。选哪个？</div>
+  <button class="quiz-option" onclick="answerQuiz('icir',0,0)">A. 都选</button>
+  <button class="quiz-option" onclick="answerQuiz('icir',0,1)">B. 选σ=0.08→ICIR=1.25稳定。B的ICIR=0.40极不稳定</button>
+  <button class="quiz-option" onclick="answerQuiz('icir',0,2)">C. 选B</button>
+  <button class="quiz-option" onclick="answerQuiz('icir',0,3)">D. 无法判断</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '📊 模块四：金融量化实战——从公式到代码',
+    lessons: [
+      {
+        id: 'var-cvar',
+        title: 'VaR与CVaR——定义「安全边际」的数学边界',
+        emoji: '🛡️',
+        content: `
+<h3>VaR（风险价值）——回答老板最喜欢的问题</h3>
+
+<div class="deep">
+  <div class="label">🛡️ 「明天我们最多亏多少？」</div>
+  <p><strong>VaR₉₅ = </strong>「在95%的置信水平下，未来一天/一周的最大损失不超过X元。」</p>
+  <p>如果组合的日VaR₉₅=100万：明天有95%的概率亏损不超过100万——但有5%的概率超过。</p>
+</div>
+
+<h3>VaR的三种计算方法</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>方法</th><th>如何做</th><th>优点</th><th>缺点</th></tr>
+  <tr><td><strong>方差-协方差</strong></td><td>假设正态→VaR=μ-1.645σ</td><td>计算最快</td><td class="hl4">假设正态=致命缺陷</td></tr>
+  <tr><td><strong>历史模拟</strong></td><td>用过去500天的实际收益排序→取第5%分位</td><td>不假设分布</td><td>过去≠未来，500天没有真正极端</td></tr>
+  <tr><td><strong>蒙特卡洛</strong></td><td>模拟10000条路径→取第5%分位</td><td>可建模肥尾</td><td>计算量大</td></tr>
+</table>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ VaR的致命缺陷</div>
+  <p><strong>VaR不告诉你超过阈值后会亏多少。</strong><br>
+  VaR₉₅=100万只说了95%的情况，没说剩下5%的情况——那5%可能是100万，也可能是1000万。<br>
+  <span class="hl">这就是2008年金融危机时VaR失灵的原因——模型对尾部一无所知。</span></p>
+</div>
+
+<h3>CVaR（条件风险价值）——VaR的补丁</h3>
+<div class="formula">
+  CVaR₉₅ = E[损失 | 损失 > VaR₉₅]<br>
+  <span style="font-size:0.8em;color:var(--sub)">「当事情变糟时，平均会糟到什么程度？」</span>
+</div>
+
+<p>如果VaR₉₅=100万，CVaR₉₅=250万 → 那5%的坏日子里，平均亏250万。这才是有用的风控信息。</p>
+
+<h3>📝 实战例题：三只股票组合的VaR计算</h3>
+
+<div class="deep">
+  <div class="label">💰 例题：手算一个简化组合VaR</div>
+  <p><strong>组合：</strong>A股50% + B股30% + C股20%。日收益率标准差：σ<sub>A</sub>=2%, σ<sub>B</sub>=1.5%, σ<sub>C</sub>=3%。相关系数：ρ<sub>AB</sub>=0.5, ρ<sub>AC</sub>=0.3, ρ<sub>BC</sub>=0.4。</p>
+  <p><strong>第一步：组合方差（展开计算）</strong></p>
+  <div class="formula">
+    σ²<sub>p</sub> = 0.5²×0.02² + 0.3²×0.015² + 0.2²×0.03²<br>
+    + 2×0.5×0.3×0.02×0.015×0.5 + 2×0.5×0.2×0.02×0.03×0.3 + 2×0.3×0.2×0.015×0.03×0.4<br>
+    = 0.0001 + 0.00002 + 0.000036 + 0.000045 + 0.000036 + 0.000022 = 0.000259
+  </div>
+  <p><strong>第二步：</strong>组合标准差 σ<sub>p</sub> = √0.000259 ≈ <strong>1.61%</strong></p>
+  <p><strong>第三步：</strong>日VaR₉₅（正态假设）= 1.645 × 1.61% = <strong>2.65%</strong></p>
+  <p><strong>结论：</strong>组合100万 → 日VaR₉₅ = 2.65万。明天95%概率亏损不超2.65万。<br>
+  <span class="hl">但如果用t分布（ν=4）重算：VaR₉₅ ≈ 2.13 × 1.61% ≈ 3.43万——比正态估算多了30%。这就是为什么肥尾假设更保守、更安全。</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">为什么2008年金融危机暴露了VaR的致命缺陷？</div>
+  <button class="quiz-option" onclick="answerQuiz('var-cvar',0,0)">A. VaR完全错误</button>
+  <button class="quiz-option" onclick="answerQuiz('var-cvar',0,1)">B. VaR只告诉你95%的情况不会亏超多少，但不告诉你剩下5%的极端情况会亏多少——而正是这5%让雷曼兄弟破产</button>
+  <button class="quiz-option" onclick="answerQuiz('var-cvar',0,2)">C. VaR计算太慢</button>
+  <button class="quiz-option" onclick="answerQuiz('var-cvar',0,3)">D. 管理层不理解VaR</button>
+  <div class="quiz-result"></div>
+</div>
+
+<h3>📝 极值理论(EVT)——定义尾部风险的数学边界</h3>
+
+<div class="deep">
+  <div class="label">📈 极值理论=不关心分布的主体，只关心尾巴</div>
+  <p><strong>GEV分布：</strong>对极端值（如每周最大跌幅）直接建模。不假设整体分布→只拟合尾部的极限行为。</p>
+  <p><strong>三种尾部类型：</strong>Gumbel(薄尾·正态类)→Fréchet(厚尾·帕累托类)→Weibull(有上限)。<span class="hl">金融数据几乎总是Fréchet型(肥尾)——极端损失没有上限。</span></p>
+  <p><strong>VaR的EVT版：</strong>VaR₉₉.₉ = 比普通VaR保守得多——因为EVT专门建模了尾部。银行压力测试用EVT-VaR而非普通VaR。</p>
+</div>
+
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'copula-tail',
+        title: 'Copula与尾部依赖——危机时资产一起跳水的数学',
+        emoji: '🔗',
+        content: `
+<h3>分散化在平时有效，在危机时失灵——为什么？</h3>
+
+<div class="analogy">
+  <div class="label">📉 2008年的教训</div>
+  <p>平时：股票和债券相关性≈0.2——分散化效果不错。<br>
+  2008年10月：股票暴跌·企业债暴跌·REITs暴跌·甚至黄金都跌——相关性突然飙升到0.7-0.9。<br>
+  <strong>分散化在最需要它的时候失灵了。</strong>这是尾部依赖（Tail Dependence）——Copula函数试图建模的正是这一点。</p>
+</div>
+
+<h3>什么是Copula？</h3>
+
+<div class="formula">
+  C(u₁, u₂) = P(U₁ ≤ u₁, U₂ ≤ u₂)<br>
+  <span style="font-size:0.8em;color:var(--sub)">Copula = 连接边缘分布与联合分布的函数</span>
+</div>
+
+<div class="deep">
+  <div class="label">🔗 Copula的核心价值</div>
+  <p><strong>问题：</strong>你知道每只股票各自的收益分布（边缘分布），但你不知道它们一起跌的概率（联合分布）。</p>
+  <p><strong>Copula解法：</strong>把「各自的分布」和「它们怎么一起动」分开建模。Copula只负责相关性结构，不碰边缘分布——两件事互不干扰。</p>
+  <p><strong>Sklar定理：</strong>任何多元分布都可以分解为边缘分布 + Copula。这是Copula理论最核心的数学保证。</p>
+</div>
+
+<h3>三种最重要的Copula</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>Copula类型</th><th>尾部依赖</th><th>适用场景</th><th>危险</th></tr>
+  <tr><td><strong>Gaussian Copula</strong></td><td class="hl4">无尾部依赖——尾部相关性=0</td><td>日常相关建模</td><td>低估极端联动=2008危机的技术根源之一</td></tr>
+  <tr><td><strong>t-Copula</strong></td><td class="hl2">有尾部依赖——危机时相关飙升</td><td>金融风险建模</td><td>自由度参数选不好同样出错</td></tr>
+  <tr><td><strong>Clayton Copula</strong></td><td>仅下尾依赖（一起暴跌）</td><td>股票组合极端风险</td><td>对上尾（一起暴涨）不敏感</td></tr>
+</table>
+</div>
+
+<div class="warning">
+  <div class="label">⚠️ Gaussian Copula——金融史上最贵的公式</div>
+  <p>2008年前，华尔街广泛使用Gaussian Copula为CDO（债务抵押债券）定价。Gaussian Copula假设尾部相关性=0——意味着它<strong>系统性地低估了「所有人都同时违约」的概率</strong>。</p>
+  <p>当次贷危机爆发，违约相关性从0.2飙升到0.8——所有基于Gaussian Copula的定价模型瞬间失效。</p>
+  <p><span class="hl">教训：用Gaussian Copula做风险管理 = 在最需要模型的极端时刻，模型告诉你一切安全。</span></p>
+</div>
+
+<h3>量化实战：怎么用Copula？</h3>
+
+<div class="deep">
+  <div class="label">🔗 三步Copula实战框架</div>
+  <p><strong>1. 对每只股票单独拟合边缘分布：</strong>用t分布（肥尾）匹配每只股票的收益分布</p>
+  <p><strong>2. 选Copula建模相关性结构：</strong>用t-Copula捕捉尾部依赖（而非Gaussian）</p>
+  <p><strong>3. 从Copula采样做联合模拟：</strong>生成10000条联合价格路径→计算组合VaR/CVaR——<span class="hl">此时的VaR已经包含了「崩盘时一起跌」的信息</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">为什么Gaussian Copula被称为「金融史上最贵的公式」？</div>
+  <button class="quiz-option" onclick="answerQuiz('copula-tail',0,0)">A. 公式本身太复杂</button>
+  <button class="quiz-option" onclick="answerQuiz('copula-tail',0,1)">B. 它假设尾部相关性=0→系统性低估了「所有人同时违约」的概率→为次贷CDO错误定价→间接导致2008万亿损失</button>
+  <button class="quiz-option" onclick="answerQuiz('copula-tail',0,2)">C. 计算成本太高</button>
+  <button class="quiz-option" onclick="answerQuiz('copula-tail',0,3)">D. 使用它需要购买昂贵的软件</button>
+  <div class="quiz-result"></div>
+</div>
+`
+      },
+      {
+        id: 'practical-summary',
+        title: '本课总结：你的量化思维工具箱',
+        emoji: '🧰',
+        content: `
+<h3>你刚学完的四大工具</h3>
+
+<div class="step-list">
+  <div class="step-card">
+    <div class="num">1</div>
+    <div class="title">概率分布</div>
+    <div class="desc">用肥尾分布描述金融数据——不再用正态分布自欺欺人</div>
+  </div>
+  <div class="step-card">
+    <div class="num">2</div>
+    <div class="title">贝叶斯法则</div>
+    <div class="desc">先验+似然=后验——Agent信念更新的数学引擎</div>
+  </div>
+  <div class="step-card">
+    <div class="num">3</div>
+    <div class="title">统计推断</div>
+    <div class="desc">置信区间·多重检验校正——区分信号和噪声</div>
+  </div>
+  <div class="step-card">
+    <div class="num">4</div>
+    <div class="title">因子IC分析</div>
+    <div class="desc">Rank IC·三层检验·VaR/CVaR——量化策略的核心指标</div>
+  </div>
+</div>
+
+<div class="deep">
+  <div class="label">🧰 量化思维的核心原则（记住这五条）</div>
+  <p><strong>1. 输出分布，不是点估计：</strong>永远给出范围+概率，不要给精确数字<br>
+  <strong>2. 先验很重要：</strong>不要只看新数据，要考虑已有的知识和经验<br>
+  <strong>3. 区分信号和噪声：</strong>p<0.05 ≠ 真信号——你测试了1000个因子<br>
+  <strong>4. 肥尾是默认，不是意外：</strong>金融数据的极端事件比正态预测的多10-100倍<br>
+  <strong>5. 持续更新，不定死：</strong>贝叶斯更新——每次新数据来，调整信念</p>
+</div>
+
+<div class="tip">
+  <div class="label">📖 下一步</div>
+  <p>下一课「时间序列与动态建模」将教你：既然昨天的收益影响今天（波动率聚集），我们应该用什么模型来利用这个特征？ARIMA、GARCH、HMM——把时间维度纳入你的数学工具箱。</p>
+</div>
+`
+      }
+    ]
+  },
+  {
+    title: '📖 中英文术语对照表',
+    lessons: [
+      {
+        id: 'glossary',
+        title: '概率统计核心术语 · 中英文速查',
+        emoji: '📖',
+        content: `
+<h3>本课所有核心术语——按模块分类，中英文对照</h3>
+
+<div style="margin-bottom:14px">
+  <input type="text" id="glossaryFilter" placeholder="🔍 搜索术语（中英文均可）…" style="width:100%;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.9em;font-family:inherit;outline:none" oninput="var q=this.value.toLowerCase();document.querySelectorAll('.gloss-row').forEach(r=>r.style.display=(!q||r.textContent.toLowerCase().includes(q)?'':'none'))">
+</div>
+
+<div class="table-wrap">
+<table>
+  <tr><th style="width:28%">English</th><th style="width:22%">中文</th><th>定义</th><th style="width:14%">模块</th></tr>
+  <tr class="gloss-row"><td><strong>Probability Distribution</strong></td><td>概率分布</td><td style="font-size:0.85em">描述随机变量取值及其对应概率的数学函数。量化中用它替代「一个数字」——输出的是可能结果的完整分布。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Fat Tail</strong></td><td>肥尾</td><td style="font-size:0.85em">分布尾部比正态分布厚——极端事件发生概率比正态预测高10-100倍。金融收益的核心特征。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Volatility Clustering</strong></td><td>波动率聚集</td><td style="font-size:0.85em">大波动后跟着大波动，小波动后跟着小波动。金融数据不是独立随机——GARCH模型的建模对象。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Normal Distribution</strong></td><td>正态分布</td><td style="font-size:0.85em">钟形对称分布，自然界最常见。但金融收益不服从正态——用正态建模金融风险=系统性低估极端事件。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>t-Distribution</strong></td><td>t分布</td><td style="font-size:0.85em">比正态肥尾的分布，自由度ν越小尾部越肥。量化中替代正态做风险建模——更保守、更安全。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Pareto Distribution</strong></td><td>帕累托分布</td><td style="font-size:0.85em">幂律分布——80/20法则的数学基础。用于建模极端损失和财富分布。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Law of Large Numbers (LLN)</strong></td><td>大数定律</td><td style="font-size:0.85em">样本量→∞时，样本均值→总体均值。量化铁律：小样本回测结果不可信——n越大越接近真相。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Central Limit Theorem (CLT)</strong></td><td>中心极限定理</td><td style="font-size:0.85em">n>30时样本均值的分布趋近正态，不论原始分布。但CLT是均值的定理，不是极端值的——VaR(99%)不能用CLT。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块一</span></td></tr>
+<tr class="gloss-row"><td><strong>Bayes Rule</strong></td><td>贝叶斯法则</td><td style="font-size:0.85em">P(θ|D)=P(D|θ)·P(θ)/P(D)。先验+似然=后验。Agent信念更新的数学引擎。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>Prior Probability</strong></td><td>先验概率</td><td style="font-size:0.85em">P(θ)——看到数据前的初始信念。量化中=市场均衡权重或大师经验。好的先验让Agent在数据稀疏时也做出稳健判断。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>Likelihood</strong></td><td>似然</td><td style="font-size:0.85em">P(D|θ)——如果假设为真，看到这个数据的概率。量化中=新样本计算出的因子IC或信号强度。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>Posterior Probability</strong></td><td>后验概率</td><td style="font-size:0.85em">P(θ|D)——看完数据后更新过的信念。贝叶斯更新的终点，也是下一次更新的起点（新先验）。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>MLE (Maximum Likelihood)</strong></td><td>极大似然估计</td><td style="font-size:0.85em">θ̂=argmax Πf(xᵢ|θ)。找到让观测数据最可能出现的参数值。频率派的核心工具——GARCH参数、因子载荷都用MLE估计。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>Black-Litterman Model</strong></td><td>Black-Litterman模型</td><td style="font-size:0.85em">贝叶斯在组合管理中最著名的应用。均衡收益(先验)+投资者观点(似然)→后验最优权重。解决Markowitz的输入敏感性。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块二</span></td></tr>
+<tr class="gloss-row"><td><strong>Confidence Interval (CI)</strong></td><td>置信区间</td><td style="font-size:0.85em">μ̂±t·s/√n。参数真值的区间估计。量化中判断因子IC是否显著——95%CI不包含0→因子有效。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>Spearman Rank IC</strong></td><td>斯皮尔曼秩IC</td><td style="font-size:0.85em">ρ=1-6Σdᵢ²/[n(n²-1)]。因子排名与收益排名的相关性。抗异常值——量化投资的行业标准因子评价指标。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>Pearson IC</strong></td><td>皮尔逊IC</td><td style="font-size:0.85em">因子值与收益的线性相关系数。问题：一个异常值（暴涨500%的股票）会完全主导相关性。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>p-value</strong></td><td>p值</td><td style="font-size:0.85em">如果因子真的无效（H₀为真），观察到当前结果或更极端结果的概率。p<0.05≠真信号——检验1000个因子时，50个会碰巧p<0.05。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>Bonferroni Correction</strong></td><td>Bonferroni校正</td><td style="font-size:0.85em">α'=α/m。多重检验校正——检验1000个因子时，只接受p<0.00005的结果。防假阳性。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>FDR (False Discovery Rate)</strong></td><td>错误发现率</td><td style="font-size:0.85em">Benjamini-Hochberg方法——控制「声称显著的因子中假阳性比例」。比Bonferroni更灵活，适合因子挖掘。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>Standard Error</strong></td><td>标准误</td><td style="font-size:0.85em">s/√n——样本均值的标准差。n越大标准误越小→估计越精确。量化中标准误=IC估计的不确定性。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块三</span></td></tr>
+<tr class="gloss-row"><td><strong>VaR (Value at Risk)</strong></td><td>风险价值</td><td style="font-size:0.85em">在给定置信水平下的最大损失。VaR₉₅=100万→明天95%概率亏损≤100万。致命缺陷：不告诉你超阈值后会亏多少。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块四</span></td></tr>
+<tr class="gloss-row"><td><strong>CVaR (Conditional VaR)</strong></td><td>条件风险价值</td><td style="font-size:0.85em">E[损失|损失>VaR]。「当事情变糟时，平均会糟到什么程度？」VaR的补丁——告诉你尾部的真实风险。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块四</span></td></tr>
+<tr class="gloss-row"><td><strong>Copula</strong></td><td>Copula函数</td><td style="font-size:0.85em">连接边缘分布与联合分布的函数。用于建模危机时资产相关性飙升。Gaussian Copula因低估尾部联动间接导致2008危机。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块四</span></td></tr>
+<tr class="gloss-row"><td><strong>Tail Dependence</strong></td><td>尾部依赖</td><td style="font-size:0.85em">两个变量在极端值上的相关性。平时相关性0.2的资产，崩盘时可能飙升到0.8。分散化在最需要时失灵的技术原因。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块四</span></td></tr>
+<tr class="gloss-row"><td><strong>Monte Carlo Simulation</strong></td><td>蒙特卡洛模拟</td><td style="font-size:0.85em">E[f(X)]≈(1/N)Σf(Xᵢ)。通过大量随机采样求期望。DCF不输出单一数字，输出内在价值完整分布。</td><td><span style="background:rgba(0,184,148,0.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-size:0.75em;font-weight:600">模块四</span></td></tr>
+</table>
+</div>
+<div style="text-align:center;padding:12px;color:var(--sub);font-size:0.82em">26 条术语</div><\/script>
+`
+      }
+    ]
+  }
+];
+
+// ===== QUIZ DATA =====
+const quizData = {
+  'why-probability': [
+    { correct:1, explain:'正确。量化投资的核心就是把主观判断转化为概率语言——「因子IC显著不为零的概率>99%」而不是「这个因子好」。数据量和计算机只是工具，核心是思维方式的转变。' }
+  ],
+  'distributions-basics': [
+    { correct:1, explain:'正确。金融收益是肥尾分布——1987年黑色星期一日跌20%，按正态分布几十亿年才发生一次，但现实中每10-20年发生。波动率聚集意味着大波动后跟着大波动（不是随机的）。' }
+  ],
+  'bayes-theorem': [
+    { correct:1, explain:'正确。这是贝叶斯思维最核心的应用。先验概率极低时，即使似然看起来不错，后验概率也可能仍然很低。在量化中：如果历史上95%的因子无效，那么即使回测显示IC=0.12，你仍然需要额外验证——这个结果可能只是幸存者偏差。' }
+  ],
+  'bayes-quant': [
+    { correct:1, explain:'正确。Markowitz的核心缺陷就是对μ极其敏感——你估计收益率从10%变成11%（10%的相对误差），权重可能从20%变成60%（200%的相对误差）。BL用均衡权重作为先验起点，只在你有高置信度观点的地方微调，从根本上避免了这个问题。' }
+  ],
+  'estimation': [
+    { correct:1, explain:'正确。95%CI=[-0.003, 0.163]包含0，说明我们无法以95%的置信度排除「IC=0」的可能性。问题出在样本量太小（n=25周）——同样的均值0.08如果n=250周，CI会窄很多。量化中永远不要用太短的样本做推断。' }
+  ],
+  'ic-analysis': [
+    { correct:1, explain:'正确。Bonferroni校正后，只接受p<0.0001的结果。8个p<0.01的因子中，很可能绝大多数（甚至全部）都是多重检验的假阳性。这就是为什么量化中「因子挖掘→多重检验校正→样本外验证」是个铁三角。' }
+  ],
+  'var-cvar': [
+    { correct:1, explain:'正确。VaR只关注分布的第5百分位，对尾部毫无感知。雷曼兄弟破产前的VaR看起来完全正常——因为VaR假设了正态分布且只看到95%分位。而真正的危险藏在没被看到的5%里。CVaR问了正确的问题：「如果事情变糟，平均会糟到什么程度？」' }
+  ],
+  'law-large-numbers': [
+    { correct:1, explain:'正确。大数定律：n越大，样本均值越接近真值。n=10时，标准误=σ/√10≈0.32σ（巨大），IC可从真值0.06偏移到0.25。n=250时，标准误=σ/√250≈0.06σ。量化铁律：永远不信任小样本回测。' }
+  ],
+  'mle-estimation': [
+    { correct:1, explain:'正确。GARCH模型通过MLE找到最优参数(ω,α,β)——即能让历史波动率序列「最可能」被观测到的参数组合。MLE是频率派核心工具：不纳入先验，纯从数据提取。但小样本时不可靠。' }
+  ],
+  'icir': [{ correct:1, explain:'IC只看均值，ICIR还看稳定性=IC均值/IC标准差。同IC=0.10的因子，σ=0.08→ICIR=1.25(稳定)，σ=0.25→ICIR=0.40(极不稳定)。量化选因子看ICIR而非IC——年化ICIR>2.0为强因子。' }],
+
+  'copula-tail': [
+    { correct:1, explain:'正确。Gaussian Copula假设尾部相关性=0→「所有人同时违约」几乎不可能。2008年前用此模型为次贷CDO定价，违约潮到来时所有资产一起暴跌（相关性→0.8），模型瞬间失效。Taleb称此「知识分子的狂妄」。' }
+  ]
+};
+
+// ===== FINAL EXAM =====
+const finalExam = [
+  { q:'量化投资的「概率思维」最核心的特征是什么？', opts:['给出精确的预测数字','用概率分布描述不确定性——输出的是分布而非点估计','使用大量数据','使用计算机'], correct:1 },
+  { q:'贝叶斯公式中P(θ)代表什么？', opts:['似然——新数据提供的证据','先验概率——看到数据前的初始信念','后验概率——更新后的信念','边际概率'], correct:1 },
+  { q:'金融收益为什么不能用正态分布建模？', opts:['正态分布太简单','肥尾——极端事件发生概率比正态预测高10-100倍，且存在波动率聚集','金融数据太少','正态分布计算太慢'], correct:1 },
+  { q:'Spearman Rank IC比Pearson IC好的原因是什么？', opts:['计算更快','只看排名关系——抗异常值，一只股票涨了500%不会主导整个分析','结果更好看','历史更悠久'], correct:1 },
+  { q:'你测试了1000个因子，在α=0.05水平下，预期有多少个「显著」的结果纯属运气？', opts:['5个','50个','100个','0个，p值是精确的'], correct:1 },
+  { q:'Black-Litterman模型解决了Markowitz优化器的什么致命缺陷？', opts:['计算太慢','输入敏感——μ的微小误差→w的巨大变化（误差最大化器），BL用均衡权重作为稳健先验','不能处理做空','需要太多数据'], correct:1 },
+  { q:'CVaR（条件风险价值）比VaR好在哪里？', opts:['计算更简单','CVaR告诉我们超过VaR阈值后平均亏多少——VaR对尾部一无所知','CVaR更常用','两者没有区别'], correct:1 },
+  { q:'Alpha检验三层体系中，第三层Fama-MacBeth的核心价值是什么？', opts:['速度最快','控制其他因子后测「纯溢价」——不像简单IC可能被遗漏变量污染','不需要数据','更适合A股'], correct:1 },
+];
+
+// ===== STATE =====
+let completedLessons = new Set(JSON.parse(localStorage.getItem('prob_course_done') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem('prob_course_quiz') || '{}');
+let finalDone = false;
+let currentSection = 'why-probability';
+
+
+function save() {
+  localStorage.setItem('prob_course_done', JSON.stringify([...completedLessons]));
+  localStorage.setItem('prob_course_quiz', JSON.stringify(quizResults));
+}
+
+function updateUI() {
+  const totalLessons = modules.reduce((s,m)=>s+m.lessons.length,0);
+  const done = completedLessons.size;
+  const pct = Math.round(done/totalLessons*100);
+  document.getElementById('progressPct').textContent = pct+'%';
+  document.getElementById('progressBar').style.width = pct+'%';
+  let navHTML = '';
+  modules.forEach((m,mi) => {
+    navHTML += '<div class="nav-module"><div class="nav-module-title">'+m.title+'</div>';
+    m.lessons.forEach((l) => {
+      const isActive = l.id === currentSection;
+      const isDone = completedLessons.has(l.id);
+      navHTML += '<div class="nav-item'+(isActive?' active':'')+(isDone?' done':'')+'" onclick="navigateTo(\''+l.id+'\')">';
+      navHTML += '<span class="check">'+(isDone?'✅':'○')+'</span>';
+      navHTML += '<span>'+l.emoji+' '+l.title+'</span></div>';
+    });
+    navHTML += '</div>';
+  });
+  navHTML += '<div class="nav-module"><div class="nav-module-title">🏆 考核</div>';
+  navHTML += '<div class="nav-item'+(currentSection==='final'?' active':'')+'" onclick="navigateTo(\'final\')"><span class="check">'+(finalDone?'✅':'○')+'</span><span>终极测验</span></div></div>';
+  document.getElementById('navContainer').innerHTML = navHTML;
+}
+
+function navigateTo(id) {
+  currentSection = id;
+  completedLessons.add(id);
+  if (id !== 'final') save();
+  updateUI();
+  if (id === 'final') renderFinalExam();
+  else renderContent(id);
+  window.scrollTo(0,0);
+}
+
+function renderContent(id) {
+  let lesson = null;
+  for (const m of modules) { const found = m.lessons.find(l => l.id === id); if (found) { lesson = found; break; } }
+  if (!lesson) return;
+  let allLessons = []; modules.forEach(m => allLessons.push(...m.lessons));
+  const idx = allLessons.findIndex(l => l.id === id);
+  const prev = idx > 0 ? allLessons[idx-1] : null;
+  const next = idx < allLessons.length-1 ? allLessons[idx+1] : null;
+  let html = '<div class="lesson-card"><h2><span class="emoji">'+lesson.emoji+'</span>'+lesson.title+'</h2>';
+  html += '<div class="meta">📈 时间序列与动态建模 · 第二课</div>';
+  html += lesson.content;
+  const qd = quizData[id];
+  if (qd) {
+    const script = '\n<script>\n(function(){\n  const answers = '+JSON.stringify(qd)+';\n  const userAnswers = quizResults[\''+id+'\'] || [];\n  answers.forEach((a,qi) => {\n    if (userAnswers[qi] !== undefined) {\n      const card = document.querySelectorAll(\'.quiz-card\')[qi];\n      if (!card) return;\n      const btns = card.querySelectorAll(\'.quiz-option\');\n      const result = card.querySelector(\'.quiz-result\');\n      btns.forEach((b,oi) => {\n        b.disabled = true;\n        if (oi === a.correct) b.classList.add(\'correct\');\n        if (oi === userAnswers[qi] && oi !== a.correct) b.classList.add(\'wrong\');\n      });\n      if (result) {\n        result.innerHTML = \'<span class=\"ans\">✅ 正确！</span> \' + a.explain;\n        result.classList.add(\'show\', userAnswers[qi]===a.correct ? \'pass\' : \'fail\');\n      }\n    }\n  });\n})();\n<\\/script>\n';
+    html += script;
+  }
+  html += '<div class="nav-btns">';
+  if (prev) html += '<button class="btn btn-secondary" onclick="navigateTo(\''+prev.id+'\')">⬅ '+prev.title+'</button>';
+  else html += '<span></span>';
+  if (next) html += '<button class="btn btn-primary" onclick="navigateTo(\''+next.id+'\')">'+next.title+' ➡</button>';
+  else html += '<button class="btn btn-primary" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>';
+  html += '</div></div>';
+  document.getElementById('mainContent').innerHTML = html;
+  if (typeof simAR1 === 'function') simAR1();
+  if (typeof simGARCH === 'function') simGARCH();
+}
+
+function answerQuiz(lessonId, qi, oi) {
+  if (!quizResults[lessonId]) quizResults[lessonId] = [];
+  quizResults[lessonId][qi] = oi;
+  save(); renderContent(lessonId);
+}
+
+// ===== SIMULATORS =====
+function simAR1() {
+  const phi = parseFloat(document.getElementById('ar1-phi')?.value||0.7);
+  const n = parseInt(document.getElementById('ar1-n')?.value||50);
+  const el = document.getElementById('ar1Val');
+  if (!el) return;
+  let y = 0, vals = [];
+  for (let t = 0; t < n; t++) { y = phi*y + (Math.random()-0.5)*2; vals.push(y); }
+  const min = Math.min(...vals), max = Math.max(...vals), range = max-min || 1;
+  const lines = [];
+  for (let i = 0; i < Math.min(10, n); i++) {
+    const pct = Math.round((vals[i]-min)/range*100);
+    lines.push('█'.repeat(Math.max(1,Math.round(pct/5))));
+  }
+  el.textContent = 'φ₁='+phi+' | '+(phi>0?'动量延续':phi<0?'反转回归':'白噪声')+'\n前10期: '+vals.slice(0,10).map(v=>v.toFixed(1)).join(' ');
+}
+
+function simGARCH() {
+  const alpha = parseFloat(document.getElementById('garch-alpha')?.value||0.1);
+  const beta = parseFloat(document.getElementById('garch-beta')?.value||0.85);
+  const el = document.getElementById('garchVal');
+  const sumEl = document.getElementById('garchSum');
+  if (!el) return;
+  if (sumEl) sumEl.textContent = (alpha+beta).toFixed(2);
+  let sigma2 = 1;
+  const sigmas = [];
+  for (let t = 0; t < 40; t++) {
+    const eps = (Math.random()-0.5)*2;
+    sigma2 = 0.05 + alpha*eps*eps + beta*sigma2;
+    sigmas.push(Math.sqrt(sigma2));
+  }
+  const lines = sigmas.map((s,i) => {
+    const bar = '█'.repeat(Math.round(s*10));
+    return bar + ' ' + s.toFixed(2);
+  });
+  el.textContent = 'α+β='+(alpha+beta).toFixed(2)+' | '+(alpha+beta>0.97?'高持续（恐慌持久）':alpha+beta>0.9?'中等持续':'低持续（快速衰减）')+'\n' + lines.join('\n');
+}
+
+// ===== FINAL EXAM =====
+function startFinalExam() { navigateTo('final'); }
+function renderFinalExam() {
+  let html = '<div class="lesson-card"><h2>🏆 终极测验</h2><div class="meta">8道题 · 覆盖本课全部模块 · 70%及格</div>';
+  let allAnswered = true;
+  finalExam.forEach((q,qi) => {
+    const ua = quizResults['final_'+qi];
+    if (ua === undefined) allAnswered = false;
+    html += '<div class="quiz-card"><h3>📝 第'+(qi+1)+'题</h3><div class="quiz-question">'+q.q+'</div>';
+    q.opts.forEach((opt,oi) => {
+      let cls = 'quiz-option';
+      if (ua !== undefined && oi === q.correct) cls += ' correct';
+      if (ua !== undefined && oi === ua && oi !== q.correct) cls += ' wrong';
+      html += '<button class="'+cls+'" onclick="answerFinal('+qi+','+oi+')" '+(ua!==undefined?'disabled':'')+'>'+['A','B','C','D'][oi]+'. '+opt+'</button>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  if (allAnswered) {
+    const score = finalExam.filter((q,i) => quizResults['final_'+i] === q.correct).length;
+    const pct = Math.round(score/8*100);
+    const passed = pct >= 70;
+    html += '<div class="certificate show"><div style="font-size:3em">'+(passed?'🎉':'💪')+'</div>';
+    html += '<h2>'+(passed?'恭喜毕业！':'还需要再练练')+'</h2>';
+    html += '<div class="grade">'+score+' / 8 （'+pct+'%）</div>';
+    html += '<p style="color:var(--sub)">'+(passed?'你已掌握时间序列分析的核心工具。下一步：随机过程与连续金融——学习股价的随机运动规律。':'再看看薄弱环节——GARCH和HMM是量化周期策略的核心。')+'</p>';
+    html += '<div class="btn-group" style="justify-content:center"><button class="btn btn-secondary" onclick="resetFinal()">🔄 重新测验</button></div></div>';
+  }
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function answerFinal(qi, oi) {
+  quizResults['final_'+qi] = oi;
+  save();
+  finalDone = finalExam.every((_,i) => quizResults['final_'+i] !== undefined);
+  if (finalDone) completedLessons.add('final');
+  updateUI(); renderFinalExam();
+}
+
+function resetFinal() {
+  finalExam.forEach((_,i) => delete quizResults['final_'+i]);
+  completedLessons.delete('final'); finalDone = false;
+  save(); updateUI(); renderFinalExam();
+}
+
+function resetAll() {
+  localStorage.removeItem('prob_course_done');
+  localStorage.removeItem('prob_course_quiz');
+  completedLessons = new Set(); quizResults = {}; finalDone = false;
+  currentSection = 'why-probability';
+  save(); updateUI(); renderContent('why-probability'); window.scrollTo(0,0);
+}
+window.resetAll = resetAll;
+
+// ===== INIT =====
+(function() {
+  currentSection = 'why-probability';
+  updateUI();
+  renderContent('why-probability');
+})();
+</script>
+</body>
+</html>

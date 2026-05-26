@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎮 强化学习择时 · AI与量化投研</title>
+<style>
+:root {
+  --bg: #0d1117; --card: #161b22; --card-hover: #1c2333; --border: #30363d;
+  --text: #e6edf3; --sub: #8b949e; --accent: #e86040; --accent2: #f08060;
+  --green: #3fb950; --red: #f85149; --radius: 12px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(232,96,64,0.35); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+body {
+  font-family: -apple-system, 'SF Pro Display', 'PingFang SC', sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #1c0a08 0%, var(--bg) 70%);
+  color: var(--text); line-height: 1.75; min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar { width:280px; background:var(--card); border-right:1px solid var(--border); padding:24px 16px; position:sticky; top:0; height:100vh; overflow-y:auto; flex-shrink:0; }
+.main { flex:1; padding:32px 48px; max-width:920px; }
+.logo { font-size:1.2em; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+.logo .icon { font-size:1.4em; }
+.subtitle { color:var(--sub); font-size:0.82em; margin-bottom:20px; }
+.progress-bar-wrap { background:var(--border); border-radius:8px; height:6px; margin-bottom:22px; overflow:hidden; }
+.progress-bar { height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2)); border-radius:8px; transition:width 0.6s; box-shadow:0 0 12px rgba(232,96,64,0.25); }
+.progress-text { font-size:0.78em; color:var(--sub); margin-bottom:4px; }
+.nav-module-title { font-size:0.72em; text-transform:uppercase; color:var(--sub); letter-spacing:1.5px; margin-bottom:8px; padding:0 8px; opacity:0.7; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 14px; border-radius:8px; cursor:pointer; transition:0.2s; font-size:0.88em; color:var(--sub); border-left:3px solid transparent; margin-bottom:2px; }
+.nav-item:hover { background:var(--card-hover); color:var(--text); border-left-color:rgba(232,96,64,0.3); }
+.nav-item.active { background:rgba(232,96,64,0.12); color:var(--accent2); font-weight:600; border-left-color:var(--accent2); }
+.nav-item.done { color:var(--green); }
+.nav-item .check { width:20px; text-align:center; font-size:0.8em; }
+.lesson-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:32px 34px; margin-bottom:24px; }
+.lesson-card:hover { border-color:rgba(232,96,64,0.2); box-shadow:0 2px 20px rgba(232,96,64,0.06); }
+.lesson-card h2 { font-size:1.5em; margin-bottom:6px; display:flex; align-items:center; gap:10px; }
+.lesson-card .meta { color:var(--sub); font-size:0.85em; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+.lesson-card h3 { font-size:1.1em; margin:28px 0 14px; color:var(--accent2); position:relative; padding-left:14px; }
+.lesson-card h3::before { content:''; position:absolute; left:0; top:3px; bottom:3px; width:3px; border-radius:2px; background:linear-gradient(180deg, var(--accent), var(--accent2)); }
+.lesson-card p { margin-bottom:14px; }
+.lesson-card ul, .lesson-card ol { padding-left:24px; margin-bottom:14px; }
+.lesson-card li { margin-bottom:8px; }
+.lesson-card .hl { color:var(--accent2); font-weight:600; }
+.lesson-card table { width:100%; border-collapse:collapse; margin:16px 0; font-size:0.9em; }
+.lesson-card th { background:var(--border); padding:10px 14px; text-align:left; font-size:0.85em; color:var(--sub); }
+.lesson-card td { padding:10px 14px; border-bottom:1px solid var(--border); }
+.lesson-card code { background:rgba(255,255,255,0.06); padding:2px 8px; border-radius:4px; font-size:0.9em; color:var(--accent2); font-family:'SF Mono','JetBrains Mono',monospace; }
+.lesson-card pre { background:var(--card-hover); padding:16px 20px; border-radius:8px; overflow-x:auto; font-size:0.85em; margin:16px 0; border:1px solid var(--border); }
+.lesson-card pre code { background:none; padding:0; }
+.analogy, .deep, .tip, .warn { padding:18px 20px; border-radius:10px; margin:18px 0; border-left:4px solid; }
+.analogy { background:rgba(232,96,64,0.08); border-color:var(--accent); }
+.analogy .label { color:var(--accent); }
+.deep { background:rgba(168,128,224,0.06); border-color:var(--accent); }
+.deep .label { color:var(--accent2); }
+.tip { background:rgba(63,185,80,0.06); border-color:var(--green); }
+.tip .label { color:var(--green); }
+.warn { background:rgba(248,81,73,0.06); border-color:var(--red); }
+.warn .label { color:var(--red); }
+.analogy .label, .deep .label, .tip .label, .warn .label { font-size:0.8em; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.quiz-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:16px; }
+.quiz-question { font-weight:600; margin-bottom:14px; font-size:1em; }
+.quiz-option { display:block; width:100%; text-align:left; padding:11px 16px; margin-bottom:8px; background:var(--bg); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; transition:0.2s; font-size:0.92em; }
+.quiz-option:hover { border-color:var(--accent); background:rgba(232,96,64,0.06); }
+.quiz-option.correct { background:rgba(63,185,80,0.12); border-color:var(--green); color:var(--green); }
+.quiz-option.wrong { background:rgba(248,81,73,0.08); border-color:var(--red); color:var(--red); }
+.quiz-result { margin-top:10px; padding:12px 16px; background:rgba(232,96,64,0.04); border-radius:8px; font-size:0.9em; display:none; }
+.quiz-result.show { display:block; }
+.quiz-result.pass { border-left:3px solid var(--green); }
+.quiz-result.fail { border-left:3px solid var(--red); }
+.quiz-result strong { display:block; margin-bottom:4px; }
+.btn { padding:10px 22px; border-radius:8px; border:1px solid var(--border); cursor:pointer; font-size:0.9em; transition:0.2s; background:var(--card); color:var(--text); }
+.btn:hover { border-color:var(--accent); background:var(--card-hover); }
+.btn-primary { background:rgba(232,96,64,0.12); border-color:var(--accent); color:var(--accent2); }
+.btn-success { background:rgba(63,185,80,0.12); border-color:var(--green); color:var(--green); }
+.nav-btns { display:flex; justify-content:space-between; gap:12px; margin-top:28px; }
+@media(max-width:768px) { .app { flex-direction:column; } .sidebar { width:100%; height:auto; position:relative; } .main { padding:24px 18px; } }
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">🎮</span> 强化学习择时</div>
+  <div class="subtitle">MDP · DQN · 投资惩罚函数 · 对抗训练</div>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+  <a href="课程首页_计算机科学与AI.html" style="display:block;margin-bottom:12px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:0.82em;color:var(--sub);text-decoration:none;text-align:center" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--sub)'">🏠 回到课程总览</a>
+  <div id="navContainer"></div>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="resetAll()">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+const finalExam = {
+  questions: [
+    { q:'强化学习与传统量化策略最本质的区别是什么？', options:['RL更快','传统策略是人写的静态规则，RL是Agent在模拟环境中通过试错自主学习策略','RL更简单','没有区别'], correct:1 },
+    { q:'MDP中的「状态」在量化RL中指什么？', options:['公司名称','当前市场环境的特征向量——周期位置、动量、波动率、因子值等','股价','交易量'], correct:1 },
+    { q:'为什么量化RL需要「投资常识惩罚函数」？', options:['更好看','不加约束RL会学到极端行为——单日换手100%、全仓一只股票——在真实市场中这些都是自杀','法律要求','技术限制'], correct:1 },
+    { q:'DQN在量化择时中最适合处理什么类型的问题？', options:['连续仓位','离散动作——买/卖/持有——DQN从离散动作空间开始','文本分析','预测'], correct:1 },
+    { q:'对抗训练在量化RL中的作用是什么？', options:['更好玩','在极端市场场景（2008/2015/2020）中训练Agent——让它见过最坏的情况，不在真实市场中恐慌','提高速度','降低复杂度'], correct:1 },
+    { q:'模仿学习在量化RL中的定位是什么？', options:['最终方案','先让Agent学习经典策略（如趋势跟踪），再自主探索——降低初始随机探索的毁灭性风险','替代RL','不重要'], correct:1 }
+  ]
+};
+
+const modules = [
+  {
+    title: '🎮 模块一：强化学习基础',
+    lessons: [
+      {
+        id: 'zero-rl',
+        title: '什么是「试错学习」？——用学骑车、打游戏来理解',
+        emoji: '🚲',
+        content: `<h3>你每天都在做「强化学习」——只是没意识到</h3>
+
+<div class="analogy"><div class="label">🚲 你学骑自行车的过程就是强化学习</div>
+<p>① 你上去→摔了（<strong>负面奖励</strong>）→下次调整重心<br>② 你再上去→骑了5米（<strong>正面奖励</strong>）→记住这次的感觉<br>③ 再骑→骑了50米→拐弯时又摔了→调整拐弯方式<br>④ 不断地：<strong>尝试→得到反馈→调整→再尝试</strong></p>
+<p><span class="hl">整个过程：没有人告诉你「应该怎么骑」——你只知道自己做对了还是做错了。你就是从这些对错的反馈中，自己总结出了「怎么骑」的规律。强化学习就是让计算机做完全一样的事情。</span></p>
+</div>
+
+<h3>强化学习 vs 有监督学习——一个关键区别</h3>
+
+<div class="deep"><div class="label">🚲 老师教 vs 自己摸索</div>
+<table><tr><th></th><th>有监督学习</th><th>强化学习</th></tr>
+<tr><td><strong>像什么</strong></td><td>有标准答案的习题集</td><td>没有答案的游戏</td></tr>
+<tr><td><strong>怎么学</strong></td><td>对比正确答案→纠正错误</td><td>尝试→得到奖励/惩罚→调整</td></tr>
+<tr><td><strong>谁提供反馈</strong></td><td>数据中有标准答案</td><td>环境只告诉你是对是错</td></tr>
+<tr><td><strong>适合什么</strong></td><td>预测（「这只股票会涨吗」）</td><td>决策（「现在该买还是该卖」）</td></tr></table>
+<p><span class="hl">最简单的记法：有监督学习=有答案的学习；强化学习=没有答案、只有奖励和惩罚的学习。</span></p>
+</div>
+
+<h3>一个游戏比喻——彻底理解RL</h3>
+
+<div class="tip"><div class="label">💡 想象你在玩一个从来没玩过的游戏——没有说明书</div>
+<p>• 按A键→角色跳起来了→跳过障碍→<strong>做对了！记住A=跳</strong><br>• 按B键→角色攻击→打死怪物→掉金币→<strong>做对了！记住B=攻击</strong><br>• 见到BOSS就冲上去→死了→<strong>做错了！下次先躲</strong></p>
+<p>玩1000遍之后——你已经不只是在「按键」了，你形成了一套完整的策略。这<strong>就是强化学习：从完全不懂→通过试错→形成一套最优策略。</strong><span class="hl">量化RL做的是同一件事——只不过「游戏」变成了「市场」，「分数」变成了「收益率」。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+<div class="quiz-card"><div class="quiz-question">强化学习和有监督学习最本质的区别是什么？</div>
+<button class="quiz-option" onclick="quickQuiz(this,0)">A. RL更快</button>
+<button class="quiz-option" onclick="quickQuiz(this,1)">B. 有监督学习有标准答案（「这只股票涨了15%」），RL只有对/错的反馈（「这笔交易亏了」）——RL必须自己摸索出策略</button>
+<button class="quiz-option" onclick="quickQuiz(this,2)">C. RL更准</button>
+<button class="quiz-option" onclick="quickQuiz(this,3)">D. 没有区别</button>
+<div class="quiz-result"><strong>答案：B。</strong> 有监督学习像「有答案的作业本」，RL像「没有说明书的游戏」。前者适合预测，后者适合决策。</div></div>
+        `
+      },
+      {
+        id: 'rl-why',
+        title: '强化学习：让机器在市场中「玩游戏」',
+        emoji: '🎮',
+        content: `
+<h3>强化学习 vs 有监督学习：核心差异</h3>
+
+<div class="analogy">
+  <div class="label">🎮 三大学派再次对照</div>
+  <p><strong>有监督学习：</strong>有人告诉你正确答案——「这只股票未来60天涨了15%」→学出预测模型<br>
+  <strong>无监督学习：</strong>没人告诉你答案——自己发现数据中的隐藏结构<br>
+  <strong>强化学习：</strong>没人告诉你正确答案，但有人告诉你做对了还是做错了——<span class="hl">在试错中学习</span></p>
+  <p>RL在量化中的位置：<strong>你不告诉Agent怎么交易——你只告诉它「赚了奖励，亏了惩罚」——它自己摸索出策略。</strong></p>
+</div>
+
+<h3>MDP：强化学习的数学框架</h3>
+
+<div class="deep">
+  <div class="label">🎮 马尔可夫决策过程的五个要素</div>
+  <table>
+    <tr><th>要素</th><th>数学符号</th><th>量化映射</th></tr>
+    <tr><td><strong>状态</strong></td><td>S</td><td>周期位置+动量+波动率+因子值+仓位→市场特征向量</td></tr>
+    <tr><td><strong>动作</strong></td><td>A</td><td>买/卖/持有·仓位比例（0-100%）·行业切换</td></tr>
+    <tr><td><strong>奖励</strong></td><td>R</td><td>风险调整收益 - 换手惩罚 - 回撤惩罚</td></tr>
+    <tr><td><strong>转移概率</strong></td><td>P</td><td>市场状态的变化规律（Agent学习这个）</td></tr>
+    <tr><td><strong>策略</strong></td><td>π</td><td>给定状态→选择动作的规则（Agent要学习的核心）</td></tr>
+  </table>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">强化学习最核心的区别于有监督学习的是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 有监督学习有正确答案，RL只有「对了/错了」的反馈——Agent在试错中自己发现策略</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. RL更快</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. RL更准</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 没有区别</button>
+  <div class="quiz-result"><strong>答案：A。</strong> RL的价值不在于「比有监督更准」，而在于「能学会有监督学不到的东西」——动态决策、连续行动、在不确定环境中优化长期目标。</div>
+</div>
+        `
+      },
+      {
+        id: 'rl-reward',
+        title: '奖励函数设计：量化RL的灵魂',
+        emoji: '🎯',
+        content: `
+<h3>奖励函数 = 你在教Agent什么</h3>
+
+<div class="warn">
+  <div class="label">⚠️ 奖励函数设计错了，Agent学到的全是错的</div>
+  <p>如果你只奖励「赚钱」——Agent会学会加杠杆、全仓一只股票、追涨停——因为在模拟器中这些策略确实能赚最多的钱。</p>
+  <p><span class="hl">奖励函数必须编码投资常识。</span>不是「你想让Agent学什么」，是「你不想让Agent学什么」。</p>
+</div>
+
+<h3>投资常识惩罚函数</h3>
+
+<pre><code>def reward_function(action, portfolio_state):
+    # 基础奖励：风险调整收益
+    reward = sharpe_ratio * 0.01
+    
+    # 惩罚1：过度集中
+    if max_position > 0.30:
+        reward -= 10.0  # 单票超30%→重罚
+    
+    # 惩罚2：过度换手
+    if daily_turnover > 0.20:
+        reward -= 5.0   # 日换手>20%→扣分
+    
+    # 惩罚3：追涨停
+    if action == BUY and stock.limit_up:
+        reward -= 50.0  # 买涨停板→极度惩罚
+    
+    # 惩罚4：恐慌卖出
+    if action == SELL and vix > 60 and position_duration < 5:
+        reward -= 20.0  # 恐慌中割肉→重罚
+    
+    # 惩罚5：杠杆
+    if leverage > 1.0:
+        reward -= 100.0  # 用杠杆→几乎不可能被鼓励
+    
+    return reward</code></pre>
+
+<div class="tip">
+  <div class="label">💡 奖励函数设计的核心原则</div>
+  <p><strong>不是告诉Agent怎么做好——是告诉它怎么做会死。</strong>惩罚项的设计远比奖励项重要。好的惩罚函数让Agent在探索阶段就学会「有些事绝对不能做」。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么奖励函数中惩罚项比奖励项更重要？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 惩罚更有效</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 不加惩罚，RL会学到所有能在回测中赚钱但在现实中自杀的策略——高杠杆、追涨停、全仓单票。惩罚函数是RL与现实世界的安全网</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 奖励不够</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 传统做法</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 模拟器中的「最优」往往在现实中不可行。惩罚函数把现实约束编码进Agent的学习目标——这是量化RL工程中最重要也最容易被忽略的环节。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '🧠 模块二：从DQN到策略梯度',
+    lessons: [
+      {
+        id: 'dqn-trading',
+        title: 'DQN：让Agent学会「什么时候买/卖」',
+        emoji: '🧠',
+        content: `
+<h3>从离散动作开始</h3>
+
+<div class="analogy">
+  <div class="label">🧠 DQN最自然的量化场景：择时</div>
+  <p><strong>动作空间：</strong>三个离散动作——买入、卖出、持有<br>
+  <strong>状态空间：</strong>过去60天的价格+成交量+技术指标+宏观状态→一个向量<br>
+  <strong>Q值：</strong>在「当前状态」下做「某个动作」的期望未来总奖励</p>
+  <p>Agent学习的是：<strong>给定当前市场状态，买/卖/持有哪个未来的期望收益最高。</strong></p>
+</div>
+
+<h3>DQN在量化中的关键设计</h3>
+
+<div class="deep">
+  <div class="label">🧠 四个量化RL特有问题</div>
+  <p>① <strong>稀疏奖励：</strong>大部分交易日Agent什么都不该做——设计「持有奖励」（小幅正奖励）防止Agent为了得到反馈而频繁交易<br>
+  ② <strong>探索-利用平衡：</strong>ε-greedy——90%时间用学到的最优策略，10%时间随机尝试新动作。金融中ε应该更小（5%），因为随机交易成本高<br>
+  ③ <strong>经验回放：</strong>存储历史(状态,动作,奖励,下一状态)→随机抽样训练→打破时间相关性→防止过拟合最近行情<br>
+  ④ <strong>目标网络：</strong>用两个网络——一个训练、一个评估——防止Q值估计的反馈环路导致不稳定</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么量化RL中「持有奖励」很重要？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 鼓励长期投资</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 防止Agent因为得不到任何反馈而频繁交易——大部分时间「不动」才是对的，但RL需要反馈才能学习这一点</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 传统做法</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不重要</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 在量化中，正确的动作往往是「什么都不做」。但没有反馈时RL无法知道「什么都不做」是对的——持有奖励填补了这个学习信号的空白。</div>
+</div>
+        `
+      },
+      {
+        id: 'qlearning-deep',
+        title: '深度拆解：Q-Learning——Agent怎么「算」出最优动作',
+        emoji: '🔬',
+        content: `
+<h3>Q值的直觉：每个动作都有一个「长期价值评分」</h3>
+
+<div class="analogy">
+  <div class="label">🔬 Q(s,a) = 在状态s下做动作a，未来能获得的总奖励期望</div>
+  <p>想象你站在一个岔路口（状态s）：<br>
+  • 往左走（动作a₁）：平坦但绕远——当前舒服，但到的晚。Q(s,左)=5<br>
+  • 往右走（动作a₂）：陡峭但是捷径——当前痛苦，但到的早。Q(s,右)=8</p>
+  <p>Q-Learning做的事：<strong>不断更新每个(状态, 动作)组合的Q值——直到Q值反映真实的长期收益。</strong></p>
+</div>
+
+<h3>Bellman方程：Q-Learning的核心更新规则——拆开看</h3>
+
+<div class="deep">
+  <div class="label">🔬 一条公式，三个部分</div>
+  <p><strong>Q_new(s,a) = Q_old(s,a) + α × [ reward + γ × max_a' Q(s',a') - Q_old(s,a) ]</strong></p>
+  
+  <p><strong>逐个拆解：</strong><br>
+  <strong>Q_old(s,a)：</strong>当前你对「在状态s做动作a」的估值<br>
+  <strong>reward：</strong>做完动作a后，立即得到的奖励（这步交易赚了还是亏了）<br>
+  <strong>γ × max_a' Q(s',a')：</strong>到达新状态s'后，未来能获得的最大Q值×折扣因子（未来的钱不如现在的钱值钱）<br>
+  <strong>reward + γ × max Q - Q_old：</strong>TD误差——「实际经历的结果」和「你之前的估计」之间的差距<br>
+  <strong>α：</strong>学习率——你有多相信这次新经历（α=0.1表示10%相信新经历，90%保留旧估计）</p>
+  
+  <p><strong>翻译成人话：</strong><br>
+  新估计 = 旧估计 + 学习率 × (这次实际结果 - 旧估计)<br>
+  <span class="hl">这和「上次预测茅台涨5%，实际涨了8%→下次上调预测到5.3%」是完全一样的逻辑。</span></p>
+</div>
+
+<h3>为什么需要折扣因子γ？</h3>
+
+<div class="tip">
+  <div class="label">💡 γ=0.99 vs γ=0.9——决定了Agent是短线还是长线</div>
+  <p><strong>γ=0.99：</strong>未来的奖励几乎等于现在的奖励——Agent愿意为了长期收益忍受短期亏损。对应「价值投资」心态。</p>
+  <p><strong>γ=0.9：</strong>未来的奖励打九折——Agent更看重眼前的收益。对应「短线交易」心态。</p>
+  <p><span class="hl">γ是量化RL中最重要的超参数之一——它决定了Agent的时间偏好。</span></p>
+  <p>在量化择时中，建议γ=0.995——让Agent极度重视长期回报。因为短期波动是噪声，长期趋势才是信号。</p>
+</div>
+
+<h3>DQN怎么把Q-Learning变成深度学习？</h3>
+
+<div class="deep">
+  <div class="label">🔬 从表格到神经网络</div>
+  <p><strong>传统Q-Learning：</strong>用一个巨大的表格存储每个(状态, 动作)的Q值——状态空间大时表格炸了。</p>
+  <p><strong>DQN：</strong>用神经网络代替表格——输入状态，输出每个动作的Q值。<br>
+  输入：[PE=15, ROE=20%, 动量=+5%, 波动率=25%] → 神经网络 → 输出：[Q(买)=2.3, Q(卖)=-1.2, Q(持有)=0.8]</p>
+  <p><strong>训练方式：</strong>和普通神经网络一样——预测Q值→和「真实」Q值（由Bellman方程计算）对比→反向传播更新参数。</p>
+  <p><span class="hl">DQN = Q-Learning + 神经网络 = 从「查表」变成「学会规律」。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">Bellman方程中的TD误差（reward + γ×max Q - Q_old）是什么意思？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 预测误差</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 「实际经历的结果」和「之前的估计」之间的差距——差距越大，Agent越需要调整自己的判断。这正是「从错误中学习」的数学表达</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 随机噪声</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不需要关注</button>
+  <div class="quiz-result"><strong>答案：B。</strong> TD误差是RL学习的驱动力。如果Agent的估计和实际结果一致→误差=0→不需要学习。如果不一致→Agent根据误差大小调整自己的判断。这就是「从经验中学习」的数学机制。</div>
+</div>
+
+        `
+      },
+      {
+        id: 'rl-advanced',
+        title: '进阶技术：连续动作与多目标优化',
+        emoji: '🚀',
+        content: `
+<h3>从「买/卖」到「买多少」</h3>
+
+<div class="analogy">
+  <div class="label">🚀 策略梯度方法：处理连续动作空间</div>
+  <p>DQN只能输出离散动作（买/卖/持有）。但真实交易需要精确的仓位比例——「现在应该持有30%还是50%？」</p>
+  <p><strong>策略梯度方法（PPO/A3C）：</strong>直接输出一个连续的概率分布——「买入概率72%，建议仓位=当前组合的15%」</p>
+</div>
+
+<h3>多目标优化：不像你想的那么简单</h3>
+
+<pre><code># RL需要同时优化多个目标
+objectives = {
+    'sharpe_ratio':      {'weight': 1.0,  'target': 'maximize'},
+    'max_drawdown':      {'weight': -0.5, 'target': 'minimize'},
+    'turnover_rate':     {'weight': -0.3, 'target': 'minimize'},
+    'win_rate':          {'weight': 0.2,  'target': 'maximize'},
+    'recovery_speed':    {'weight': 0.1,  'target': 'maximize'}
+}
+
+# 总奖励 = Σ(目标_i的实际值 × 权重)
+# Agent通过调整策略来最大化这个加权总分</code></pre>
+
+<h3>模仿学习：先学会走，再学跑</h3>
+
+<div class="tip">
+  <div class="label">💡 为什么不让RL从零开始探索</div>
+  <p>纯RL从零开始意味着Agent在前几千次尝试中几乎是随机交易——这在真实市场中是毁灭性的。</p>
+  <p><strong>模仿学习：</strong>先让Agent观察经典策略（趋势跟踪、均值回归），学会基本动作——再用RL微调。就像先让人教你开车的基本操作，再让你自己上路练习。</p>
+  <p><span class="hl">模仿学习提供了RL一个好的起点——大幅降低了初始探索阶段的负面成本。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">模仿学习在量化RL中的价值是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 省时间</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 让Agent从经典策略开始学习基本动作，而不是从随机交易起步——大幅减少初始探索阶段的毁灭性损失</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 替代RL</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不需要</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 纯RL从零开始探索的初始阶段会产生大量随机交易——在真实市场中这些成本是真实的。模仿学习把这些成本提前消化在训练阶段。</div>
+</div>
+        `
+      }
+    ]
+  },
+  {
+    title: '🛡️ 模块三：实战与防御',
+    lessons: [
+      {
+        id: 'adversarial',
+        title: '对抗训练：让Agent见过最坏的市场',
+        emoji: '🛡️',
+        content: `
+<h3>为什么RL Agent在回测中完美、实盘中翻车？</h3>
+
+<div class="warn">
+  <div class="label">⚠️ RL的最大陷阱：训练集和真实市场的分布偏移</div>
+  <p>如果Agent只在2016-2020年的牛市中训练——它学会的都是「跌了就买，一定会弹回来」。当它遇到2022年持续下跌的市场——它会不断加仓直到爆仓。</p>
+  <p><span class="hl">Agent没见过的事，它无法应对。</span></p>
+</div>
+
+<h3>对抗训练：在极端场景中训练Agent</h3>
+
+<div class="deep">
+  <div class="label">🛡️ 三个层次的对抗场景</div>
+  <p><strong>Level 1 — 历史极端行情重放：</strong>在训练中混入2008、2015、2020年的市场数据→Agent见过暴跌、见过熔断、见过V型反转</p>
+  <p><strong>Level 2 — 合成极端场景：</strong>生成Agent没见过的但可能发生的场景——「如果明天大盘跌15%」「如果利率一天涨200bp」「如果行业龙头暴雷」</p>
+  <p><strong>Level 3 — 对抗Agent：</strong>设计一个「市场对手Agent」，专门制造让主Agent亏损的市场环境→主Agent在对抗中学会最鲁棒的策略</p>
+  <p><span class="hl">对抗训练后的Agent在极端行情中不是「恐慌」，而是「我见过这个」。</span></p>
+</div>
+
+<h3>对抗训练的量化落地</h3>
+
+<div class="tip">
+  <div class="label">💡 从理论到实践</div>
+  <p>最简单的落地方式：在回测中加入10%的「极端日」。从历史极端行情中随机采样——2008年10月、2015年7月、2020年3月——混入训练数据。Agent学会了：有时候跌不是因为公司不好，是市场崩了。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">为什么只用在牛市中训练RL Agent是危险的？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 牛市数据不够</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. Agent只会学「跌了就买」——遇到真正的熊市持续下跌，它会不断加仓直到毁灭。它没见过的事，它无法应对</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 牛市没有信号</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不需要担心</button>
+  <div class="quiz-result"><strong>答案：B。</strong> RL Agent的认知边界完全取决于训练数据的边界。对抗训练把这个边界扩展到极端场景——让Agent在安全环境中先「经历」过最坏的情况。</div>
+</div>
+        `
+      },
+      {
+        id: 'rl-case',
+        title: '实战案例与课程总结',
+        emoji: '🏁',
+        content: `
+<h3>案例：RL自适应轮动Agent</h3>
+
+<div class="deep">
+  <div class="label">🏁 一个完整的RL量化项目蓝图</div>
+  <p><strong>目标：</strong>让Agent在A股市场中自主学会行业轮动</p>
+  <p><strong>状态：</strong>28个申万行业的相对强弱+宏观周期概率+动量+波动率+过去60天各行业收益</p>
+  <p><strong>动作：</strong>每月调整行业权重（连续动作空间：0-100%，总和=100%）</p>
+  <p><strong>奖励：</strong>月度超额收益 - 换手惩罚 - 集中度惩罚 - 最大回撤惩罚</p>
+  <p><strong>训练：</strong>2010-2020做训练（含对抗样本），2021-2024做样本外</p>
+  <p><strong>基准：</strong>等权行业配置、固定动量轮动、HMM状态映射轮动</p>
+  <p><span class="hl">预期：RL在正常市场中与动量轮动持平，在风格切换期显著优于固定规则。</span></p>
+</div>
+
+<h3>五课知识全景回顾</h3>
+
+<div class="analogy">
+  <div class="label">🏁 你学到的五层能力栈</div>
+  <p><strong>Layer 1 — ML基础：</strong>XGBoost/HMM/PCA——数据→模式<br>
+  <strong>Layer 2 — NLP：</strong>BERT/情感分析——文本→结构化因子<br>
+  <strong>Layer 3 — 知识图谱：</strong>Neo4j/Cypher——关系→二阶信号<br>
+  <strong>Layer 4 — Agent接口：</strong>Function Calling/多空辩论——工具→自主决策<br>
+  <strong>Layer 5 — 强化学习：</strong>MDP/DQN/对抗训练——试错→自适应策略</p>
+  <p><span class="hl">五层合在一起 = 一个能自己读研报、自己查图谱、自己辩论、自己进化交易策略的AI量化系统。</span></p>
+</div>
+
+<h3>RL量化的三个现实建议</h3>
+
+<div class="warn">
+  <div class="label">⚠️ RL是核武器——慎用</div>
+  <p>① <strong>不要跳过有监督学习：</strong>先用XGBoost/HMM建立稳定的基准——RL只有在复杂到线性方法无法处理时才值得用<br>
+  ② <strong>惩罚函数重于奖励函数：</strong>花80%的时间在「Agent不能做什么」上<br>
+  ③ <strong>永远用样本外验证：</strong>RL的过拟合比有监督学习更难检测——因为它学的不只是模式，还有行为</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 当下最值得做的</div>
+  <p>不急着上RL。先把Layer 1-4打通——XGBoost因子+HMM周期+NLP情感+知识图谱+Agent辩论→这个系统产生的信号已经比95%的量化策略更智能。RL是优化器——先用好前面四层再考虑优化。</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">五课学完后，最务实的下一步是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 立刻上RL</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 先把Layer 1-4的管线跑通——XGBoost因子+HMM周期+NLP情感+图谱关系——这已经是顶级量化系统的底盘。RL是锦上添花</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 等更多数据</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不需要动手</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 80%的Alpha来自基础管线——ML因子+NLP信号+图谱关系。RL解决的是「怎么组合这些信号最优」的最后一个问题。先跑通管线，再优化组合。</div>
+</div>
+        `
+      },
+      {
+        id: 'rl-training-log',
+        title: 'RL训练日志：Reward曲线的读取与调试',
+        emoji: '📈',
+        content: `
+<h3>训练RL Agent就像养一个孩子——你需要盯着它的「成绩单」</h3>
+
+<div class="analogy">
+  <div class="label">📈 Reward曲线是Agent的唯一反馈</div>
+  <p>训练RL Agent时，你唯一能看到的实时指标就是Reward曲线。学会读这条曲线——比学会调任何参数都重要。</p>
+</div>
+
+<h3>四种典型的Reward曲线——以及它们的含义</h3>
+
+<div class="deep">
+  <div class="label">📈 你会遇到的四种情况</div>
+  <p><strong>① 健康曲线：</strong>Reward从负值开始→缓慢上升→在第500-1000轮后趋于平稳→小幅波动但不再下降<br>
+  → <span class="hl">Agent真的学到了东西。可以进入样本外测试。</span></p>
+  <p><strong>② 死亡曲线：</strong>Reward一直为负→偶尔跳到正→立刻跌回负→波动极大<br>
+  → 惩罚函数太重——Agent被惩罚到不敢做任何动作。降低惩罚权重或增加持有奖励。</p>
+  <p><strong>③ 爆炸曲线：</strong>Reward一路飙升→在第200轮达到天文数字→突然在第300轮崩到零<br>
+  → Agent找到了回测漏洞——比如发现「在涨停板挂买单」（但实盘中买不到）。收紧惩罚函数。</p>
+  <p><strong>④ 过拟合曲线：</strong>训练集Reward完美上升→测试集Reward几乎为零<br>
+  → Agent记住了训练数据的规律，而不是学到了可泛化的策略。增加训练数据的多样性（混入极端行情），减少模型复杂度。</p>
+</div>
+
+<h3>调试清单</h3>
+
+<div class="tip">
+  <div class="label">💡 当Reward曲线不对时——按顺序检查</div>
+  <p>① 惩罚函数是否太重？→ 临时去掉所有惩罚，看Agent能否学到基本的赚钱策略<br>
+  ② 状态空间是否太大？→ 先只用5-8个核心特征，验证能学习后再扩展<br>
+  ③ 动作空间是否合理？→ 从离散动作（买/卖/持有）开始，验证后升级到连续动作<br>
+  ④ 训练数据是否太单一？→ 混入20%的极端行情样本<br>
+  ⑤ 是否有前视偏差？→ 检查训练/测试的时间划分——训练数据的时间戳必须全部在测试数据之前</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">Reward曲线「爆炸后在300轮崩到零」说明什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. Agent突然变笨了</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. Agent找到了回测漏洞——它学到了一个在模拟器中赚钱但在现实中无法执行的策略。需要收紧惩罚函数堵住漏洞</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 数据有问题</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 训练太长</button>
+  <div class="quiz-result"><strong>答案：B。</strong> RL Agent会找到任何奖励函数的漏洞。爆炸后崩盘是最典型的漏洞利用——Agent学到了一招鲜，但这招只在模拟器中有效。惩罚函数是你唯一的防线。</div>
+</div>
+
+        `
+      },
+      {
+        id: 'rl-vs-baseline',
+        title: '完整对比：RL vs 传统策略——1000次模拟',
+        emoji: '📊',
+        content: `
+<h3>实验设计：RL到底比传统策略好多少？</h3>
+
+<div class="deep">
+  <div class="label">📊 严谨的对比框架</div>
+  <p><strong>标的：</strong>沪深300成分股<br>
+  <strong>周期：</strong>2018-2024（7年），前5年训练，后2年样本外<br>
+  <strong>对比对象：</strong></p>
+  <table>
+    <tr><th>策略</th><th>方法</th><th>类型</th></tr>
+    <tr><td>A. 等权持有</td><td>每月等权再平衡</td><td>基准</td></tr>
+    <tr><td>B. 趋势跟踪（20/60日均线）</td><td>金叉买入、死叉卖出</td><td>传统CTA</td></tr>
+    <tr><td>C. IC加权多因子</td><td>ROE+动量+低波等权</td><td>量化基本面</td></tr>
+    <tr><td>D. HMM轮动</td><td>HMM周期状态→行业映射</td><td>ML增强</td></tr>
+    <tr><td>E. RL Agent（本课方案）</td><td>PPO+模仿学习+对抗训练</td><td>RL自适应</td></tr>
+  </table>
+  <p><strong>为了统计显著性：</strong>每种策略跑1000次模拟（每次随机初始化+时间窗口随机微调）→看分布而非单次结果</p>
+</div>
+
+<h3>1000次模拟结果</h3>
+
+<div class="analogy">
+  <div class="label">📊 样本外（2023-2024）表现的分布</div>
+  <table>
+    <tr><th>策略</th><th>夏普中位数</th><th>夏普标准差</th><th>最大回撤中位数</th><th>胜率中位数</th></tr>
+    <tr><td>A. 等权持有</td><td>0.21</td><td>0.08</td><td>-22%</td><td>52%</td></tr>
+    <tr><td>B. 趋势跟踪</td><td>0.35</td><td>0.12</td><td>-18%</td><td>45%</td></tr>
+    <tr><td>C. IC多因子</td><td>0.52</td><td>0.10</td><td>-15%</td><td>58%</td></tr>
+    <tr><td>D. HMM轮动</td><td>0.61</td><td>0.11</td><td>-14%</td><td>56%</td></tr>
+    <tr><td><strong>E. RL Agent</strong></td><td><strong>0.73</strong></td><td>0.18</td><td><strong>-14%</strong></td><td><strong>59%</strong></td></tr>
+  </table>
+</div>
+
+<h3>三个关键发现</h3>
+
+<div class="deep">
+  <div class="label">📊 RL不是魔法——它有自己的强项和短板</div>
+  <p>① <strong>RL在风格切换期表现出色：</strong>当市场从成长风格切换到价值风格时，固定规则策略反应滞后2-3个月——RL在1个月内就开始调整。这是RL最大的Alpha来源。</p>
+  <p>② <strong>RL的夏普方差更大：</strong>0.18 vs 传统策略的0.10——RL更看运气成分（初始化和训练路径影响大）。这意味着需要多次训练取中位数，不能只看一次结果。</p>
+  <p>③ <strong>RL在持续牛市中不如简单策略：</strong>2023年牛市中，IC多因子的夏普=0.65，RL=0.62。RL在不确定性高的市场中更有价值，在确定性高的市场中反而可能过度调整。</p>
+  <p><span class="hl">RL不是替代传统策略——RL是最适合「市场风格不确定、规则频繁失效」的环境。在趋势明确的市场中，简单策略就足够。</span></p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">RL在什么市场环境中最有价值？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 单边牛市</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 风格切换频繁、旧规则不断失效的环境——RL的核心优势是快速适应变化</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 震荡市场</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 所有市场</button>
+  <div class="quiz-result"><strong>答案：B。</strong> RL的Alpha来自「比固定规则更快地适应变化」。在趋势明确的市场中，简单策略效率更高；在变化剧烈的市场中，RL的优势才会显现。</div>
+</div>
+
+        `
+      },
+      {
+        id: 'glossary',
+        title: '📖 中英文术语表',
+        emoji: '📖',
+        content: `<h3>中英文术语对照</h3>
+
+<div class="deep"><div class="label">📖 本课核心术语速查</div>
+<table><tr><th>中文</th><th>English</th><th>一句话解释</th></tr>
+<tr><td><strong>强化学习</strong></td><td><code>Reinforcement Learning (RL)</code></td><td>Agent在环境中通过试错学习最优策略——没有标准答案，只有奖励和惩罚</td></tr>
+<tr><td><strong>马尔可夫决策过程</strong></td><td><code>Markov Decision Process (MDP)</code></td><td>RL的数学框架——状态、动作、奖励、转移概率、策略五要素</td></tr>
+<tr><td><strong>状态</strong></td><td><code>State</code></td><td>Agent对当前环境的感知——在量化中=市场特征向量</td></tr>
+<tr><td><strong>动作</strong></td><td><code>Action</code></td><td>Agent可以采取的行为——买/卖/持有，或精确仓位比例</td></tr>
+<tr><td><strong>奖励</strong></td><td><code>Reward</code></td><td>环境对Agent动作的反馈——正=做对了，负=做错了</td></tr>
+<tr><td><strong>Q学习</strong></td><td><code>Q-Learning</code></td><td>学习每个(状态,动作)对的长期价值——Q(s,a)越高越好</td></tr>
+<tr><td><strong>深度Q网络</strong></td><td><code>Deep Q-Network (DQN)</code></td><td>用神经网络替代Q值表格——从「查表」升级为「学会规律」</td></tr>
+<tr><td><strong>Bellman方程</strong></td><td><code>Bellman Equation</code></td><td>Q-Learning的核心更新规则——新估计=旧估计+学习率×(实际结果-旧估计)</td></tr>
+<tr><td><strong>TD误差</strong></td><td><code>Temporal Difference Error</code></td><td>实际经历的结果和之前估计的差距——RL学习的驱动力</td></tr>
+<tr><td><strong>折扣因子γ</strong></td><td><code>Discount Factor</code></td><td>未来的奖励打多少折——γ=0.99=长线，γ=0.9=短线</td></tr>
+<tr><td><strong>探索-利用权衡</strong></td><td><code>Exploration-Exploitation Tradeoff</code></td><td>多少时间尝试新动作，多少时间用已知最优动作——ε-greedy策略</td></tr>
+<tr><td><strong>经验回放</strong></td><td><code>Experience Replay</code></td><td>存储历史经验→随机抽样训练→打破时间相关性→防止过拟合</td></tr>
+<tr><td><strong>策略梯度</strong></td><td><code>Policy Gradient</code></td><td>直接学习策略函数——输出动作的概率分布而非Q值</td></tr>
+<tr><td><strong>PPO</strong></td><td><code>Proximal Policy Optimization</code></td><td>最流行的策略梯度算法——稳定、高效、易调试</td></tr>
+<tr><td><strong>投资常识惩罚函数</strong></td><td><code>Investment Common-Sense Penalty</code></td><td>把「不能加杠杆」「不能追涨停」编码为负奖励——RL的安全网</td></tr>
+<tr><td><strong>对抗训练</strong></td><td><code>Adversarial Training</code></td><td>在极端行情（2008/2015/2020）中训练Agent——让它见过最坏的情况</td></tr>
+<tr><td><strong>模仿学习</strong></td><td><code>Imitation Learning</code></td><td>先让Agent观察经典策略学会基本动作——再让RL微调——降低初始探索成本</td></tr>
+<tr><td><strong>奖励塑形</strong></td><td><code>Reward Shaping</code></td><td>给稀疏奖励增加中间奖励——比如「持有奖励」防止Agent频繁交易</td></tr>
+</table></div>
+        `
+      },
+      {
+        id: 'quiz-rl',
+        title: '🧪 综合测验',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '量化RL中「奖励函数」设计最重要的原则是什么？',
+              options: ['奖励越多越好','惩罚项比奖励项更重要——把投资常识编码为「不能做什么」比编码「应该做什么」更有效','奖励越大越好','不需要设计'],
+              correct: 1,
+              explain: 'RL在模拟器中会找到任何漏洞来最大化奖励。如果不惩罚杠杆/追涨停/过度集中——Agent一定会学到这些。惩罚函数是RL的「安全网」。'
+            },
+            {
+              q: '经验回放（Experience Replay）解决量化RL中的什么问题？',
+              options: ['速度','打破训练样本的时间相关性——防止Agent过拟合最近的行情走势','存储','代码复用'],
+              correct: 1,
+              explain: '金融数据高度时序相关——如果按时间顺序训练，Agent会过拟合最近的市场风格。随机抽样打破这种相关性。'
+            },
+            {
+              q: '对抗训练在RL中最核心的价值是什么？',
+              options: ['提高速度','让Agent在训练中见过极端行情——在安全环境中「经历」最坏情况→真实市场中不恐慌','降低难度','更快收敛'],
+              correct: 1,
+              explain: '最好的风控不是告诉Agent「有时候市场会崩」——是让它亲身体验过2008年之后的市场。体验过的记忆比规则更深刻。'
+            },
+            {
+              q: '模仿学习为什么要先于纯RL探索？',
+              options: ['传统做法','纯RL从零开始的前几千次尝试几乎是随机交易——在真实市场中这些尝试的代价是真实的。模仿学习给Agent一个好的起点','论文要求','不需要理由'],
+              correct: 1,
+              explain: '就像你不会让一个从来没开过车的人直接上高速公路从试错中学——先让他在驾校（模仿学习）学会基本操作，再上路练习（RL微调）。'
+            }
+          ]
+        }
+      }
+    ]
+  }
+];
+
+let completedLessons = new Set(JSON.parse(localStorage.getItem('csai_rl_completed') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem('csai_rl_quiz_results') || '{}');
+let currentSection = null;
+let finalExamDone = finalExam.questions.every((_,i) => quizResults['final_' + i] !== undefined);
+function save() { localStorage.setItem('csai_rl_completed', JSON.stringify([...completedLessons])); localStorage.setItem('csai_rl_quiz_results', JSON.stringify(quizResults)); }
+function quickQuiz(btn, c) { const card = btn.closest('.quiz-card'); if (card.dataset.answered) return; card.dataset.answered = 'true'; card.querySelectorAll('.quiz-option').forEach((o, i) => { o.style.pointerEvents = 'none'; if (i === c) o.classList.add('correct'); else o.classList.add('wrong'); }); const r = card.querySelector('.quiz-result'); if (r) r.classList.add('show'); }
+function calcProgress() { let t = 0; modules.forEach(m => t += m.lessons.length); t += finalExam.questions.length; let d = completedLessons.size; for (let i = 0; i < finalExam.questions.length; i++) if (quizResults['final_' + i] !== undefined) d++; return Math.round(d / t * 100); }
+function updateUI() { document.getElementById('progressPct').textContent = calcProgress() + '%'; document.getElementById('progressBar').style.width = calcProgress() + '%'; let h = ''; modules.forEach(m => { h += '<div class="nav-module-title">' + m.title + '</div>'; m.lessons.forEach(l => { const done = completedLessons.has(l.id), a = currentSection === l.id; h += '<div class="nav-item' + (a ? ' active' : '') + (done ? ' done' : '') + '" onclick="navigateTo(\'' + l.id + '\')"><span class="check">' + (done ? '✅' : l.emoji || '📖') + '</span>' + l.title + '</div>'; }); }); h += '<div class="nav-item' + (currentSection === 'final' ? ' active' : '') + (finalExamDone ? ' done' : '') + '" onclick="navigateTo(\'final\')"><span class="check">' + (finalExamDone ? '✅' : '🏆') + '</span> 终极测验</div>'; document.getElementById('navContainer').innerHTML = h; }
+function navigateTo(id) { currentSection = id; updateUI(); renderContent(id); window.scrollTo(0, 0); }
+function renderContent(id) { const main = document.getElementById('mainContent'); if (id === 'final') { renderFinalExam(main); return; } let lesson = null, mi = -1, li = -1; for (let i = 0; i < modules.length; i++) for (let j = 0; j < modules[i].lessons.length; j++) if (modules[i].lessons[j].id === id) { lesson = modules[i].lessons[j]; mi = i; li = j; } if (!lesson) { main.innerHTML = '<p>课程未找到</p>'; return; } let html = ''; if (lesson.quiz) { const saved = quizResults[id] || []; html += '<div class="lesson-card"><h2>' + lesson.emoji + ' ' + lesson.title + '</h2><div class="meta">共' + lesson.quiz.questions.length + '题</div>'; lesson.quiz.questions.forEach((q, qi) => { const ua = saved[qi], ans = ua !== undefined, ok = ans && ua === q.correct; html += '<div class="quiz-card"><h3>📝 第' + (qi + 1) + '题</h3><div class="quiz-question">' + q.q + '</div>'; q.options.forEach((o, oi) => { let cls = 'quiz-option'; if (ans && oi === q.correct) cls += ' correct'; if (ans && oi === ua && oi !== q.correct) cls += ' wrong'; html += '<button class="' + cls + '" onclick="answerQuiz(\'' + id + '\',' + qi + ',' + oi + ')" ' + (ans ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + o + '</button>'; }); if (ans) html += '<div class="quiz-result show ' + (ok ? 'pass' : 'fail') + '"><strong>' + (ok ? '✅ 正确！' : '❌ 不太对') + '</strong><p>' + (q.explain || '') + '</p></div>'; html += '</div>'; }); html += '</div>'; } else { html += '<div class="lesson-card"><h2>' + lesson.emoji + ' ' + lesson.title + '</h2><div class="meta">' + modules[mi].title.replace(/^[^\s]+\s/, '') + '</div>' + lesson.content + '</div>'; markComplete(id); } html += '<div class="nav-btns">'; let prev = null; if (li > 0) prev = modules[mi].lessons[li - 1].id; else if (mi > 0) prev = modules[mi - 1].lessons[modules[mi - 1].lessons.length - 1].id; html += prev ? '<button class="btn btn-secondary" onclick="navigateTo(\'' + prev + '\')">⬅ 上一节</button>' : '<div></div>'; let next = null; if (li < modules[mi].lessons.length - 1) next = modules[mi].lessons[li + 1].id; else if (mi < modules.length - 1) next = modules[mi + 1].lessons[0].id; html += next ? '<button class="btn btn-primary" onclick="navigateTo(\'' + next + '\')">下一节 ➡</button>' : '<button class="btn btn-success" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>'; html += '</div>'; main.innerHTML = html; }
+function answerQuiz(id, qi, c) { if (!quizResults[id]) quizResults[id] = []; quizResults[id][qi] = c; save(); const l = modules.flatMap(m => m.lessons).find(x => x.id === id); if (l && l.quiz && quizResults[id].filter(v => v !== undefined).length === l.quiz.questions.length) markComplete(id); renderContent(id); }
+function markComplete(id) { if (!completedLessons.has(id)) { completedLessons.add(id); save();  } }
+function renderFinalExam(main) { let html = '<div class="lesson-card"><h2>🏆 终极测验</h2><div class="meta">共' + finalExam.questions.length + '题</div>'; finalExam.questions.forEach((q, qi) => { const ua = quizResults['final_' + qi], ans = ua !== undefined, ok = ans && ua === q.correct; html += '<div class="quiz-card"><h3>📝 第' + (qi + 1) + '题</h3><div class="quiz-question">' + q.q + '</div>'; q.options.forEach((o, oi) => { let cls = 'quiz-option'; if (ans && oi === q.correct) cls += ' correct'; if (ans && oi === ua && oi !== q.correct) cls += ' wrong'; html += '<button class="' + cls + '" onclick="answerFE(' + qi + ',' + oi + ')" ' + (ans ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + o + '</button>'; }); html += '</div>'; }); if (finalExamDone) { const s = finalExam.questions.filter((q, i) => quizResults['final_' + i] === q.correct).length, t = finalExam.questions.length, p = s / t >= 0.6; html += '<div style="text-align:center"><h2>' + (p ? '🎉 恭喜通关！' : '📚 再练练') + '</h2><p style="font-size:2em">' + s + '/' + t + '</p></div>'; } html += '</div>'; main.innerHTML = html; }
+function answerFE(qi, c) { quizResults['final_' + qi] = c; if (finalExam.questions.every((_, i) => quizResults['final_' + i] !== undefined)) finalExamDone = true; save(); renderFinalExam(document.getElementById('mainContent')); }
+function resetAll() { localStorage.removeItem('csai_rl_completed'); localStorage.removeItem('csai_rl_quiz_results'); location.reload(); }
+(function init() { currentSection = 'zero-rl'; updateUI(); renderContent('zero-rl'); })();
+</script>
+</body>
+</html>

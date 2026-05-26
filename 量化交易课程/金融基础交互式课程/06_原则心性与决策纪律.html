@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧭 原则、心性与决策纪律 · 金融大师头脑培养</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --card-hover: #1c2333;
+  --border: #30363d;
+  --text: #e6edf3;
+  --sub: #8b949e;
+  --accent: #c084fc;
+  --accent2: #a880e0;
+  --green: #3fb950;
+  --red: #f85149;
+  --yellow: #a880e0;
+  --orange: #c084fc;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::selection { background: rgba(192,132,252,0.35); color: #fff; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3e50; }
+body {
+  font-family: -apple-system, 'SF Pro Display', 'PingFang SC', sans-serif;
+  background: radial-gradient(ellipse at 50% 0%, #160c24 0%, var(--bg) 70%);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width: 280px;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  padding: 24px 16px;
+  position: sticky; top:0; height:100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.main {
+  flex:1;
+  padding: 32px 48px;
+  max-width: 920px;
+}
+.logo { font-size: 1.2em; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.logo .icon { font-size: 1.4em; }
+.subtitle { color: var(--sub); font-size: 0.82em; margin-bottom: 20px; opacity: 0.8; }
+.progress-bar-wrap { background: var(--border); border-radius: 8px; height: 6px; margin-bottom: 22px; overflow: hidden; }
+.progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 8px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 0 12px rgba(192,132,252,0.25); }
+.progress-text { font-size: 0.78em; color: var(--sub); margin-bottom: 4px; }
+.nav-module { margin-bottom: 18px; }
+.nav-module-title { font-size: 0.72em; text-transform: uppercase; color: var(--sub); letter-spacing: 1.5px; margin-bottom: 8px; padding: 0 8px; opacity: 0.7; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; font-size: 0.88em; color: var(--sub); border-left: 3px solid transparent; margin-bottom: 2px; }
+.nav-item:hover { background: var(--card-hover); color: var(--text); border-left-color: rgba(192,132,252,0.3); }
+.nav-item.active { background: rgba(192,132,252,0.12); color: var(--accent2); font-weight: 600; border-left-color: var(--accent2); }
+.nav-item.done { color: var(--green); }
+.nav-item .check { width: 20px; text-align: center; font-size: 0.8em; }
+.divider { border-top: 1px solid var(--border); margin: 16px 0; }
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.lesson-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px 34px; margin-bottom: 24px; transition: border-color 0.25s, box-shadow 0.25s; }
+.lesson-card:hover { border-color: rgba(192,132,252,0.2); box-shadow: 0 2px 20px rgba(192,132,252,0.06); }
+.lesson-card h2 { font-size: 1.5em; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.lesson-card h2 .emoji { font-size: 1.3em; }
+.lesson-card .meta { color: var(--sub); font-size: 0.85em; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.lesson-card h3 { font-size: 1.1em; margin: 28px 0 14px; color: var(--accent2); position: relative; padding-left: 14px; }
+.lesson-card h3::before { content: ''; position: absolute; left: 0; top: 3px; bottom: 3px; width: 3px; border-radius: 2px; background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+.lesson-card p { margin-bottom: 14px; }
+.lesson-card ul, .lesson-card ol { padding-left: 24px; margin-bottom: 14px; }
+.lesson-card li { margin-bottom: 8px; }
+.analogy { background: linear-gradient(135deg, rgba(210,153,29,0.06), rgba(192,132,252,0.06)); border: 1px solid rgba(210,153,29,0.15); border-left: 3px solid var(--accent2); border-radius: var(--radius); padding: 18px 22px; margin: 20px 0; }
+.analogy .label { font-size: 0.78em; color: var(--accent2); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.diagram-svg { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 12px; margin: 20px 0; text-align: center; overflow-x: auto; }
+.diagram-svg svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+.diagram-svg text { font-family: inherit; }
+.tip, .warning, .deep { border-radius: var(--radius); padding: 18px 22px; margin: 20px 0; position: relative; }
+.tip { background: rgba(63,185,80,0.06); border: 1px solid rgba(63,185,80,0.2); border-left: 3px solid var(--green); }
+.warning { background: rgba(248,81,73,0.06); border: 1px solid rgba(248,81,73,0.2); border-left: 3px solid var(--red); }
+.deep { background: rgba(192,132,252,0.05); border: 1px solid rgba(192,132,252,0.12); border-left: 3px solid var(--accent); }
+.tip .label, .warning .label, .deep .label { font-weight: 700; margin-bottom: 6px; font-size: 0.85em; display: flex; align-items: center; gap: 6px; }
+.tip .label { color: var(--green); }
+.warning .label { color: var(--red); }
+.deep .label { color: var(--accent); }
+.quiz-card { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius); padding: 28px 30px; margin: 28px 0; }
+.quiz-card h3 { font-size: 1.15em; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.quiz-question { margin: 18px 0 10px; font-weight: 600; font-size: 0.95em; }
+.quiz-option { display: block; width: 100%; text-align: left; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 13px 18px; margin: 8px 0; cursor: pointer; color: var(--text); font-size: 0.93em; transition: all 0.2s ease; }
+.quiz-option:hover { border-color: var(--accent); background: var(--card-hover); transform: translateX(4px); }
+.quiz-option.correct { border-color: var(--green); background: rgba(63,185,80,0.08); color: var(--green); }
+.quiz-option.wrong { border-color: var(--red); background: rgba(248,81,73,0.08); color: var(--red); }
+.quiz-option:disabled { cursor: default; opacity: 0.8; transform: none; }
+.quiz-result { margin-top: 16px; padding: 16px; border-radius: 8px; display: none; }
+.quiz-result.show { display: block; }
+.quiz-result.pass { background: rgba(63,185,80,0.1); border: 1px solid var(--green); }
+.quiz-result.fail { background: rgba(248,81,73,0.1); border: 1px solid var(--red); }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 11px 26px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.93em; font-weight: 600; transition: all 0.2s ease; letter-spacing: 0.3px; }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--accent); color: #000; box-shadow: 0 2px 8px rgba(192,132,252,0.3); }
+.btn-primary:hover { background: #d2991d; box-shadow: 0 4px 16px rgba(192,132,252,0.4); }
+.btn-secondary { background: var(--border); color: var(--text); }
+.btn-secondary:hover { background: #3a3e50; }
+.btn-success { background: var(--green); color: #fff; box-shadow: 0 2px 8px rgba(63,185,80,0.3); }
+.btn-success:hover { background: #00a381; box-shadow: 0 4px 16px rgba(63,185,80,0.4); }
+.step-list { display: flex; gap: 14px; flex-wrap: wrap; margin: 18px 0; }
+.step-card { flex: 1; min-width: 180px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 16px; text-align: center; transition: all 0.2s ease; }
+.step-card:hover { border-color: rgba(192,132,252,0.3); transform: translateY(-2px); }
+.step-card .num { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #c08020); color: #000; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: 700; font-size: 0.85em; box-shadow: 0 2px 8px rgba(192,132,252,0.3); }
+.step-card .title { font-weight: 600; margin-bottom: 6px; font-size: 0.9em; }
+.step-card .desc { font-size: 0.82em; color: var(--sub); line-height: 1.6; }
+.nav-btns { display: flex; justify-content: space-between; margin-top: 32px; }
+.table-wrap { overflow-x: auto; margin: 18px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+.table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.88em; line-height: 1.6; }
+.table-wrap th { background: rgba(192,132,252,0.08); border-bottom: 1px solid var(--accent2); padding: 10px 14px; font-weight: 600; text-align: left; color: var(--accent); font-size: 0.82em; text-transform: uppercase; letter-spacing: 0.5px; }
+.table-wrap td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.table-wrap tr:last-child td { border-bottom: none; }
+.table-wrap tr:hover td { background: rgba(192,132,252,0.03); }
+.certificate { display: none; background: linear-gradient(135deg, rgba(192,132,252,0.08), rgba(210,153,29,0.06)); border: 2px solid var(--accent2); border-radius: var(--radius); padding: 48px 40px; text-align: center; margin: 28px 0; box-shadow: 0 4px 32px rgba(210,153,29,0.08); }
+.certificate.show { display: block; animation: fadeIn 0.5s ease; }
+.certificate h2 { font-size: 2em; color: var(--accent2); margin-bottom: 8px; }
+.certificate .grade { font-size: 2.5em; color: var(--accent); font-weight: 800; margin: 16px 0 8px; }
+.formula { background: rgba(192,132,252,0.06); border: 1px solid rgba(192,132,252,0.15); border-radius: 8px; padding: 14px 20px; margin: 14px 0; text-align: center; font-family: 'SF Mono', 'Menlo', 'Monaco', monospace; font-size: 0.92em; }
+.hl { color: var(--accent); font-weight: 600; }
+.hl2 { color: var(--green); font-weight: 600; }
+.hl3 { color: var(--yellow); font-weight: 600; }
+@media (max-width: 768px) {
+  .app { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+  .main { padding: 20px 16px; }
+  .step-list { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><span class="icon">🧭</span> 原则与决策纪律</div>
+  <div class="subtitle">十大原则 · 段永平 · 德鲁克 · 纳瓦尔 — 打造你的操作系统</div>
+  <div class="progress-text">课程进度 <span id="progressPct">0%</span></div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+  <a href="课程首页_金融基础.html" style="display:block;margin-bottom:12px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-size:0.82em;color:var(--sub);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.borderColor=this.style.color" onmouseout="this.style.borderColor='var(--border)'" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--sub)'">🏠 回到课程总览</a>
+<div id="navContainer"></div>
+  <div class="divider"></div>
+  <button class="btn btn-primary" style="width:100%" onclick="startFinalExam()">🏆 终极测验</button>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:0.8em" onclick="resetAll()">🔄 重置进度</button>
+</aside>
+<main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ===== COURSE DATA =====
+const modules = [
+  {
+    title: '🧘 模块七：理性、心性与决策纪律——打造你自己的「原则」',
+    lessons: [
+      {
+        id: 'top10-principles',
+        title: '21位大师提炼的十大核心原则——投资的十诫',
+        emoji: '📜',
+        content: `
+<h3>从21位大师的智慧中提取的公约数</h3>
+
+<div class="analogy">
+  <div class="label">📜 十条原则就是你的投资操作系统</div>
+  <p>达利欧说：系统化的原则比临场判断可靠100倍。段永平说：不做清单比做什么清单更重要。<br>
+  这十条——是21位大师都同意的东西。</p>
+</div>
+
+<div class="table-wrap">
+<table>
+  <tr><th>#</th><th>原则</th><th>来源大师</th><th>一句话操作指南</th></tr>
+  <tr><td>1</td><td><strong>安全边际是第一原则</strong></td><td>格雷厄姆·巴菲特·卡拉曼</td><td>买点=内在价值×0.7</td></tr>
+  <tr><td>2</td><td><strong>在市场恐惧时贪婪</strong></td><td>巴菲特·马克斯·老木匠</td><td>恐慌指数>阈值→加码</td></tr>
+  <tr><td>3</td><td><strong>永远不要亏钱</strong></td><td>巴菲特</td><td>最大回撤硬上限·止损程序化</td></tr>
+  <tr><td>4</td><td><strong>知道你不知道什么</strong></td><td>芒格·塔勒布</td><td>能力圈外标的=自动排除</td></tr>
+  <tr><td>5</td><td><strong>反过来想</strong></td><td>芒格·马斯克</td><td>每个买入假设先做空头审查</td></tr>
+  <tr><td>6</td><td><strong>痛苦+反思=进步</strong></td><td>达利欧</td><td>回测=痛苦·因子重校=反思</td></tr>
+  <tr><td>7</td><td><strong>本分=做对的事+把事情做对</strong></td><td>段永平</td><td>策略偏离基准>5%→警告</td></tr>
+  <tr><td>8</td><td><strong>市场的错误是唯一机会</strong></td><td>索罗斯</td><td>反身性强度=偏离×持续</td></tr>
+  <tr><td>9</td><td><strong>不预测，只准备</strong></td><td>马克斯·塔勒布</td><td>对冲>预测·情景>点预测</td></tr>
+  <tr><td>10</td><td><strong>知足是超能力</strong></td><td>豪泽尔·纳瓦尔</td><td>每季强制止盈检讨</td></tr>
+</table>
+</div>
+
+<div class="deep">
+  <div class="label">📜 十条原则之间的内在联系</div>
+  <p><strong>防御层（1-4）：</strong>安全边际→逆向恐惧→不亏钱→能力圈 = 先立于不败之地<br>
+  <strong>思维层（5-6）：</strong>反过来想→痛苦反思 = 持续校准你的判断<br>
+  <strong>执行层（7-8）：</strong>本分→利用市场错误 = 用纪律抓住机会<br>
+  <strong>心态层（9-10）：</strong>不预测→知足 = 接受不确定性，控制贪婪</p>
+  <p style="margin-top:8px">四层合在一起 = <span class="hl">从「怎么想」到「怎么做」到「怎么管自己」的完整操作系统</span></p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">段永平的「本分」在投资中对应什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 不要冒险</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 做对的事+把事情做对——策略不偏离基准，不因为贪婪而越界</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 永远满仓</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 频繁调整策略</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 「本分」是段永平从实业带到投资的核心概念——知道自己该做什么、不该做什么。策略偏离基准>5%就是「非本分」——不是因为你判断错了，是你在做不该做的事。</div>
+</div>
+`
+      },
+      {
+        id: 'duan-benfen',
+        title: '段永平：本分与不做清单——中国最成功的价值投资翻译者',
+        emoji: '🏌️',
+        content: `
+<h3>把巴菲特的直觉变成中国人能执行的操作手册</h3>
+
+<div class="analogy">
+  <div class="label">🏌️ 段永平三句话 = 全部投资哲学</div>
+  <p><strong>1. 买股票就是买公司</strong>——用企业主心态对待每一笔投资。如果股市关门五年你也无所谓，你才是真投资。<br>
+  <strong>2. 不懂不做</strong>——能力圈不是锦上添花，是生死线。懂就是懂，不懂就是不懂，没有「半懂」。<br>
+  <strong>3. 好的商业模式 + 好的企业文化 + 好的价格</strong>——三位一体选股框架。缺任何一条，都不叫价值投资。</p>
+</div>
+
+<h3>与巴菲特/芒格的关键区别</h3>
+
+<div class="table-wrap">
+<table>
+  <tr><th>维度</th><th>巴菲特</th><th>芒格</th><th>段永平</th></tr>
+  <tr><td>身份</td><td>纯粹投资者</td><td>投资者+思想家</td><td>企业家+投资者</td></tr>
+  <tr><td>核心武器</td><td>保险浮存金+复利机器</td><td>跨学科思维格栅</td><td>实业经验+商业直觉</td></tr>
+  <tr><td>能力圈来源</td><td>60年阅读财报</td><td>跨学科阅读</td><td>亲手做企业30年</td></tr>
+  <tr><td>风格</td><td>系统化、制度化</td><td>哲学化、逆向</td><td>极简化、实战化</td></tr>
+  <tr><td>最大贡献</td><td>价值投资体系化</td><td>多元思维模型</td><td>中国化操作手册</td></tr>
+</table>
+</div>
+
+<div class="deep">
+  <div class="label">🏌️ 不做清单比做什么清单更重要</div>
+  <p>• 不做空——做空的亏损无限<br>
+  • 不借钱买股票（不用杠杆）——借来的钱会让你在错误的时间被迫卖出<br>
+  • 不懂不做——半懂不懂是投资中最贵的事<br>
+  • 不做短期交易——短期交易是零和博弈，长期投资是正和博弈</p>
+  <p style="margin-top:8px;color:var(--accent)"><strong>段永平从实业带到投资的核心洞见：</strong>做企业时，做对了100件事不如做错了1件事的破坏力大。投资也一样——克制你不该做的事，比找到该做的事更难也更重要。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">段永平「不懂不做」中的「懂」最低标准是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 看过一篇分析报告</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 如果股市关门五年你也无所谓——这才是真懂</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 朋友推荐过</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 股价在涨</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 段永平的「懂」标准极高：如果你买了之后股市关门五年，你完全不担心——因为你确信这个生意本身在五年后会更好。这才是真懂。达不到这个标准，就是「不懂」——不管PE多低。</div>
+</div>
+`
+      },
+      {
+        id: 'drucker-effectiveness',
+        title: '德鲁克：有效性思维——把知识变成成果的管理哲学',
+        emoji: '📋',
+        content: `
+<div class="analogy">
+  <div class="label">📋 为什么投资需要管理学？</div>
+  <p>德鲁克（Peter Drucker，1909-2005）被誉为「现代管理学之父」。巴菲特称他为「管理思想家中的管理思想家」。他在投资体系中的位置：<strong>帮你判断管理层是否「有效」——这直接决定了你投的公司能不能持续创造价值。</strong></p>
+</div>
+
+<h3>德鲁克五问——快速判断一家公司的管理水平</h3>
+
+<div class="deep">
+  <div class="label">📋 德鲁克的五大经典问题（投资角度的重构）</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>问题</th><th>投资角度的解读</th><th>红旗信号</th></tr>
+    <tr><td><strong>1. 我们的使命是什么？</strong></td><td>公司知道自己在为谁解决什么问题吗？</td><td>使命模糊、频繁改战略方向</td></tr>
+    <tr><td><strong>2. 我们的客户是谁？</strong></td><td>真正的用户画像清晰吗？护城河的来源在这里</td><td>说不清客户是谁、试图服务所有人</td></tr>
+    <tr><td><strong>3. 客户重视什么？</strong></td><td>客户的支付意愿来自哪里？这决定了定价权</td><td>唯一的竞争手段是降价</td></tr>
+    <tr><td><strong>4. 我们的成果是什么？</strong></td><td>ROIC>WACC吗？聚焦在真正创造价值的事上吗？</td><td>多元化扩张掩盖核心业务衰退</td></tr>
+    <tr><td><strong>5. 我们的计划是什么？</strong></td><td>资本配置能力——留存利润再投资的回报率</td><td>账面现金越来越多但找不到投资方向</td></tr>
+  </table>
+  </div>
+</div>
+
+<h3>有效性 vs 效率——德鲁克最被误读的概念</h3>
+
+<div class="warning">
+  <div class="label">⚠️ 做正确的事 vs 正确地做事</div>
+  <p><strong>效率（Efficiency）：</strong>把事情做对——用最快的方式完成目标<br>
+  <strong>有效性（Effectiveness）：</strong>做对的事情——先判断这个目标值不值得做<br>
+  <span class="hl">「效率是以正确的方式做事，有效性是做正确的事。」</span></p>
+  <p style="margin-top:8px">投资中的映射：一个管理层可以「高效」地执行一个错误的战略（比如盲目扩张），这比「低效」地执行正确战略危险得多。</p>
+</div>
+
+<h3>德鲁克 × 段永平 = 判断管理层的双镜头</h3>
+
+<div class="deep">
+  <div class="label">📋 两大师互补——投资管理层评估的完整框架</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>视角</th><th>德鲁克（管理有效性）</th><th>段永平（本分哲学）</th></tr>
+    <tr><td>核心问题</td><td>「在做什么？为什么做？」</td><td>「做的是对的事吗？不是就不做」</td></tr>
+    <tr><td>判断标准</td><td>成果导向——ROIC、资本配置效率</td><td>价值导向——不赚不该赚的钱</td></tr>
+    <tr><td>危险信号</td><td>「高效地做无效的事」</td><td>「做不该做的事赚了不该赚的钱」</td></tr>
+    <tr><td>理想状态</td><td>知识工作者聚焦于创造真实价值</td><td>本分——拒绝诱惑，持续做对的事</td></tr>
+  </table>
+  </div>
+</div>
+
+<h3>德鲁克的「聚焦贡献」——投资决策的核心原则</h3>
+
+<div class="deep">
+  <div class="label">📋 德鲁克的三条行动法则（重构为投资决策原则）</div>
+  <p><strong>1. 「我的贡献应该是什么？」→ 问自己：这笔投资对我的投资体系的贡献是什么？</strong></p>
+  <p style="margin-left:20px;color:var(--sub)">不是「它能赚多少钱」，是「它补上了我投资组合的哪个缺口」。</p>
+  <p><strong>2. 「这件事还值得做吗？」→ 定期审视持仓：当初买入的理由还成立吗？</strong></p>
+  <p style="margin-left:20px;color:var(--sub)">德鲁克说：「最危险的不是做错了什么，而是继续做昨天正确但今天不再正确的事。」</p>
+  <p><strong>3. 「放弃什么才能腾出空间？」→ 卖出纪律：不卖滞涨股就没有仓位买新机会</strong></p>
+  <p style="margin-left:20px;color:var(--sub)">德鲁克：「没有比把资源浪费在不再产生成果的事情上更大的浪费了。」</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">德鲁克说「有效性是做正确的事，效率是正确地做事」。投资中这对应什么意思？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 选股是效率，择时是有效性</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 有效性=先判断值不值得投（选股+估值），效率=怎么优化执行（下单+仓位）——前者决定胜负</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 两者没有区别</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 效率比有效性重要</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 德鲁克的核心思想：管理层可以「高效」地执行错误的战略（盲目扩张、并购毁价值），这比「低效」地做好公司危险得多。投资同理——你花再多时间优化仓位和买卖点，投了错误的公司=无效。先问「值不值得投」，再问「怎么投更好」。</div>
+</div>
+`
+      },
+      {
+        id: 'naval-judgment',
+        title: '纳瓦尔：判断力=财富——硅谷最会「把赚钱变成哲学」的人',
+        emoji: '🧭',
+        content: `
+<h3>纳瓦尔的核心框架：专长 + 杠杆 + 判断力</h3>
+
+<div class="analogy">
+  <div class="label">🧭 财富三要素</div>
+  <p><strong>专长（Specific Knowledge）：</strong>无法被培训、无法被外包、无法被自动化的事情。不是「我会编程」，是「我能在3天学会任何新框架」。<br>
+  <strong>杠杆（Leverage）：</strong>放大你的专长的力量。<br>
+  <strong>判断力（Judgment）：</strong>知道该把杠杆用在什么地方。</p>
+</div>
+
+<h3>纳瓦尔的三种杠杆——最核心的框架</h3>
+
+<div class="step-list">
+  <div class="step-card">
+    <div class="num">①</div>
+    <div class="title">劳动力杠杆</div>
+    <div class="desc">雇人帮你干活<br>最古老，最弱<br>管人很烦</div>
+  </div>
+  <div class="step-card">
+    <div class="num">②</div>
+    <div class="title">资本杠杆</div>
+    <div class="desc">用钱生钱<br>中等，传统路径<br>需要初始资本</div>
+  </div>
+  <div class="step-card">
+    <div class="num">③</div>
+    <div class="title">代码和媒体</div>
+    <div class="desc">最强大、最民主<br>零边际成本<br>不需要任何人批准</div>
+  </div>
+</div>
+
+<div class="deep">
+  <div class="label">🧭 「新时代的杠杆是你可以无限复制的产品」</div>
+  <p>• 代码 = 写一次，无限复制（软件/SaaS/AI）<br>
+  • 媒体 = 说/写一次，无限传播（播客/写作/视频）<br>
+  • <strong>投资应用：</strong>巴菲特用资本杠杆（浮存金），唐朝用媒体杠杆（唐书房），亮哥的一人公司=媒体杠杆+资本杠杆</p>
+</div>
+
+<h3>纳瓦尔的投资智慧</h3>
+
+<div class="deep">
+  <div class="label">🧭 判断力是可训练的</div>
+  <p>• <strong>知足是超能力：</strong>「够了」是投资中最被低估的词。不知足的人永远在追逐下一个，永远不满意。<br>
+  • <strong>长期主义：</strong>「复利不仅在财富中起效，在人际关系和知识中也同样起效。」<br>
+  • <strong>反脆弱的决策：</strong>做「上行无限、下行有限」的决策——和塔勒布的杠铃策略完全一致</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">纳瓦尔认为「最强大的杠杆」是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 劳动力杠杆</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 资本杠杆</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 代码和媒体——零边际成本、不需要任何人批准、无限复制</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 管理杠杆</button>
+  <div class="quiz-result"><strong>答案：C。</strong> 纳瓦尔认为代码和媒体是「新时代的杠杆」——写一次无限复制，零边际成本，不需要任何人批准。这和巴菲特用资本杠杆不同：你不需要初始资本，只需要创造能力。这对普通人的启示是：建立你的「媒体杠杆」——写作/音频/视频。</div>
+</div>
+`
+      },
+      {
+        id: 'decision-traps-1',
+        title: '决策陷阱：锚定效应与承诺升级——聪明人怎么被自己困住',
+        emoji: '⚠️',
+        content: `h3>陷阱一：锚定效应——你的第一个数字决定了你的一切判断</h3>
+
+<div class="deep">
+  <div class="label">⚓ 锚定效应的杀伤力</div>
+  <p><strong>定义：</strong>在做决策时过度依赖最先获得的信息（锚），即使这个锚与决策无关。</p>
+  <p><strong>投资中的锚定陷阱：</strong><br>
+  ① <strong>买入价锚定：</strong>「我买在50块，现在跌到30块了，我要等回到50再卖」——50已经没有任何意义，但它在控制你的决策<br>
+  ② <strong>历史高点锚定：</strong>「茅台最高2600，现在1500，肯定便宜」——但茅台在2600时可能是极度高估<br>
+  ③ <strong>分析师目标价锚定：</strong>「分析师都看到100，现在才60，还有40%空间」——分析师的100可能只是从50上调的</p>
+  <p><strong>破解方法：</strong><br>
+  • 定期重置——每季度像从未买过一样重新评估持仓<br>
+  • 用分位替代绝对值——不要看「跌了多少」，看PE/PB在历史上的分位<br>
+  • 别人的成本与你无关——百元大钞从谁口袋里掏出来都值100块</p>
+</div>
+
+<h3>陷阱二：承诺升级——越陷越深的心理黑洞</h3>
+
+<div class="deep">
+  <div class="label">📉 沉没成本谬误的升级版</div>
+  <p><strong>定义：</strong>已经投入了资源（时间/金钱/声誉），即使证据表明方向错了，仍继续投入——因为承认错误比继续错更痛苦。</p>
+  <p><strong>经典案例：巴菲特在IBM上的错误</strong><br>
+  • 2011年，巴菲特以平均约170美元买入IBM，成为其最大股东之一<br>
+  • 2012-2015年，IBM营收连续下滑，云计算转型缓慢<br>
+  • 巴菲特在2015-2016年继续持有甚至在下跌中加仓<br>
+  • <strong>2017年：</strong>巴菲特终于承认错误，卖出约1/3仓位<br>
+  • <strong>2018年：</strong>全部清仓，承认「我对IBM的判断是错误的」<br>
+  • 巴菲特从买入到卖出约7年——即使是他，也陷入了一定程度的承诺升级</p>
+  <p><strong>破解方法：</strong><br>
+  • 设定「信仰动摇线」——如果发生什么，我会改变看法？提前写下来<br>
+  • 加仓必须独立触发条件——不能因为「已经亏了」而加仓<br>
+  • 假装是别人推荐的——如果你没有持仓，今天会买吗？</p>
+</div>
+
+<h3>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">即使巴菲特也会陷入「承诺升级」——他在IBM上的错误告诉我们什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 巴菲特不值得学习</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 即使最理性的人在已经投入后也难以客观——需要提前设定「信仰动摇线」</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. IBM是一家坏公司</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 应该更早卖出</button>
+  <div class="quiz-result"><strong>答案：B。</strong></div>
+</div>
+
+        `
+      },
+      {
+        id: 'decision-traps-2',
+        title: '段永平投资网易：非对称决策的教科书级案例',
+        emoji: '📖',
+        content: `<h3>案例深度拆解：段永平投资网易——非对称决策的教科书</h3>
+
+<div class="deep">
+  <div class="label">📖 2001-2003年段永平投资网易</div>
+  <p><strong>背景：</strong>2001年互联网泡沫破裂，网易从15.5美元跌至0.64美元，面临退市风险。同时网易被发现会计问题，市场普遍认为这家公司完了。</p>
+  
+  <p><strong>段永平的决策过程（自我叙述+复盘提炼）：</strong><br>
+  <strong>① 能力圈检查：</strong>段永平做过游戏公司（步步高），他理解游戏行业的商业模式——这不是他不熟悉的领域<br>
+  <strong>② 基本面研究：</strong>他看网易的财务报表，发现公司现金+短期投资 > 市值——即使公司立刻清算，每股也值1美元以上。而现在股价只有0.64<br>
+  <strong>③ 安全边际：</strong>清算价值已经提供了底部保护（下行风险极低），而《大话西游》正在内测——如果游戏成功，上行空间巨大<br>
+  <strong>④ 非对称结构：</strong>下行：亏光也就0.64美元（实际上有清算价值保护，可能跌不了那么低）。上行：如果游戏成功，可能涨几十倍<br>
+  <strong>⑤ 行动：</strong>在0.8-1美元之间买入约200万美元（约5%仓位）</p>
+  
+  <p><strong>结果：</strong>《大话西游》大获成功，网易股价在两年内从1美元涨到70美元。段永平在过程中逐步卖出，获利约1亿美元——约50倍回报。</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 段永平网易投资的关键决策原则</div>
+  <p>① <strong>不懂不做：</strong>段永平懂游戏行业——这是他能力圈内的标的<br>
+  ② <strong>安全边际第一：</strong>现金>市值——公司立刻清算都值更多钱。这是真正的安全边际<br>
+  ③ <strong>非对称性：</strong>下行风险=0.64（且有底部保护），上行空间=几十倍。这是杠铃策略的完美体现<br>
+  ④ <strong>仓位控制：</strong>只投了5%——即使全亏，也不影响生活。这才能让你在波动中拿得住<br>
+  ⑤ <strong>不为市场情绪所动：</strong>别人因为「互联网完了」「网易有会计问题」而恐慌卖出时，他只看「这个公司的清算价值是多少」</p>
+</div>
+
+<h3>陷阱三：叙事谬误——为随机事件编造故事</h3>
+
+<div class="deep">
+  <div class="label">📝 大脑的自动编剧模式</div>
+  <p><strong>定义：</strong>人类大脑无法接受「这只是随机波动」，会本能地为任何结果编造一个自洽的解释。</p>
+  <p><strong>投资中的表现：</strong><br>
+  • 股票涨了→「因为业绩超预期/政策利好/资金流入」<br>
+  • 股票跌了→「因为获利回吐/恐慌情绪/利空消化」<br>
+  • <strong>真相：</strong>大多数日间波动根本无法归因——它们是噪声</p>
+  <p><strong>破解方法：</strong><br>
+  • 要求每个「故事」有统计显著性——日波动不需要解释，月趋势才需要<br>
+  • 做「盲测」——不看股票名称，只看财务数据和价格走势，你的判断还一样吗？<br>
+  • 用「如果反过来」测试——如果今天股价涨了而你的解释是X，那如果今天跌了你的解释也是X吗？</p>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">段永平投资网易最关键的决策要素是什么？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 预测到游戏会成功</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 清算价值>市值提供安全边际 + 游戏提供非对称上行 + 仓位控制=5%</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 听从朋友推荐</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 靠运气</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 段永平厉害的不是预测——他甚至不知道《大话西游》能不能成功。他厉害的是构建了「最坏情况下也亏不了多少，最好情况下能赚几十倍」的非对称结构。</div>
+</div>
+
+<div class="quiz-card">
+  <div class="quiz-question">什么是叙事谬误在投资中最常见的表现？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 不会编故事</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 为每一根K线找「原因」——而大多数日间波动是噪声</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 讲得太复杂</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 不关注新闻</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 金融媒体存在的意义就是为每天的涨跌编造一个「说得过去」的解释。但聪明的投资者知道：大多数日间波动没有原因，不需要解释，也不应该影响决策。</div>
+</div>
+        `
+      },
+      {
+        id: 'board-arch-design',
+        title: '董事会Agent架构设计——把大师装进AI系统',
+        emoji: '🏛️',
+        content: `
+<h3>你的个人AI投资董事会</h3>
+
+<div class="analogy">
+  <div class="label">🏛️ 核心设计思想</div>
+  <p>不是让一个Agent做所有决策。是让<span class="hl">每位大师变身为一个独立的Agent</span>，各自从自己的视角给出判断，最终由「董事长Agent」加权投票决策。</p>
+</div>
+
+<div class="diagram-svg">
+<svg viewBox="0 0 840 420" xmlns="http://www.w3.org/2000/svg">
+  <!-- Chairman -->
+  <rect x="340" y="10" width="160" height="50" rx="10" fill="rgba(192,132,252,0.15)" stroke="#e28413" stroke-width="2"/>
+  <text x="420" y="40" text-anchor="middle" fill="#e28413" font-size="14" font-weight="700">🏛️ 董事长Agent</text>
+  <text x="420" y="55" text-anchor="middle" fill="#8b949e" font-size="10">加权投票·贝叶斯融合·最终决策</text>
+
+  <!-- Lines from chairman -->
+  <line x1="370" y1="60" x2="200" y2="110" stroke="#d2991d" stroke-width="1" opacity="0.3"/>
+  <line x1="390" y1="60" x2="350" y2="110" stroke="#d2991d" stroke-width="1" opacity="0.3"/>
+  <line x1="420" y1="60" x2="460" y2="110" stroke="#d2991d" stroke-width="1" opacity="0.3"/>
+  <line x1="460" y1="60" x2="550" y2="110" stroke="#d2991d" stroke-width="1" opacity="0.3"/>
+  <line x1="490" y1="60" x2="650" y2="110" stroke="#d2991d" stroke-width="1" opacity="0.3"/>
+
+  <!-- Row 1: Value + Multi-model -->
+  <rect x="80" y="110" width="150" height="60" rx="8" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="1"/>
+  <text x="155" y="135" text-anchor="middle" fill="#2dd4bf" font-size="11" font-weight="700">巴菲特Agent</text>
+  <text x="155" y="155" text-anchor="middle" fill="#8b949e" font-size="9">内在价值·安全边际</text>
+
+  <rect x="260" y="110" width="150" height="60" rx="8" fill="rgba(192,132,252,0.08)" stroke="#c084fc" stroke-width="1"/>
+  <text x="335" y="135" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="700">芒格Agent</text>
+  <text x="335" y="155" text-anchor="middle" fill="#8b949e" font-size="9">批判·跨学科·盲区识别</text>
+
+  <rect x="440" y="110" width="150" height="60" rx="8" fill="rgba(210,153,29,0.08)" stroke="#d2991d" stroke-width="1"/>
+  <text x="515" y="135" text-anchor="middle" fill="#d2991d" font-size="11" font-weight="700">马克斯Agent</text>
+  <text x="515" y="155" text-anchor="middle" fill="#8b949e" font-size="9">周期位置·钟摆定位</text>
+
+  <rect x="620" y="110" width="150" height="60" rx="8" fill="rgba(168,85,247,0.08)" stroke="#a855f7" stroke-width="1"/>
+  <text x="695" y="135" text-anchor="middle" fill="#a855f7" font-size="11" font-weight="700">索罗斯Agent</text>
+  <text x="695" y="155" text-anchor="middle" fill="#8b949e" font-size="9">反身性·转折点</text>
+
+  <!-- Row 2: Macro + Risk + Discipline -->
+  <rect x="80" y="200" width="150" height="60" rx="8" fill="rgba(63,185,80,0.08)" stroke="#3fb950" stroke-width="1"/>
+  <text x="155" y="225" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="700">达利欧Agent</text>
+  <text x="155" y="245" text-anchor="middle" fill="#8b949e" font-size="9">宏观·债务周期</text>
+
+  <rect x="260" y="200" width="150" height="60" rx="8" fill="rgba(248,81,73,0.08)" stroke="#f85149" stroke-width="1"/>
+  <text x="335" y="225" text-anchor="middle" fill="#f85149" font-size="11" font-weight="700">塔勒布Agent</text>
+  <text x="335" y="245" text-anchor="middle" fill="#8b949e" font-size="9">尾部风险·反脆弱</text>
+
+  <rect x="440" y="200" width="150" height="60" rx="8" fill="rgba(192,132,252,0.08)" stroke="#e28413" stroke-width="1"/>
+  <text x="515" y="225" text-anchor="middle" fill="#e28413" font-size="11" font-weight="700">风控Agent</text>
+  <text x="515" y="245" text-anchor="middle" fill="#8b949e" font-size="9">一票否决权</text>
+
+  <rect x="620" y="200" width="150" height="60" rx="8" fill="rgba(232,136,66,0.08)" stroke="#e28413" stroke-width="1"/>
+  <text x="695" y="225" text-anchor="middle" fill="#e28413" font-size="11" font-weight="700">段永平Agent</text>
+  <text x="695" y="245" text-anchor="middle" fill="#8b949e" font-size="9">不做清单·本分审查</text>
+
+  <!-- Row 3: Behavioral + Special -->
+  <rect x="170" y="290" width="130" height="60" rx="8" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1"/>
+  <text x="235" y="315" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="700">豪泽尔Agent</text>
+  <text x="235" y="335" text-anchor="middle" fill="#8b949e" font-size="9">行为纠偏</text>
+
+  <rect x="330" y="290" width="130" height="60" rx="8" fill="rgba(234,179,8,0.08)" stroke="#eab308" stroke-width="1"/>
+  <text x="395" y="315" text-anchor="middle" fill="#eab308" font-size="11" font-weight="700">老木匠Agent</text>
+  <text x="395" y="335" text-anchor="middle" fill="#8b949e" font-size="9">便宜+逆向</text>
+
+  <rect x="490" y="290" width="130" height="60" rx="8" fill="rgba(34,197,94,0.08)" stroke="#22c55e" stroke-width="1"/>
+  <text x="555" y="315" text-anchor="middle" fill="#22c55e" font-size="11" font-weight="700">纳瓦尔Agent</text>
+  <text x="555" y="335" text-anchor="middle" fill="#8b949e" font-size="9">杠杆·判断力</text>
+
+  <!-- Bottom note -->
+  <text x="420" y="400" text-anchor="middle" fill="#8b949e" font-size="11">每个Agent背后有完整的知识库支撑——不是prompt调教，是知识库驱动</text>
+</svg>
+</div>
+
+<h3>🧩 随堂测验</h3>
+
+<div class="quiz-card">
+  <div class="quiz-question">风控Agent在董事会架构中拥有关键的什么权力？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 估值权</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 一票否决权——不管理由多充分，超过风险预算就否决</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 加仓权</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 选股权</button>
+  <div class="quiz-result"><strong>答案：B。</strong></div>
+</div>
+
+        `
+      },
+      {
+        id: 'board-principles',
+        title: '核心设计原则与Agent驱动——基于大师知识库的决策系统',
+        emoji: '⚙️',
+        content: `<h3>核心设计原则</h3>
+
+<div class="deep">
+  <div class="label">🏛️ 四大设计法则</div>
+  <p><strong>① 知识库驱动，非prompt调教：</strong>每个Agent背后有该大师的完整知识库（巴菲特226文件、芒格107文件……）<br>
+  <strong>② 芒格Agent的核心职责：</strong>不是给答案，是「系统性批判」——找出其他Agent遗漏的学科盲区<br>
+  <strong>③ 风控Agent拥有一票否决权：</strong>不管理由多充分，超过风险预算就否决。这是从LTCM学到的教训<br>
+  <strong>④ 董事长Agent不是「人」：</strong>是加权投票算法+贝叶斯融合——先验来自大师知识库权重，似然来自数据信号</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 当前进度：阶段二→三</div>
+  <p>学科知识就位 ✅ → 量化引擎运行中 🔄 → Agent架构设计中 📋<br>
+  下一步：巴菲特Agent原型（读财报·算估值·判护城河）+ 芒格Agent原型（批判思维·跨学科检查）</p>
+</div>
+
+        `
+      },
+      {
+        id: 'investment-checklist',
+        title: '个人投资检查清单——事前·事中·事后',
+        emoji: '✅',
+        content: `
+<h3>像飞行员一样决策——不靠记忆，靠检查清单</h3>
+
+<div class="analogy">
+  <div class="label">✈️ 葛文德式检查清单</div>
+  <p>外科医生阿图·葛文德证明：一张简单的检查清单，能让手术感染率从11%降到0%。飞行员每次起飞前都逐项核对——不管经验多丰富。</p>
+  <p><strong>投资决策也一样：</strong>你不需要记住所有原则，你需要一张<span class="hl">在每次决策前强制运行的检查清单</span>。</p>
+</div>
+
+<h3>事前——下单前必过的8道关</h3>
+
+<div class="deep">
+  <div class="label">✅ 八道防线</div>
+  <p><strong>□ ① 护城河：</strong>这个生意的竞争优势在5年后还在吗？（巴菲特）<br>
+  <strong>□ ② 安全边际：</strong>买入价至少低于内在价值30%（格雷厄姆）<br>
+  <strong>□ ③ 管理层：</strong>这群人值得信任吗？本分吗？（德鲁克·段永平）<br>
+  <strong>□ ④ 周期：</strong>我们现在在周期的什么位置？（马克斯）<br>
+  <strong>□ ⑤ 反身性：</strong>市场对这个标的的共识在加速吗？（索罗斯）<br>
+  <strong>□ ⑥ 逆向：</strong>如果我是空头，我会怎么攻击这个假设？（芒格）<br>
+  <strong>□ ⑦ 尾部风险：</strong>最坏情况是什么？能承受吗？（塔勒布）<br>
+  <strong>□ ⑧ 我遗漏了什么学科的视角？（芒格多元思维）</strong></p>
+</div>
+
+<h3>事中——持仓期间的三条纪律</h3>
+
+<div class="deep">
+  <div class="label">✅ 持仓三纪律</div>
+  <p><strong>□ ① 定期重检：</strong>每季度/每次季报后重新跑一次事前8问。不要因为「已经买了」就停止质疑。<br>
+  <strong>□ ② 仓位纪律：</strong>不超过凯利公式最优仓位。不因为涨了而加仓，不因为跌了而恐慌减仓。<br>
+  <strong>□ ③ 信息禁食：</strong>不看日内价格、不刷股票APP、不追热点新闻——噪音是决策的敌人。</p>
+</div>
+
+<h3>事后——每笔交易的达利欧式复盘</h3>
+
+<div class="deep">
+  <div class="label">✅ 复盘三问</div>
+  <p><strong>□ ① 这个决策是理性判断还是情绪驱动？</strong>（豪泽尔——诚实回答）<br>
+  <strong>□ ② 有哪些我当时不知道但应该知道的？</strong>（信息盲区分析）<br>
+  <strong>□ ③ 大师中谁会对这个决策说「不」？</strong>（想象董事会投票——巴菲特/芒格/塔勒布/段永平各会说什么）</p>
+</div>
+
+<div class="tip">
+  <div class="label">💡 使用检查清单的正确心态</div>
+  <p>检查清单不是用来「证明」你的决策正确——是用来<span class="hl">确保你在做决策之前，看到了所有可能让你失败的东西</span>。如果8道关都过了，你对失败已经有了预案。如果有任何一道关过不了——那不是「小问题」，是系统报警。</p>
+</div>
+
+<div class="quiz-card">
+  <h3>🧩 随堂测验</h3>
+  <div class="quiz-question">事前检查清单的8道关中最容易被忽略的是哪一道？</div>
+  <button class="quiz-option" onclick="quickQuiz(this,0)">A. 护城河</button>
+  <button class="quiz-option" onclick="quickQuiz(this,1)">B. 「我遗漏了什么学科的视角」——因为人天然不知道自己的盲区</button>
+  <button class="quiz-option" onclick="quickQuiz(this,2)">C. 安全边际</button>
+  <button class="quiz-option" onclick="quickQuiz(this,3)">D. 管理层</button>
+  <div class="quiz-result"><strong>答案：B。</strong> 第8问最难也最重要——因为人天然不知道自己遗漏了什么。这就是为什么需要芒格Agent（系统性批判）和风控Agent（一票否决权）——它们就是设计来发现你自己看不到的盲区。</div>
+</div>
+`
+      },
+      {
+        id: 'quiz-module7',
+        title: '🧪 小测验 #3',
+        emoji: '🧪',
+        quiz: {
+          questions: [
+            {
+              q: '段永平「不懂不做」中「懂」的最低标准是什么？',
+              options: ['看过研报', '如果股市关门五年你也无所谓——这才是真懂', '朋友推荐', '股价在涨'],
+              correct: 1,
+              explain: '段永平的「懂」标准极高：不管市场价格怎么波动，你确信这个生意本身会在五年后更好。达不到这个标准就「不懂」。'
+            },
+            {
+              q: '董事会架构中，风控Agent拥有什么特殊权力？',
+              options: ['估值权', '一票否决权——不管理由多充分，超过风险预算就否决', '加仓权', '选股权'],
+              correct: 1,
+              explain: '这是从LTCM学到的教训——最聪明的人+最复杂的模型，因为没有风控闸门，40亿瞬间蒸发。风控Agent的一票否决权是整个系统的最后一道防线。'
+            },
+            {
+              q: '事后复盘三问中，哪一问最能防止「重复犯错」？',
+              options: ['我赚了多少', '"有哪些我当时不知道但应该知道的"——信息盲区分析', '我应该加仓吗', '别人怎么看'],
+              correct: 1,
+              explain: '大多数复盘只关注结果（赚了还是亏了），不关注过程（当时为什么不信息）。信息盲区分析强迫你审视：我当时应该知道但没有去查的是什么？下次怎么避免？'
+            },
+            {
+              q: '纳瓦尔所说的「知足是超能力」在投资中意味着什么？',
+              options: ['永远不要卖出', '知道什么时候「够了」——不因为贪婪而继续追逐已经到手的利润', '永远满仓', '不看账户'],
+              correct: 1,
+              explain: '「够了」是投资中最被低估的词。不知足的投资者永远在追逐下一个更赚钱的机会，最终把所有利润都还给了市场。知足=每季强制止盈检讨，拒绝贪婪加码。'
+            }
+          ]
+        }
+      }
+    ]
+
+  },
+  {
+    title: '📖 中英文术语对照表',
+    lessons: [
+      {
+        id: 'glossary',
+        title: '原则心性与决策·术语双语速查',
+        emoji: '📖',
+        content: `
+<h3>投资是认知的变现——这些术语涵盖了心智、决策和行为金融的核心词汇</h3>
+
+<div class="tip">
+  <div class="label">💡 为什么需要中英对照</div>
+  <p>行为金融学的开创性研究——卡尼曼《思考快与慢》、塞勒《错误的行为》、达利欧《原则》——全部是英文原版。掌握双语术语，就能直接阅读这些改变世界的思想的原典。</p>
+</div>
+
+<h3>一、心智与准则</h3>
+<div class="table-wrap"><table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>原则</td><td>Principles</td><td>原则</td></tr>
+  <tr><td>心性</td><td>Mindset / Mental Discipline</td><td>心性</td></tr>
+  <tr><td>交易纪律</td><td>Trading Discipline</td><td>纪律</td></tr>
+  <tr><td>不做清单</td><td>Stop-Doing List</td><td>不做清单</td></tr>
+  <tr><td>本分</td><td>Ben Fen (Duan Yongping philosophy)</td><td>本分</td></tr>
+  <tr><td>有效性</td><td>Effectiveness</td><td>有效性</td></tr>
+  <tr><td>情绪纪律</td><td>Emotional Discipline</td><td>情绪纪律</td></tr>
+</table></div>
+
+<h3>二、决策科学</h3>
+<div class="table-wrap"><table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>决策疲劳</td><td>Decision Fatigue</td><td>决策疲劳</td></tr>
+  <tr><td>决策树</td><td>Decision Tree</td><td>决策树</td></tr>
+  <tr><td>事前验尸</td><td>Pre-Mortem</td><td>事前验尸</td></tr>
+  <tr><td>复盘</td><td>After-Action Review (AAR)</td><td>AAR</td></tr>
+  <tr><td>系统1/系统2</td><td>System 1 / System 2</td><td>系统1/2</td></tr>
+  <tr><td>延迟满足</td><td>Delayed Gratification</td><td>延迟满足</td></tr>
+</table></div>
+
+<h3>三、行为金融偏误</h3>
+<div class="table-wrap"><table>
+  <tr><th style="width:35%">中文</th><th style="width:35%">English</th><th style="width:30%">简记</th></tr>
+  <tr><td>损失厌恶</td><td>Loss Aversion</td><td>损失厌恶</td></tr>
+  <tr><td>沉没成本</td><td>Sunk Cost</td><td>沉没成本</td></tr>
+  <tr><td>锚定效应</td><td>Anchoring Effect</td><td>锚定</td></tr>
+  <tr><td>过度自信</td><td>Overconfidence</td><td>过度自信</td></tr>
+  <tr><td>从众行为</td><td>Herding Behavior</td><td>从众</td></tr>
+</table></div>
+
+<div class="analogy">
+  <div class="label">🧠 卡尼曼的比喻</div>
+  <p><strong>系统1</strong> = 自动挡——直觉、快速、不费力。看到老虎立刻跑，不需要思考。<br>
+  <strong>系统2</strong> = 手动挡——理性、缓慢、费脑。做数学题、分析财报、判断估值。<br>
+  投资中最常见的错误：<strong>用系统1做投资决策</strong>（追涨杀跌），应该启动系统2（算估值、看财报）。</p>
+  <p style="margin-top:8px">达利欧说：「痛苦 + 反思 = 进步。」复盘（AAR）就是启动系统2——从情绪驱动回到理性分析。</p>
+</div>
+`
+      }
+    ]
+  }
+
+];
+
+// ===== FINAL EXAM =====
+
+// ===== APP STATE =====
+
+const finalExam = {
+  questions: [
+    { q:'段永平「不懂不做」的「懂」最低标准是什么？', options:['看过研报','股市关门五年也无所谓才是真懂','朋友推荐','股价在涨'], correct:1 },
+    { q:'董事会架构中风控Agent有什么特殊权力？', options:['估值权','一票否决权——超过风险预算就否决','加仓权','选股权'], correct:1 },
+    { q:'事前检查清单中最容易被忽略的是哪道关？', options:['护城河','「我遗漏了什么学科视角」——人天然不知道自己的盲区','安全边际','管理层'], correct:1 }
+  ]
+};
+
+let completedLessons = new Set(JSON.parse(localStorage.getItem('master_finance_6_final_course_completed') || '[]'));
+let quizResults = JSON.parse(localStorage.getItem('master_finance_6_final_quiz_results') || '{}');
+let currentSection = null;
+let finalExamDone = finalExam.questions.every((_,i) => quizResults['final_' + i] !== undefined);
+
+function save() {
+  localStorage.setItem('master_finance_6_final_course_completed', JSON.stringify([...completedLessons]));
+  localStorage.setItem('master_finance_6_final_quiz_results', JSON.stringify(quizResults));
+}
+
+function quickQuiz(btn, correctChoice) {
+  const card = btn.closest('.quiz-card');
+  if (card.dataset.answered) return;
+  card.dataset.answered = 'true';
+  const options = card.querySelectorAll('.quiz-option');
+  options.forEach((o, i) => {
+    o.style.pointerEvents = 'none';
+    if (i === correctChoice) o.classList.add('correct');
+    else o.classList.add('wrong');
+  });
+  const result = card.querySelector('.quiz-result');
+  if (result) { result.classList.add('show'); }
+}
+
+function calcProgress() {
+  let totalLessons = 0;
+  modules.forEach(m => { totalLessons += m.lessons.length; });
+  totalLessons += finalExam.questions.length;
+  let done = completedLessons.size;
+  for (let i = 0; i < finalExam.questions.length; i++) {
+    if (quizResults['final_' + i] !== undefined) done++;
+  }
+  return Math.round((done / totalLessons) * 100);
+}
+
+function updateUI() {
+  const pct = calcProgress();
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+
+  const nav = document.getElementById('navContainer');
+  let html = '';
+  modules.forEach((mod) => {
+    html += '<div class="nav-module-title">' + mod.title + '</div>';
+    mod.lessons.forEach((lesson) => {
+      const id = lesson.id;
+      const done = completedLessons.has(id);
+      const active = currentSection === id;
+      html += '<div class="nav-item' + (active ? ' active' : '') + (done ? ' done' : '') + '" onclick="navigateTo(\'' + id + '\')">';
+      html += '<span class="check">' + (done ? '✅' : lesson.emoji || '📖') + '</span>';
+      html += lesson.title + '</div>';
+    });
+  });
+  html += '<div class="nav-item' + (currentSection === 'final' ? ' active' : '') + (finalExamDone ? ' done' : '') + '" onclick="navigateTo(\'final\')">';
+  html += '<span class="check">' + (finalExamDone ? '✅' : '🏆') + '</span> 终极测验</div>';
+  nav.innerHTML = html;
+}
+
+function navigateTo(id) {
+  currentSection = id;
+  updateUI();
+  renderContent(id);
+  window.scrollTo(0, 0);
+}
+
+function markComplete(id) {
+  if (!completedLessons.has(id)) {
+    completedLessons.add(id);
+    save();
+    updateUI();
+  }
+}
+
+function renderContent(id) {
+  const main = document.getElementById('mainContent');
+  if (id === 'final') { renderFinalExam(main); return; }
+
+  let lesson = null, modIndex = -1, lesIndex = -1;
+  for (let mi = 0; mi < modules.length; mi++) {
+    for (let li = 0; li < modules[mi].lessons.length; li++) {
+      if (modules[mi].lessons[li].id === id) {
+        lesson = modules[mi].lessons[li]; modIndex = mi; lesIndex = li; break;
+      }
+    }
+    if (lesson) break;
+  }
+  if (!lesson) { main.innerHTML = '<p>课程未找到</p>'; return; }
+
+  let html = '';
+
+  if (lesson.quiz) {
+    const savedAnswers = quizResults[id] || [];
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">测试你对' + modules[modIndex].title.replace(/^[^\s]+\s/, '') + '的理解—共' + lesson.quiz.questions.length + '题</div>';
+    lesson.quiz.questions.forEach((q, qi) => {
+      const userAnswer = savedAnswers[qi];
+      const answered = userAnswer !== undefined;
+      const isCorrect = answered && userAnswer === q.correct;
+      html += '<div class="quiz-card" id="quiz-' + qi + '"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+      html += '<div class="quiz-question">' + q.q + '</div>';
+      q.options.forEach((opt, oi) => {
+        let cls = 'quiz-option';
+        if (answered && oi === q.correct) cls += ' correct';
+        if (answered && oi === userAnswer && oi !== q.correct) cls += ' wrong';
+        html += '<button class="' + cls + '" onclick="answerQuiz(\'' + id + '\', ' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+      });
+      if (answered) {
+        html += '<div class="quiz-result show ' + (isCorrect ? 'pass' : 'fail') + '" id="result-' + id + '-' + qi + '">';
+        html += '<strong>' + (isCorrect ? '✅ 正确！' : '❌ 不太对') + '</strong><p>' + q.explain + '</p></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<div class="lesson-card"><h2><span class="emoji">' + lesson.emoji + '</span> ' + lesson.title + '</h2>';
+    html += '<div class="meta">' + modules[modIndex].title.replace(/^[^\s]+\s/, '') + '</div>';
+    html += lesson.content;
+    html += '</div>';
+    markComplete(id);
+  }
+
+  html += '<div class="nav-btns">';
+  let prevId = null;
+  if (lesIndex > 0) prevId = modules[modIndex].lessons[lesIndex - 1].id;
+  else if (modIndex > 0) { const pm = modules[modIndex - 1]; prevId = pm.lessons[pm.lessons.length - 1].id; }
+  if (prevId) html += '<button class="btn btn-secondary" onclick="navigateTo(\'' + prevId + '\')">⬅ 上一节</button>';
+  else html += '<div></div>';
+
+  let nextId = null;
+  if (lesIndex < modules[modIndex].lessons.length - 1) nextId = modules[modIndex].lessons[lesIndex + 1].id;
+  else if (modIndex < modules.length - 1) nextId = modules[modIndex + 1].lessons[0].id;
+  if (nextId) html += '<button class="btn btn-primary" onclick="navigateTo(\'' + nextId + '\')">下一节 ➡</button>';
+  else html += '<button class="btn btn-success" onclick="navigateTo(\'final\')">🏆 去终极测验 ➡</button>';
+  html += '</div>';
+
+  main.innerHTML = html;
+}
+
+function answerQuiz(lessonId, qi, oi) {
+  if (!quizResults[lessonId]) quizResults[lessonId] = [];
+  quizResults[lessonId][qi] = oi;
+  save();
+  renderContent(lessonId);
+}
+
+function startFinalExam() { navigateTo('final'); }
+
+function renderFinalExam(main) {
+  let html = '<div class="lesson-card"><h2>🏆 终极测验</h2>';
+  html += '<div class="meta">8道题 · 覆盖全部3个模块 · 70%及格</div>';
+
+  let allAnswered = true;
+  finalExam.questions.forEach((q, qi) => {
+    const ua = quizResults['final_' + qi];
+    const answered = ua !== undefined;
+    if (!answered) allAnswered = false;
+    const isCorrect = answered && ua === q.correct;
+    html += '<div class="quiz-card" id="final-q-' + qi + '"><h3>📝 第 ' + (qi + 1) + ' 题</h3>';
+    html += '<div class="quiz-question">' + q.q + '</div>';
+    q.options.forEach((opt, oi) => {
+      let cls = 'quiz-option';
+      if (answered && oi === q.correct) cls += ' correct';
+      if (answered && oi === ua && oi !== q.correct) cls += ' wrong';
+      html += '<button class="' + cls + '" onclick="answerFinal(' + qi + ', ' + oi + ')" ' + (answered ? 'disabled' : '') + '>' + ['A','B','C','D'][oi] + '. ' + opt + '</button>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+
+  if (allAnswered) {
+    const score = finalExam.questions.filter((q, i) => quizResults['final_' + i] === q.correct).length;
+    const total = finalExam.questions.length;
+    const pct = Math.round(score / total * 100);
+    const passed = pct >= 70;
+    const grade = pct >= 90 ? '🏅 S级·格栅大师' : pct >= 80 ? '🥇 A级·跨学科思维者' : pct >= 70 ? '🥈 B级·格栅学徒' : '📝 继续加油';
+    html += '<div class="certificate show"><div style="font-size:3em">' + (passed ? '🎉' : '💪') + '</div>';
+    html += '<h2>' + (passed ? '恭喜毕业！' : '还需要再练练') + '</h2>';
+    html += '<div class="grade">' + grade + '</div>';
+    html += '<div style="font-size:1.5em;color:var(--accent2)">' + score + ' / ' + total + ' 题正确（' + pct + '%）</div>';
+    html += '<p style="margin-top:16px;color:var(--sub)">' + (passed ?
+      '你已经完成了金融大师头脑培养课程的第五课——也是最后三块拼图。从塔勒布的反脆弱到老木匠的A股实战、从达利欧的债务周期到周金涛的康波、从段永平的本分到纳瓦尔的判断力到21位大师的十大原则——你不仅学会了怎么分析公司（课1-4），更学会了<span class="hl">怎么构建一个让你活下来并持续进化的投资操作系统</span>。记住：投资最终比的不是谁更聪明，而是谁的系统更不容易出错。每次决策前跑一次检查清单，让董事会Agent帮你审视盲区，保持「知止」的智慧。'
+      : '再看看薄弱环节，重做一次就能过！') + '</p>';
+    html += '<div style="margin-top:20px"><button class="btn btn-secondary" onclick="resetFinalExam()">🔄 重新测验</button>';
+    html += '<button class="btn btn-primary" onclick="resetAll()" style="margin-left:8px">🔁 重学全部课程</button></div></div>';
+    const wrong = finalExam.questions.map((q, i) => ({ q, i })).filter(x => quizResults['final_' + x.i] !== x.q.correct);
+    if (wrong.length > 0) {
+      html += '<div class="tip" style="margin-top:16px"><div class="label">📚 建议补强的知识点</div>';
+      const topicMap = {
+        0: '→ 复习「模块五：黑天鹅与极端斯坦」',
+        1: '→ 复习「模块五：老木匠的散户生存智慧」',
+        2: '→ 复习「模块六：达利欧经济机器与去杠杆」',
+        3: '→ 复习「模块六：明斯基时刻与泡沫解剖」',
+        4: '→ 复习「模块七：段永平的不懂不做」',
+        5: '→ 复习「模块七：风控Agent一票否决权」',
+        6: '→ 复习「模块七：个人投资检查清单」',
+        7: '→ 复习「模块六：周金涛康波周期」'
+      };
+      wrong.forEach(w => { html += '<p>❌ 第' + (w.i + 1) + '题 ' + topicMap[w.i] + '</p>'; });
+      html += '</div>';
+    }
+  }
+  main.innerHTML = html;
+  if (allAnswered) updateUI();
+}
+
+function answerFinal(qi, oi) {
+  quizResults['final_' + qi] = oi;
+  save();
+  renderFinalExam(document.getElementById('mainContent'));
+  updateUI();
+}
+
+function resetFinalExam() {
+  finalExam.questions.forEach((_, i) => delete quizResults['final_' + i]);
+  save(); updateUI();
+  renderFinalExam(document.getElementById('mainContent'));
+}
+
+function resetAll() {
+  localStorage.removeItem('master_finance_6_final_course_completed');
+  localStorage.removeItem('master_finance_6_final_quiz_results');
+  location.reload();
+}
+
+// ===== INIT =====
+(function init() {
+  currentSection = 'top10-principles';
+  updateUI();
+  renderContent('top10-principles');
+})();
+
+</script>
+</body>
+</html>
